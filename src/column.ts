@@ -1,10 +1,21 @@
 import { Type } from '@sinclair/typebox';
 
-export const Column = {
+type PropertyReturnType<T extends { [key: string]: (...arg: any) => any }> =
+	ReturnType<T[keyof T]>;
+
+const PrimitiveColumn = {
 	String: Type.String,
 	Number: Type.Number,
 	Boolean: Type.Boolean,
 	Date: Type.Date,
 };
 
-export type ColumnType = ReturnType<(typeof Column)[keyof typeof Column]>;
+type PrimitiveColumn = PropertyReturnType<typeof PrimitiveColumn>;
+
+export const Column = {
+	...PrimitiveColumn,
+	Nullable: <T extends PrimitiveColumn>(columnSchema: T) =>
+		Type.Union([columnSchema, Type.Null()]),
+};
+
+export type ColumnType = PropertyReturnType<typeof Column>;
