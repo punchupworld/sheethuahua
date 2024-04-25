@@ -1,0 +1,14 @@
+{
+	"name": "sheethuahua",
+	"module": "src/index.ts",
+	"type": "module",
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {
+		"@sinclair/typebox": "^0.32.20"
+	}
+}
