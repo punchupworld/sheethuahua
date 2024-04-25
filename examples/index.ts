@@ -1,14 +1,13 @@
-import { Type } from '@sinclair/typebox';
-import { Spreadsheet, Table } from '../src';
+import { Spreadsheet, Table, Column } from '../src';
 
 const userTable = Table('users', {
-	id: Type.Number(),
-	value: Type.String(),
+	id: Column.Number(),
+	value: Column.String(),
 });
 
 const itemTable = Table('items', {
-	id: Type.Number(),
-	name: Type.String(),
+	id: Column.Number(),
+	name: Column.String(),
 });
 
 const sheet = Spreadsheet('1SbX2kgAGsslbhGuB-EI_YdSAnIt3reU1_OEtWmDVOVk', [
