@@ -1,19 +1,20 @@
-import { Spreadsheet, Table, Column } from '../src';
+import { Column, Table, Spreadsheet } from '../src';
 
-const userTable = Table('users', {
-	id: Column.Number(),
-	value: Column.String(),
-});
-
-const itemTable = Table('items', {
-	id: Column.Number(),
+const assembliesTable = Table('assemblies', {
 	name: Column.String(),
+	term: Column.Number(),
+	startedAt: Column.Date(),
+	endedAt: Column.Nullable(Column.Date()),
+	origin: Column.Nullable(Column.String()),
 });
 
 const sheet = Spreadsheet('1SbX2kgAGsslbhGuB-EI_YdSAnIt3reU1_OEtWmDVOVk', [
-	userTable,
-	itemTable,
+	assembliesTable,
 ]);
 
-const users = sheet.get('users');
-const items = sheet.get('items');
+try {
+	const assemblies = await sheet.get('assemblies');
+	console.log(assemblies);
+} catch (e) {
+	console.error(e);
+}

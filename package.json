@@ -2,13 +2,15 @@
 	"name": "sheethuahua",
 	"module": "src/index.ts",
 	"type": "module",
+	"dependencies": {
+		"@sinclair/typebox": "^0.32.20",
+		"d3-dsv": "^3.0.1"
+	},
 	"devDependencies": {
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"@types/d3-dsv": "^3.0.7"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"
-	},
-	"dependencies": {
-		"@sinclair/typebox": "^0.32.20"
 	}
 }
