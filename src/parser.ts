@@ -1,11 +1,12 @@
-import { Type, type Static, type TSchema } from '@sinclair/typebox';
+import { Type, type Static, type TObject } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 import { autoType, csvParse } from 'd3-dsv';
+import type { TColumnsDefinition } from './table';
 
-export async function parseCSVFromUrl<C extends TSchema>(
+export async function parseCSVFromUrl<S extends TObject<TColumnsDefinition>>(
 	url: string,
-	columnsSchema: C,
-): Promise<Static<C>[]> {
+	columnsSchema: S,
+): Promise<Static<S>[]> {
 	const res = await fetch(url);
 
 	if (!res.ok) {
@@ -15,10 +16,10 @@ export async function parseCSVFromUrl<C extends TSchema>(
 	return parseCSVFromString(await res.text(), columnsSchema);
 }
 
-export async function parseCSVFromString<C extends TSchema>(
+export async function parseCSVFromString<S extends TObject<TColumnsDefinition>>(
 	csvString: string,
-	columnsSchema: C,
-): Promise<Static<C>[]> {
+	columnsSchema: S,
+): Promise<Static<S>[]> {
 	const resSchema = Type.Array(columnsSchema);
 	const rows = csvParse(csvString, autoType);
 
