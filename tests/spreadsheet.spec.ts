@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
-import { Spreadsheet, Table } from '../../src';
-import { mockFetch } from '../setup';
+import { Spreadsheet, Table } from '../src';
+import { mockFetch } from './setup';
 
 describe('Spreadsheet.get', () => {
 	it('should fetch with given sheetsId and table name', async () => {

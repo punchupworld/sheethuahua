@@ -5,8 +5,7 @@ import {
 	type TIndexFromPropertyKey,
 	type TKeyOf,
 } from '@sinclair/typebox';
-import { Value } from '@sinclair/typebox/value';
-import { autoType, csvParse } from 'd3-dsv';
+import { parseCSVFromUrl } from './parser';
 import type { TTable } from './table';
 
 export function Spreadsheet<T extends TTable<any, any>[]>(
@@ -16,30 +15,13 @@ export function Spreadsheet<T extends TTable<any, any>[]>(
 	const tablesSchema = Type.Intersect(tables);
 
 	return {
-		async get<N extends Static<TKeyOf<typeof tablesSchema>>>(
+		get<N extends Static<TKeyOf<typeof tablesSchema>>>(
 			tableName: N,
 		): Promise<Static<TIndexFromPropertyKey<Intersect<T>, N>>[]> {
-			const rowsSchema = Type.Array(Type.Index(tablesSchema, [tableName]));
-
-			const res = await fetch(
+			return parseCSVFromUrl(
 				`https://docs.google.com/spreadsheets/d/${sheetsId}/gviz/tq?tqx=out:csv&sheet=${tableName}`,
+				Type.Index(tablesSchema, [tableName]),
 			);
-
-			if (!res.ok) {
-				throw new Error(
-					res.status === 404
-						? `Could not get the data, does sheet id "${sheetsId}" and table name "${tableName}" valid and public?`
-						: res.statusText,
-				);
-			}
-
-			const rows = csvParse(await res.text(), autoType);
-
-			if (!Value.Check(rowsSchema, rows)) {
-				throw [...Value.Errors(rowsSchema, rows)];
-			}
-
-			return rows;
 		},
 	};
 }
