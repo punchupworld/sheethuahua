@@ -1,4 +1,4 @@
-import { Column, Spreadsheet, Table, type TableRow } from '../src';
+import { Column, Spreadsheet, Table, type RowType } from '../src';
 
 const assembliesTable = Table('assemblies', {
 	name: Column.String(),
@@ -8,14 +8,14 @@ const assembliesTable = Table('assemblies', {
 	origin: Column.Nullable(Column.String()),
 });
 
-type Assembly = TableRow<typeof assembliesTable>;
+type Assembly = RowType<typeof assembliesTable>;
 
-const sheet = Spreadsheet('1SbX2kgAGsslbhGuB-EI_YdSAnIt3reU1_OEtWmDVOVk', [
+const sheets = Spreadsheet('1SbX2kgAGsslbhGuB-EI_YdSAnIt3reU1_OEtWmDVOVk', [
 	assembliesTable,
 ]);
 
 try {
-	const assemblies = await sheet.get('assemblies');
+	const assemblies = await sheets.get('assemblies');
 	console.log(assemblies);
 } catch (e) {
 	console.error(e);

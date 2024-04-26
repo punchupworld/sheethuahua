@@ -7,9 +7,9 @@ import {
 } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 import { autoType, csvParse } from 'd3-dsv';
-import type { TableDefition } from './table';
+import type { TTable } from './table';
 
-export function Spreadsheet<T extends TableDefition<any, any>[]>(
+export function Spreadsheet<T extends TTable<any, any>[]>(
 	sheetsId: string,
 	tables: [...T],
 ) {

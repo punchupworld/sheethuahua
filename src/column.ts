@@ -10,12 +10,12 @@ const PrimitiveColumn = {
 	Date: Type.Date,
 };
 
-type PrimitiveColumn = PropertyReturnType<typeof PrimitiveColumn>;
+type TPrimitiveColumn = PropertyReturnType<typeof PrimitiveColumn>;
 
 export const Column = {
 	...PrimitiveColumn,
-	Nullable: <T extends PrimitiveColumn>(columnSchema: T) =>
+	Nullable: <T extends TPrimitiveColumn>(columnSchema: T) =>
 		Type.Union([columnSchema, Type.Null()]),
 };
 
-export type ColumnType = PropertyReturnType<typeof Column>;
+export type TColumn = PropertyReturnType<typeof Column>;

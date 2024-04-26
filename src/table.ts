@@ -5,21 +5,21 @@ import {
 	type TPropertyKey,
 	type TRecordOrObject,
 } from '@sinclair/typebox';
-import type { ColumnType } from './column';
+import type { TColumn } from './column';
 
-type TableSchemaType = Record<TPropertyKey, ColumnType>;
+type TColumnsSchema = Record<TPropertyKey, TColumn>;
 
-export type TableDefition<
+export type TTable<
 	N extends string,
-	S extends TableSchemaType,
+	S extends TColumnsSchema,
 > = TRecordOrObject<TConst<N>, TObject<S>>;
 
-export function Table<N extends string, S extends TableSchemaType>(
+export function Table<N extends string, C extends TColumnsSchema>(
 	name: N,
-	schema: S,
+	columns: C,
 ) {
-	return Type.Record(Type.Const(name), Type.Object(schema));
+	return Type.Record(Type.Const(name), Type.Object(columns));
 }
 
-export type TableRow<T extends TableDefition<string, TableSchemaType>> =
+export type RowType<T extends TTable<string, TColumnsSchema>> =
 	T['static'][keyof T['static']];
