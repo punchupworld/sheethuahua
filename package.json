@@ -2,13 +2,26 @@
 	"name": "sheethuahua",
 	"module": "src/index.ts",
 	"type": "module",
+	"scripts": {
+		"format": "prettier --write --ignore-unknown .",
+		"prepare": "husky"
+	},
+	"lint-staged": {
+		"*": "prettier --write --ignore-unknown"
+	},
 	"dependencies": {
 		"@sinclair/typebox": "^0.32.20",
 		"d3-dsv": "^3.0.1"
 	},
 	"devDependencies": {
+		"@commitlint/cli": "^19.3.0",
+		"@commitlint/config-conventional": "^19.2.2",
 		"@types/bun": "latest",
-		"@types/d3-dsv": "^3.0.7"
+		"@types/d3-dsv": "^3.0.7",
+		"husky": "^9.0.11",
+		"lint-staged": "^15.2.2",
+		"prettier": "^3.2.5",
+		"prettier-plugin-organize-imports": "^3.2.4"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"

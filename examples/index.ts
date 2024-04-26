@@ -1,4 +1,4 @@
-import { Column, Table, Spreadsheet, type TableRow } from '../src';
+import { Column, Spreadsheet, Table, type TableRow } from '../src';
 
 const assembliesTable = Table('assemblies', {
 	name: Column.String(),
