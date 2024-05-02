@@ -1,4 +1,4 @@
-import { Type } from '@sinclair/typebox';
+import { Type, type TLiteralValue } from '@sinclair/typebox';
 
 type PropertyReturnType<T extends { [key: string]: (...arg: any) => any }> =
 	ReturnType<T[keyof T]>;
@@ -14,8 +14,10 @@ type TPrimitiveColumn = PropertyReturnType<typeof PrimitiveColumn>;
 
 export const Column = {
 	...PrimitiveColumn,
-	Nullable: <T extends TPrimitiveColumn>(columnSchema: T) =>
+	Optional: <T extends TPrimitiveColumn>(columnSchema: T) =>
 		Type.Union([columnSchema, Type.Null()]),
+	OneOf: <T extends TLiteralValue[]>(values: [...T]) =>
+		Type.Union(values.map((value) => Type.Literal(value))),
 };
 
 export type TColumn = PropertyReturnType<typeof Column>;

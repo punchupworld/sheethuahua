@@ -4,8 +4,9 @@ const assembliesTable = Table('assemblies', {
 	name: Column.String(),
 	term: Column.Number(),
 	startedAt: Column.Date(),
-	endedAt: Column.Nullable(Column.Date()),
-	origin: Column.Nullable(Column.String()),
+	endedAt: Column.Optional(Column.Date()),
+	origin: Column.Optional(Column.String()),
+	options: Column.OneOf(['a', 'b', 'c']),
 });
 
 type Assembly = RowType<typeof assembliesTable>;
