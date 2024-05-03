@@ -6,7 +6,7 @@ import {
 	type TIndexFromPropertyKey,
 	type TKeyOf,
 } from '@sinclair/typebox';
-import { parseCSVFromUrl } from './parser';
+import { parseCSVFromUrl, type CSVParserOptions } from './parser';
 import type { TTable } from './table';
 
 export function Spreadsheet<T extends TTable<any, any>[]>(
@@ -18,6 +18,7 @@ export function Spreadsheet<T extends TTable<any, any>[]>(
 	return {
 		get<N extends Static<TKeyOf<typeof tablesSchema>>>(
 			tableName: N,
+			options?: CSVParserOptions,
 		): Promise<Static<TIndexFromPropertyKey<Intersect<T>, N>>[]> {
 			const columnsSchema = Type.Index(tablesSchema, [tableName]);
 
@@ -28,6 +29,7 @@ export function Spreadsheet<T extends TTable<any, any>[]>(
 			return parseCSVFromUrl(
 				`https://docs.google.com/spreadsheets/d/${sheetsId}/gviz/tq?tqx=out:csv&sheet=${tableName}`,
 				columnsSchema,
+				options,
 			);
 		},
 	};

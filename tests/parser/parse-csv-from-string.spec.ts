@@ -61,4 +61,47 @@ describe('parser > parseCSVFromString', () => {
 		);
 		expect(res).toEqual([{ value: new Date('1996-11-13') }]);
 	});
+
+	it('should trim value before parsing by default', async () => {
+		const input = 'value\n  hi  ';
+
+		const res = await parseCSVFromString(
+			input,
+			Table({
+				value: Column.String(),
+			}),
+		);
+		expect(res).toEqual([{ value: 'hi' }]);
+	});
+
+	it('should not trim if option is set to false', async () => {
+		const input = 'value\n  hi  ';
+
+		const res = await parseCSVFromString(
+			input,
+			Table({
+				value: Column.String(),
+			}),
+			{ trim: false },
+		);
+		expect(res).toEqual([{ value: '  hi  ' }]);
+	});
+
+	it('should throw if found empty value on primitive column type', async () => {
+		const input = 'value\na\n \nc';
+		let hasThrown = false;
+
+		try {
+			await parseCSVFromString(
+				input,
+				Table({
+					value: Column.String(),
+				}),
+			);
+		} catch {
+			hasThrown = true;
+		}
+
+		expect(hasThrown).toBeTrue();
+	});
 });
