@@ -1,107 +1,154 @@
 import { describe, expect, it } from 'bun:test';
 import { Column, Table, parseCSVFromString } from '../../src';
+import { expectToThrow } from '../matchers';
 
-describe('parser > parseCSVFromString', () => {
-	it('should correctly parse string', async () => {
-		const input = 'value\na\n"with\nnewlint"';
+describe('parseCSVFromString', () => {
+	describe('String column', () => {
+		const table = Table({
+			value: Column.String(),
+		});
 
-		const res = await parseCSVFromString(
-			input,
-			Table({
-				value: Column.String(),
-			}),
-		);
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString('value\na\n"with\nnewlint"', table);
+			expect(res).toEqual([{ value: 'a' }, { value: 'with\nnewlint' }]);
+		});
 
-		expect(res).toEqual([{ value: 'a' }, { value: 'with\nnewlint' }]);
+		it('should throw if empty', async () =>
+			expectToThrow(() => parseCSVFromString('value\n\n', table)));
 	});
 
-	it('should correctly parse number', async () => {
-		const input = 'value\n100\n-5\n4.2';
+	describe('Number column', () => {
+		const table = Table({
+			value: Column.Number(),
+		});
 
-		const res = await parseCSVFromString(
-			input,
-			Table({
-				value: Column.Number(),
-			}),
-		);
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString('value\n100\n-5\n4.2', table);
+			expect(res).toEqual([{ value: 100 }, { value: -5 }, { value: 4.2 }]);
+		});
 
-		expect(res).toEqual([{ value: 100 }, { value: -5 }, { value: 4.2 }]);
+		it('should throw if empty', async () =>
+			expectToThrow(() => parseCSVFromString('value\n\n', table)));
+
+		it('should throw if invalid', async () =>
+			expectToThrow(() => parseCSVFromString('value\na\n', table)));
 	});
 
-	it('should correctly parse boolean', async () => {
-		const input = 'value\ntrue\nTRUE\nTrue\n1\nfalse\nFALSE\nFalse\n0';
+	describe('Boolean column', () => {
+		const table = Table({
+			value: Column.Boolean(),
+		});
 
-		const res = await parseCSVFromString(
-			input,
-			Table({
-				value: Column.Boolean(),
-			}),
-		);
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString(
+				'value\ntrue\nTRUE\nTrue\n1\nfalse\nFALSE\nFalse\n0',
+				table,
+			);
+			expect(res).toEqual([
+				{ value: true },
+				{ value: true },
+				{ value: true },
+				{ value: true },
+				{ value: false },
+				{ value: false },
+				{ value: false },
+				{ value: false },
+			]);
+		});
 
-		expect(res).toEqual([
-			{ value: true },
-			{ value: true },
-			{ value: true },
-			{ value: true },
-			{ value: false },
-			{ value: false },
-			{ value: false },
-			{ value: false },
-		]);
+		it('should throw if empty', async () =>
+			expectToThrow(() => parseCSVFromString('value\n\n', table)));
+
+		it('should throw if invalid', async () =>
+			expectToThrow(() => parseCSVFromString('value\na\n', table)));
 	});
 
-	it('should correctly parse date', async () => {
-		const input = 'value\n1996-11-13';
+	describe('Date column', () => {
+		const table = Table({
+			value: Column.Date(),
+		});
 
-		const res = await parseCSVFromString(
-			input,
-			Table({
-				value: Column.Date(),
-			}),
-		);
-		expect(res).toEqual([{ value: new Date('1996-11-13') }]);
+		it('should parse valid value (ISO format)', async () => {
+			const res = await parseCSVFromString('value\n1996-11-13', table);
+			expect(res).toEqual([{ value: new Date('1996-11-13') }]);
+		});
+
+		it('should throw if empty', async () =>
+			expectToThrow(() => parseCSVFromString('value\n\n', table)));
+
+		it('should throw if invalid', async () =>
+			expectToThrow(() => parseCSVFromString('value\nnotdate\n', table)));
 	});
 
-	it('should trim value before parsing by default', async () => {
-		const input = 'value\n  hi  ';
+	describe('OneOf column', () => {
+		const table = Table({
+			value: Column.OneOf(['a', 1]),
+		});
 
-		const res = await parseCSVFromString(
-			input,
-			Table({
-				value: Column.String(),
-			}),
-		);
-		expect(res).toEqual([{ value: 'hi' }]);
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString('value\na\n1', table);
+			expect(res).toEqual([{ value: 'a' }, { value: 1 }]);
+		});
+
+		it('should throw if empty', async () =>
+			expectToThrow(() => parseCSVFromString('value\n\n', table)));
+
+		it('should throw if value is not in the definition', async () =>
+			expectToThrow(() => parseCSVFromString('value\nb\n', table)));
 	});
 
-	it('should not trim if option is set to false', async () => {
-		const input = 'value\n  hi  ';
-
-		const res = await parseCSVFromString(
-			input,
-			Table({
-				value: Column.String(),
-			}),
-			{ trim: false },
-		);
-		expect(res).toEqual([{ value: '  hi  ' }]);
+	describe('Optional column', () => {
+		it('should parse empty cell as null without throwing', async () => {
+			const res = await parseCSVFromString(
+				'str,num,bool,date\n,,,\na,0,false,1996-11-13',
+				Table({
+					str: Column.Optional(Column.String()),
+					num: Column.Optional(Column.Number()),
+					bool: Column.Optional(Column.Boolean()),
+					date: Column.Optional(Column.Date()),
+				}),
+			);
+			expect(res).toEqual([
+				{
+					str: null,
+					num: null,
+					bool: null,
+					date: null,
+				},
+				{
+					str: 'a',
+					num: 0,
+					bool: false,
+					date: new Date('1996-11-13'),
+				},
+			]);
+		});
 	});
 
-	it('should throw if found empty value on primitive column type', async () => {
-		const input = 'value\na\n \nc';
-		let hasThrown = false;
+	describe('options', () => {
+		it('should trim value before parsing by default', async () => {
+			const input = 'value\n  hi  ';
 
-		try {
-			await parseCSVFromString(
+			const res = await parseCSVFromString(
 				input,
 				Table({
 					value: Column.String(),
 				}),
 			);
-		} catch {
-			hasThrown = true;
-		}
+			expect(res).toEqual([{ value: 'hi' }]);
+		});
 
-		expect(hasThrown).toBeTrue();
+		it('should not trim if option is set to false', async () => {
+			const input = 'value\n  hi  ';
+
+			const res = await parseCSVFromString(
+				input,
+				Table({
+					value: Column.String(),
+				}),
+				{ trim: false },
+			);
+			expect(res).toEqual([{ value: '  hi  ' }]);
+		});
 	});
 });

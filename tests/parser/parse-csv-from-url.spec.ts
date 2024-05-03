@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test';
 import { Column, Table, parseCSVFromUrl } from '../../src';
 import { mockFetch } from '../setup';
 
-describe('parser > parseCSVFromUrl', () => {
+describe('parseCSVFromUrl', () => {
 	const csvUrl = '/somefile.csv';
 
 	const tableSchema = Table({
