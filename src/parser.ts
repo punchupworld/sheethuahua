@@ -25,11 +25,11 @@ export async function parseCSVFromUrl<C extends TObject<TColumnsDefinition>>(
 	return parseCSVFromString(await res.text(), columnsSchema, options);
 }
 
-export async function parseCSVFromString<C extends TObject<TColumnsDefinition>>(
+export function parseCSVFromString<C extends TObject<TColumnsDefinition>>(
 	csvString: string,
 	columnsSchema: C,
 	options: CSVParserOptions = {},
-): Promise<Static<C>[]> {
+): Static<C>[] {
 	const outputSchema = Type.Array(columnsSchema);
 	const mergedOptions = {
 		...defaultCSVParserOptions,

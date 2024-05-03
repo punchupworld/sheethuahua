@@ -9,7 +9,7 @@ describe('parseCSVFromString', () => {
 		});
 
 		it('should parse valid value', async () => {
-			const res = await parseCSVFromString('value\na\n"with\nnewlint"', table);
+			const res = parseCSVFromString('value\na\n"with\nnewlint"', table);
 			expect(res).toEqual([{ value: 'a' }, { value: 'with\nnewlint' }]);
 		});
 
@@ -23,7 +23,7 @@ describe('parseCSVFromString', () => {
 		});
 
 		it('should parse valid value', async () => {
-			const res = await parseCSVFromString('value\n100\n-5\n4.2', table);
+			const res = parseCSVFromString('value\n100\n-5\n4.2', table);
 			expect(res).toEqual([{ value: 100 }, { value: -5 }, { value: 4.2 }]);
 		});
 
@@ -40,7 +40,7 @@ describe('parseCSVFromString', () => {
 		});
 
 		it('should parse valid value', async () => {
-			const res = await parseCSVFromString(
+			const res = parseCSVFromString(
 				'value\ntrue\nTRUE\nTrue\n1\nfalse\nFALSE\nFalse\n0',
 				table,
 			);
@@ -69,7 +69,7 @@ describe('parseCSVFromString', () => {
 		});
 
 		it('should parse valid value (ISO format)', async () => {
-			const res = await parseCSVFromString('value\n1996-11-13', table);
+			const res = parseCSVFromString('value\n1996-11-13', table);
 			expect(res).toEqual([{ value: new Date('1996-11-13') }]);
 		});
 
@@ -86,7 +86,7 @@ describe('parseCSVFromString', () => {
 		});
 
 		it('should parse valid value', async () => {
-			const res = await parseCSVFromString('value\na\n1', table);
+			const res = parseCSVFromString('value\na\n1', table);
 			expect(res).toEqual([{ value: 'a' }, { value: 1 }]);
 		});
 
@@ -99,7 +99,7 @@ describe('parseCSVFromString', () => {
 
 	describe('Optional column', () => {
 		it('should parse empty cell as null without throwing', async () => {
-			const res = await parseCSVFromString(
+			const res = parseCSVFromString(
 				'str,num,bool,date\n,,,\na,0,false,1996-11-13',
 				Table({
 					str: Column.Optional(Column.String()),
@@ -129,7 +129,7 @@ describe('parseCSVFromString', () => {
 		it('should trim value before parsing by default', async () => {
 			const input = 'value\n  hi  ';
 
-			const res = await parseCSVFromString(
+			const res = parseCSVFromString(
 				input,
 				Table({
 					value: Column.String(),
@@ -141,7 +141,7 @@ describe('parseCSVFromString', () => {
 		it('should not trim if option is set to false', async () => {
 			const input = 'value\n  hi  ';
 
-			const res = await parseCSVFromString(
+			const res = parseCSVFromString(
 				input,
 				Table({
 					value: Column.String(),
