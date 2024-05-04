@@ -1,18 +1,36 @@
 {
 	"name": "sheethuahua",
-	"type": "module",
-	"module": "src/index.ts",
+	"version": "0.0.1",
+	"description": "Type-safe Google Sheets and CSV parser for TypeScript and JavaScript",
+	"keywords": [
+		"Google Sheets",
+		"CSV",
+		"TypeScript"
+	],
+	"license": "MIT",
+	"homepage": "https://github.com/Th1nkK1D/sheethuahua#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Th1nkK1D/sheethuahua.git"
+	},
+	"bugs": "https://github.com/Th1nkK1D/sheethuahua/issues",
+	"author": "Th1nkK1D <witheep@gmail.com>",
+	"exports": {
+		".": "./dist/index.js"
+	},
 	"types": "dist/index.d.ts",
 	"files": [
 		"dist"
 	],
+	"type": "module",
 	"scripts": {
 		"format": "prettier --write --ignore-unknown .",
 		"prepare": "husky",
 		"test": "bun test",
 		"build": "rm -rf dist && bun build:js && bun build:types",
 		"build:js": "bun build src/*.ts --outdir=dist --minify --splitting --external=*",
-		"build:types": "tsc -d --declarationDir dist --emitDeclarationOnly"
+		"build:types": "tsc -d --declarationDir dist --emitDeclarationOnly",
+		"lint": "publint"
 	},
 	"lint-staged": {
 		"*": "prettier --write --ignore-unknown"
@@ -30,7 +48,8 @@
 		"husky": "^9.0.11",
 		"lint-staged": "^15.2.2",
 		"prettier": "^3.2.5",
-		"prettier-plugin-organize-imports": "^3.2.4"
+		"prettier-plugin-organize-imports": "^3.2.4",
+		"publint": "^0.2.7"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"
