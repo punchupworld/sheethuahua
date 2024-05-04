@@ -1,15 +1,57 @@
-# sheethuahua
+# Sheethuahua
 
-To install dependencies:
+Type-safe Google Sheets and CSV parser for TypeScript and JavaScript
 
-```bash
-bun install
-```
+## Quick Start
 
-To run:
+Install the package
 
 ```bash
-bun run index.ts
+npm i sheethuahua
 ```
 
-This project was created using `bun init` in bun v1.0.35. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+Using with public Google Sheets
+
+```ts
+import { Column, Spreadsheet, Table } from 'sheethuahua';
+
+// Define named table(s) schema
+const userTable = Table('users', {
+	name: Column.String(),
+	age: Column.Number(),
+});
+
+// Define a Spreadsheet
+const sheets = Spreadsheet('<google-sheets-id>', [userTable]);
+
+// Get type-safe data from the table
+const users = await sheets.get('users');
+
+// Infer row type from the table schema
+type User = RowType<typeof userTable>;
+```
+
+Using with URL or string of CSV file
+
+```ts
+import {
+	Column,
+	parseCSVFromUrl,
+	parseCSVFromString,
+	Table,
+} from 'sheethuahua';
+
+// Define anonymous table schema
+const userTable = Table({
+	name: Column.String(),
+	age: Column.Number(),
+});
+
+// Get type-safe data from the URL
+const users = await parseCSVFromUrl('some-url-to/data.csv');
+// Or from string
+const users = parseCSVFromString('name,age\na,27');
+
+// Can also infer row type from the table schema
+type User = RowType<typeof userTable>;
+```
