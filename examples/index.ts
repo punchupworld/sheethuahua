@@ -1,4 +1,4 @@
-import { Column, Spreadsheet, Table, type RowType } from '../src';
+import { Column, Spreadsheet, Table, type RowType } from 'sheethuahua';
 
 const assembliesTable = Table('assemblies', {
 	name: Column.OneOf(['สภาผู้แทนราษฎร', 'วุฒิสภา', 'คณะรัฐมนตรี']),
