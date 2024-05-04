@@ -11,6 +11,10 @@ export interface CSVParserOptions {
 	excludeUnknownColumns?: boolean;
 }
 
+export interface CSVFetcherOptions extends CSVParserOptions {
+	fetchRequestInit?: FetchRequestInit;
+}
+
 const defaultCSVParserOptions: Record<keyof CSVParserOptions, boolean> = {
 	trim: true,
 	excludeUnknownColumns: true,
@@ -19,9 +23,10 @@ const defaultCSVParserOptions: Record<keyof CSVParserOptions, boolean> = {
 export async function parseCSVFromUrl<C extends TObject<TColumnsDefinition>>(
 	url: string,
 	columnsSchema: C,
-	options?: CSVParserOptions,
+	options: CSVFetcherOptions = {},
 ): Promise<Static<C>[]> {
-	const res = await fetch(url);
+	const { fetchRequestInit, ...parserOptions } = options;
+	const res = await fetch(url, fetchRequestInit);
 
 	if (!res.ok) {
 		throw new Error(
@@ -29,7 +34,7 @@ export async function parseCSVFromUrl<C extends TObject<TColumnsDefinition>>(
 		);
 	}
 
-	return parseCSVFromString(await res.text(), columnsSchema, options);
+	return parseCSVFromString(await res.text(), columnsSchema, parserOptions);
 }
 
 export function parseCSVFromString<C extends TObject<TColumnsDefinition>>(

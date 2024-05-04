@@ -6,20 +6,20 @@ import {
 	type TIndexFromPropertyKey,
 	type TKeyOf,
 } from '@sinclair/typebox';
-import { parseCSVFromUrl, type CSVParserOptions } from './parser';
+import { parseCSVFromUrl, type CSVFetcherOptions } from './parser';
 import type { TTable } from './table';
 
 export function Spreadsheet<T extends TTable<any, any>[]>(
 	sheetsId: string,
 	tables: [...T],
-	globalOptions: CSVParserOptions = {},
+	globalOptions: CSVFetcherOptions = {},
 ) {
 	const tablesSchema = Type.Intersect(tables);
 
 	return {
 		async get<N extends Static<TKeyOf<typeof tablesSchema>>>(
 			tableName: N,
-			options: CSVParserOptions = {},
+			options: CSVFetcherOptions = {},
 		): Promise<Static<TIndexFromPropertyKey<Intersect<T>, N>>[]> {
 			const columnsSchema = Type.Index(tablesSchema, [tableName]);
 
