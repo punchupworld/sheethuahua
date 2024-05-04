@@ -202,29 +202,31 @@ describe('parseCSVFromString', () => {
 	});
 
 	describe('options', () => {
-		it('should trim value before parsing by default', async () => {
-			const input = 'value\n  hi  ';
+		const table = Table({
+			value: Column.String(),
+		});
 
-			const res = parseCSVFromString(
-				input,
-				Table({
-					value: Column.String(),
-				}),
-			);
+		it('should trim value before parsing by default', async () => {
+			const res = parseCSVFromString('value\n  hi  ', table);
 			expect(res).toEqual([{ value: 'hi' }]);
 		});
 
 		it('should not trim if option is set to false', async () => {
-			const input = 'value\n  hi  ';
-
-			const res = parseCSVFromString(
-				input,
-				Table({
-					value: Column.String(),
-				}),
-				{ trim: false },
-			);
+			const res = parseCSVFromString('value\n  hi  ', table, { trim: false });
 			expect(res).toEqual([{ value: '  hi  ' }]);
+		});
+
+		it('should exclude unknown columns by default', async () => {
+			const res = parseCSVFromString('value,unknown\na,b', table);
+			expect(res).toEqual([{ value: 'a' }]);
+		});
+
+		it('should not exclude unknown columns if set to false', async () => {
+			const res = parseCSVFromString('value,unknown\na,b', table, {
+				excludeUnknownColumns: false,
+			});
+			// @ts-ignore
+			expect(res).toEqual([{ value: 'a', unknown: 'b' }]);
 		});
 	});
 });

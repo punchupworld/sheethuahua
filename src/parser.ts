@@ -5,10 +5,12 @@ import type { TColumnsDefinition } from './table';
 
 export interface CSVParserOptions {
 	trim?: boolean;
+	excludeUnknownColumns?: boolean;
 }
 
-const defaultCSVParserOptions: CSVParserOptions = {
+const defaultCSVParserOptions: Record<keyof CSVParserOptions, boolean> = {
 	trim: true,
+	excludeUnknownColumns: true,
 };
 
 export async function parseCSVFromUrl<C extends TObject<TColumnsDefinition>>(
@@ -41,6 +43,10 @@ export function parseCSVFromString<C extends TObject<TColumnsDefinition>>(
 		csvParse(csvString, processRow(mergedOptions.trim)),
 	);
 
+	if (mergedOptions.excludeUnknownColumns) {
+		Value.Clean(outputSchema, rows);
+	}
+
 	if (!Value.Check(outputSchema, rows)) {
 		throw [...Value.Errors(outputSchema, rows)];
 	}
@@ -48,14 +54,12 @@ export function parseCSVFromString<C extends TObject<TColumnsDefinition>>(
 	return rows;
 }
 
-const processRow =
-	(trim = true) =>
-	(obj: Record<any, string>) =>
-		Object.entries(obj).reduce<Record<any, string | null>>(
-			(newObj, [key, value]) => {
-				const newValue = trim ? value.trim() : value;
-				newObj[key] = newValue.length > 0 ? newValue : null;
-				return newObj;
-			},
-			{},
-		);
+const processRow = (trim: boolean) => (obj: Record<any, string>) =>
+	Object.entries(obj).reduce<Record<any, string | null>>(
+		(newObj, [key, value]) => {
+			const newValue = trim ? value.trim() : value;
+			newObj[key] = newValue.length > 0 ? newValue : null;
+			return newObj;
+		},
+		{},
+	);
