@@ -1,7 +1,7 @@
 import { Column, Spreadsheet, Table, type RowType } from '../src';
 
 const assembliesTable = Table('assemblies', {
-	name: Column.String(),
+	name: Column.OneOf(['สภาผู้แทนราษฎร', 'วุฒิสภา', 'คณะรัฐมนตรี']),
 	term: Column.Number(),
 	startedAt: Column.Date(),
 	endedAt: Column.OptionalDate(),

@@ -1,7 +1,10 @@
-import { Type, type Static, type TObject } from '@sinclair/typebox';
-import { Value } from '@sinclair/typebox/value';
+import { Type, TypeGuard, type Static, type TObject } from '@sinclair/typebox';
+import { Value, type ValueErrorIterator } from '@sinclair/typebox/value';
 import { csvParse } from 'd3-dsv';
 import type { TColumnsDefinition } from './table';
+
+const BODY_ROW_OFFSET = 2;
+const NULL_ERROR_ALIAS = 'empty';
 
 export interface CSVParserOptions {
 	trim?: boolean;
@@ -21,7 +24,9 @@ export async function parseCSVFromUrl<C extends TObject<TColumnsDefinition>>(
 	const res = await fetch(url);
 
 	if (!res.ok) {
-		throw new Error(`${res.status} ${res.statusText}`);
+		throw new Error(
+			`Failed to fetch (${res.status} ${res.statusText}), please recheck if the source is corrected and publicly accessible.`,
+		);
 	}
 
 	return parseCSVFromString(await res.text(), columnsSchema, options);
@@ -48,7 +53,7 @@ export function parseCSVFromString<C extends TObject<TColumnsDefinition>>(
 	}
 
 	if (!Value.Check(outputSchema, rows)) {
-		throw [...Value.Errors(outputSchema, rows)];
+		throw Error(formatParsingError(Value.Errors(outputSchema, rows)));
 	}
 
 	return rows;
@@ -63,3 +68,29 @@ const processRow = (trim: boolean) => (obj: Record<any, string>) =>
 		},
 		{},
 	);
+
+const formatParsingError = (errors: ValueErrorIterator): string =>
+	[
+		'The following values mismatch the column type:',
+		...[...errors].map(({ path, schema, value }) => {
+			const [row, column] = path.replace('/', '').split('/');
+
+			const expectation = TypeGuard.IsUnion(schema)
+				? listFormatter.format(
+						schema.anyOf.map((option) =>
+							TypeGuard.IsLiteral(option)
+								? `${option.const}`
+								: TypeGuard.IsNull(option)
+									? NULL_ERROR_ALIAS
+									: option.type,
+						),
+					)
+				: `a ${schema.type}`;
+
+			return `- Row ${+row + BODY_ROW_OFFSET} column ${column} is ${value ?? NULL_ERROR_ALIAS} (expect ${expectation})`;
+		}),
+	].join('\n');
+
+const listFormatter = new Intl.ListFormat('en', {
+	type: 'disjunction',
+});
