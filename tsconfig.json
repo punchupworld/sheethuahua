@@ -11,6 +11,11 @@
 		"noImplicitAny": true,
 		"allowJs": true,
 		"outDir": "dist",
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"declaration": true,
+		"declarationDir": "dist"
+	},
+	"tsc-alias": {
+		"resolveFullPaths": true
 	}
 }
