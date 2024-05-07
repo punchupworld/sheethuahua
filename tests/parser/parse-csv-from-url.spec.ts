@@ -11,7 +11,7 @@ describe('parseCSVFromUrl', () => {
 	});
 
 	it('should call fetch with given url', async () => {
-		mockFetch.mockResolvedValue(new Response());
+		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
 
 		await parseCSVFromUrl(csvUrl, tableSchema);
 

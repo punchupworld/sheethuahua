@@ -1,23 +1,33 @@
 import { Type, TypeGuard, type Static } from '@sinclair/typebox';
 import { Value, type ValueErrorIterator } from '@sinclair/typebox/value';
-import { csvParse } from 'd3-dsv';
+import { csvParseRows } from 'd3-dsv';
 import type { TAnonymousTable, TColumnsDefinition } from './table';
 
-const BODY_ROW_OFFSET = 2;
+const ROW_INDEX_OFFSET = 1;
 const NULL_ERROR_ALIAS = 'empty';
 
 export interface CSVParserOptions {
 	trim?: boolean;
 	includeUnknownColumns?: boolean;
+	headerRowNumber?: number;
+	firstBodyRowNumber?: number;
+	lastBodyRowNumber?: number;
 }
 
 export interface CSVFetcherOptions extends CSVParserOptions {
 	fetchRequestInit?: FetchRequestInit;
 }
 
-const defaultCSVParserOptions: Record<keyof CSVParserOptions, boolean> = {
+const defaultCSVParserOptions: {
+	[Property in keyof Omit<
+		CSVParserOptions,
+		'lastBodyRowNumber'
+	>]-?: CSVParserOptions[Property];
+} = {
 	trim: true,
 	includeUnknownColumns: false,
+	headerRowNumber: 1,
+	firstBodyRowNumber: 2,
 };
 
 export async function parseCSVFromUrl<
@@ -46,39 +56,80 @@ export function parseCSVFromString<
 	columnsSchema: C,
 	options: CSVParserOptions = {},
 ): Static<C>[] {
-	const outputSchema = Type.Array(columnsSchema);
-	const mergedOptions = {
+	const {
+		trim,
+		includeUnknownColumns,
+		headerRowNumber,
+		firstBodyRowNumber,
+		lastBodyRowNumber,
+	} = {
 		...defaultCSVParserOptions,
 		...options,
 	};
 
-	const rows = Value.Convert(
-		outputSchema,
-		csvParse(csvString, processRow(mergedOptions.trim)),
+	if (headerRowNumber >= firstBodyRowNumber) {
+		throw Error(
+			`headerRowNumber (${headerRowNumber}) must be less than firstBodyRowNumber (${firstBodyRowNumber}).`,
+		);
+	} else if (lastBodyRowNumber && firstBodyRowNumber >= lastBodyRowNumber) {
+		throw Error(
+			`firstBodyRowNumber (${firstBodyRowNumber}) must be less than lastBodyRowNumber (${lastBodyRowNumber}).`,
+		);
+	}
+
+	const rows = csvParseRows(csvString, (row) =>
+		trim ? row.map((cell) => cell.trim()) : row,
 	);
 
-	if (!mergedOptions.includeUnknownColumns) {
-		Value.Clean(outputSchema, rows);
+	if (rows.length < 2) {
+		throw Error(
+			`Source table much have at least 2 rows (1 header + 1 body), but currently have ${rows.length}.`,
+		);
+	} else if (lastBodyRowNumber && lastBodyRowNumber > rows.length) {
+		throw Error(
+			`lastBodyRowNumber (${lastBodyRowNumber}) must be in the table range (${ROW_INDEX_OFFSET}-${rows.length}).`,
+		);
+	} else if (firstBodyRowNumber > rows.length) {
+		throw Error(
+			`firstBodyRowNumber (${firstBodyRowNumber}) must be in the table range (${ROW_INDEX_OFFSET}-${rows.length}).`,
+		);
 	}
 
-	if (!Value.Check(outputSchema, rows)) {
-		throw Error(formatParsingError(Value.Errors(outputSchema, rows)));
+	const headerRow = rows[headerRowNumber - ROW_INDEX_OFFSET];
+
+	const bodyRows = rows
+		.slice(
+			firstBodyRowNumber - ROW_INDEX_OFFSET,
+			lastBodyRowNumber && lastBodyRowNumber + 1 - ROW_INDEX_OFFSET,
+		)
+		.map((row) => row.map((cell) => (cell.length > 0 ? cell : null)));
+
+	const outputSchema = Type.Array(columnsSchema);
+
+	const data = Value.Convert(
+		outputSchema,
+		bodyRows.map((row) =>
+			headerRow.reduce((obj, key, i) => ({ ...obj, [key]: row[i] }), {}),
+		),
+	);
+
+	if (!includeUnknownColumns) {
+		Value.Clean(outputSchema, data);
 	}
 
-	return rows;
+	if (!Value.Check(outputSchema, data)) {
+		throw Error(
+			formatParsingError(Value.Errors(outputSchema, data), firstBodyRowNumber),
+		);
+	}
+
+	return data;
 }
 
-const processRow = (trim: boolean) => (obj: Record<any, string>) =>
-	Object.entries(obj).reduce<Record<any, string | null>>(
-		(newObj, [key, value]) => {
-			const newValue = trim ? value.trim() : value;
-			newObj[key] = newValue.length > 0 ? newValue : null;
-			return newObj;
-		},
-		{},
-	);
-
-const formatParsingError = (errors: ValueErrorIterator): string =>
+const formatParsingError = (
+	errors: ValueErrorIterator,
+	firstBodyRowNumber: number,
+): string =>
 	[
 		'The following values mismatch the column type:',
 		...[...errors].map(({ path, schema, value }) => {
@@ -96,7 +147,7 @@ const formatParsingError = (errors: ValueErrorIterator): string =>
 					)
 				: `a ${schema.type}`;
 
-			return `- Row ${+row + BODY_ROW_OFFSET} column ${column} is ${value ?? NULL_ERROR_ALIAS} (expect ${expectation})`;
+			return `- Row ${+row + firstBodyRowNumber} column ${column} is ${value ?? NULL_ERROR_ALIAS} (expect ${expectation})`;
 		}),
 	].join('\n');
 

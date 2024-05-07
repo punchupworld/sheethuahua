@@ -9,7 +9,7 @@ describe('Spreadsheet.get', () => {
 
 		const sheets = Spreadsheet(sheetsId, [Table(tableName, {})]);
 
-		mockFetch.mockResolvedValue(new Response());
+		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
 
 		await sheets.get(tableName);
 
