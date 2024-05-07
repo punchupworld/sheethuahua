@@ -216,14 +216,14 @@ describe('parseCSVFromString', () => {
 			expect(res).toEqual([{ value: '  hi  ' }]);
 		});
 
-		it('should exclude unknown columns by default', async () => {
+		it('should not include unknown columns by default', async () => {
 			const res = parseCSVFromString('value,unknown\na,b', table);
 			expect(res).toEqual([{ value: 'a' }]);
 		});
 
-		it('should not exclude unknown columns if set to false', async () => {
+		it('should include unknown columns if set to false', async () => {
 			const res = parseCSVFromString('value,unknown\na,b', table, {
-				excludeUnknownColumns: false,
+				includeUnknownColumns: true,
 			});
 			// @ts-ignore
 			expect(res).toEqual([{ value: 'a', unknown: 'b' }]);

@@ -8,7 +8,7 @@ const NULL_ERROR_ALIAS = 'empty';
 
 export interface CSVParserOptions {
 	trim?: boolean;
-	excludeUnknownColumns?: boolean;
+	includeUnknownColumns?: boolean;
 }
 
 export interface CSVFetcherOptions extends CSVParserOptions {
@@ -17,7 +17,7 @@ export interface CSVFetcherOptions extends CSVParserOptions {
 
 const defaultCSVParserOptions: Record<keyof CSVParserOptions, boolean> = {
 	trim: true,
-	excludeUnknownColumns: true,
+	includeUnknownColumns: false,
 };
 
 export async function parseCSVFromUrl<C extends TObject<TColumnsDefinition>>(
@@ -53,7 +53,7 @@ export function parseCSVFromString<C extends TObject<TColumnsDefinition>>(
 		csvParse(csvString, processRow(mergedOptions.trim)),
 	);
 
-	if (mergedOptions.excludeUnknownColumns) {
+	if (!mergedOptions.includeUnknownColumns) {
 		Value.Clean(outputSchema, rows);
 	}
 
