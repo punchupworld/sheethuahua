@@ -10,16 +10,20 @@ import type { TColumn } from './column';
 
 export type TColumnsDefinition = Record<TPropertyKey, TColumn>;
 
-export type TTable<
+export type TAnonymousTable<C extends TColumnsDefinition> = TObject<C>;
+
+export type TNamedTable<
 	N extends string,
 	C extends TColumnsDefinition,
-> = TRecordOrObject<TConst<N>, TObject<C>>;
+> = TRecordOrObject<TConst<N>, TAnonymousTable<C>>;
 
-export function Table<C extends TColumnsDefinition>(columns: C): TObject<C>;
+export function Table<C extends TColumnsDefinition>(
+	columns: C,
+): TAnonymousTable<C>;
 export function Table<N extends string, C extends TColumnsDefinition>(
 	name: N,
 	column: C,
-): TTable<N, C>;
+): TNamedTable<N, C>;
 export function Table<N extends string, C extends TColumnsDefinition>(
 	...arg: [N, C] | [C]
 ) {
@@ -29,8 +33,8 @@ export function Table<N extends string, C extends TColumnsDefinition>(
 }
 
 export type RowType<T> =
-	T extends TTable<any, any>
+	T extends TNamedTable<any, any>
 		? Static<T>[keyof Static<T>]
-		: T extends TObject
+		: T extends TAnonymousTable<any>
 			? Static<T>
 			: unknown;

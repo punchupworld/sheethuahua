@@ -1,7 +1,7 @@
-import { Type, TypeGuard, type Static, type TObject } from '@sinclair/typebox';
+import { Type, TypeGuard, type Static } from '@sinclair/typebox';
 import { Value, type ValueErrorIterator } from '@sinclair/typebox/value';
 import { csvParse } from 'd3-dsv';
-import type { TColumnsDefinition } from './table';
+import type { TAnonymousTable, TColumnsDefinition } from './table';
 
 const BODY_ROW_OFFSET = 2;
 const NULL_ERROR_ALIAS = 'empty';
@@ -20,7 +20,9 @@ const defaultCSVParserOptions: Record<keyof CSVParserOptions, boolean> = {
 	includeUnknownColumns: false,
 };
 
-export async function parseCSVFromUrl<C extends TObject<TColumnsDefinition>>(
+export async function parseCSVFromUrl<
+	C extends TAnonymousTable<TColumnsDefinition>,
+>(
 	url: string,
 	columnsSchema: C,
 	options: CSVFetcherOptions = {},
@@ -37,7 +39,9 @@ export async function parseCSVFromUrl<C extends TObject<TColumnsDefinition>>(
 	return parseCSVFromString(await res.text(), columnsSchema, parserOptions);
 }
 
-export function parseCSVFromString<C extends TObject<TColumnsDefinition>>(
+export function parseCSVFromString<
+	C extends TAnonymousTable<TColumnsDefinition>,
+>(
 	csvString: string,
 	columnsSchema: C,
 	options: CSVParserOptions = {},

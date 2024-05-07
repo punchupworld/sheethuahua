@@ -7,9 +7,9 @@ import {
 	type TKeyOf,
 } from '@sinclair/typebox';
 import { parseCSVFromUrl, type CSVFetcherOptions } from './parser';
-import type { TTable } from './table';
+import type { TNamedTable } from './table';
 
-export function Spreadsheet<T extends TTable<any, any>[]>(
+export function Spreadsheet<T extends TNamedTable<any, any>[]>(
 	sheetsId: string,
 	tables: [...T],
 	globalOptions: CSVFetcherOptions = {},
