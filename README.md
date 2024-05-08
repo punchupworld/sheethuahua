@@ -1,6 +1,8 @@
-# Sheethuahua 🐶📝
+# Sheethuahua
 
-Type-safe Google Sheets and CSV parser for TypeScript and JavaScript.
+Type-safe Google Sheets and CSV parser for TypeScript and JavaScript
+
+![Sheethuahua](https://repository-images.githubusercontent.com/791789277/007ab2a1-59bd-4f56-bd1d-3d52ceb67c3b)
 
 Using [TypeBox](https://github.com/sinclairzx81/typebox), [d3-dsv](https://d3js.org/d3-dsv) and [Web Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) under the hood, Sheethuahua should be supported by every modern browsers and back-end runtime.
 
@@ -13,7 +15,7 @@ Using [TypeBox](https://github.com/sinclairzx81/typebox), [d3-dsv](https://d3js.
 - [Ideology and Terminology](#ideology-and-terminology)
 - [Define Table and Column](#define-table-and-column)
 - [Using with Google Sheets](#using-with-google-sheets)
-- [Using with CSV file](#using-with-csv-file)
+- [Using with CSV File](#using-with-csv-file)
 - [CSV Parser Options](#csv-parser-options)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -160,7 +162,7 @@ const groups = await sheets.get('groups');
 
 [CSVParserOptions](#csv-parser-options) can be supplied as a last argument of `Spreadsheet` as spreadsheet-wide options, or a last argument of `.get` method for just once.
 
-## Using with CSV file
+## Using with CSV File
 
 Sheethuahua also supports any CSV file from either a URL or string by supplying `AnonymousTable` into the `parseCSVFromUrl()` or `parseCSVFromString()`. Returned data will have an array of objects of defined `Column` type. An error will be thrown if the data can not be parsed as expected type.
 
