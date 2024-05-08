@@ -1,0 +1,21 @@
+{
+	"git": {
+		"commitMessage": "chore: release v${version}"
+	},
+	"github": {
+		"release": true
+	},
+	"hooks": {
+		"before:init": ["bun test"],
+		"after:bump": ["bun run build", "bun run lint"]
+	},
+	"plugins": {
+		"@release-it/conventional-changelog": {
+			"preset": {
+				"name": "conventionalcommits"
+			},
+			"infile": "CHANGELOG.md",
+			"header": "# Changelog"
+		}
+	}
+}
