@@ -9,17 +9,22 @@ import {
 import { parseCSVFromUrl, type CSVFetcherOptions } from './parser';
 import type { TNamedTable } from './table';
 
+interface SheetOptions extends CSVFetcherOptions {
+	range?: string;
+	headers?: number;
+}
+
 export function Spreadsheet<T extends TNamedTable<any, any>[]>(
 	sheetsId: string,
 	tables: [...T],
-	globalOptions: CSVFetcherOptions = {},
+	globalOptions: SheetOptions = {},
 ) {
 	const tablesSchema = Type.Intersect(tables);
 
 	return {
 		async get<N extends Static<TKeyOf<typeof tablesSchema>>>(
 			tableName: N,
-			options: CSVFetcherOptions = {},
+			options: SheetOptions = {},
 		): Promise<Static<TIndexFromPropertyKey<Intersect<T>, N>>[]> {
 			const columnsSchema = Type.Index(tablesSchema, [tableName]);
 
@@ -29,11 +34,24 @@ export function Spreadsheet<T extends TNamedTable<any, any>[]>(
 				);
 			}
 
+			const { range, headers, ...fetcherOptions } = {
+				...globalOptions,
+				...options,
+			};
+
+			const queryParams = new URLSearchParams({
+				sheet: tableName,
+				tqx: 'out:csv',
+			});
+
+			if (range !== undefined) queryParams.append('range', range);
+			if (headers !== undefined) queryParams.append('headers', `${headers}`);
+
 			try {
 				const res = await parseCSVFromUrl(
-					`https://docs.google.com/spreadsheets/d/${sheetsId}/gviz/tq?tqx=out:csv&sheet=${tableName}`,
+					`https://docs.google.com/spreadsheets/d/${sheetsId}/gviz/tq?${queryParams.toString()}`,
 					columnsSchema,
-					{ ...globalOptions, ...options },
+					fetcherOptions,
 				);
 
 				return res;
