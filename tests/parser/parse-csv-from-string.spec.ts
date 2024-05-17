@@ -8,8 +8,8 @@ describe('parseCSVFromString', () => {
 			value: Column.String(),
 		});
 
-		it('should parse valid value', () => {
-			const res = parseCSVFromString('value\na\n"with\nnewlint"', table);
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString('value\na\n"with\nnewlint"', table);
 			expect(res).toEqual([{ value: 'a' }, { value: 'with\nnewlint' }]);
 		});
 
@@ -22,8 +22,8 @@ describe('parseCSVFromString', () => {
 			value: Column.Number(),
 		});
 
-		it('should parse valid value', () => {
-			const res = parseCSVFromString('value\n100\n-5\n4.2', table);
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString('value\n100\n-5\n4.2', table);
 			expect(res).toEqual([{ value: 100 }, { value: -5 }, { value: 4.2 }]);
 		});
 
@@ -39,8 +39,8 @@ describe('parseCSVFromString', () => {
 			value: Column.Boolean(),
 		});
 
-		it('should parse valid value', () => {
-			const res = parseCSVFromString(
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString(
 				'value\ntrue\nTRUE\nTrue\n1\nfalse\nFALSE\nFalse\n0',
 				table,
 			);
@@ -68,8 +68,8 @@ describe('parseCSVFromString', () => {
 			value: Column.Date(),
 		});
 
-		it('should parse valid value (ISO format)', () => {
-			const res = parseCSVFromString('value\n1996-11-13', table);
+		it('should parse valid value (ISO format)', async () => {
+			const res = await parseCSVFromString('value\n1996-11-13', table);
 			expect(res).toEqual([{ value: new Date('1996-11-13') }]);
 		});
 
@@ -85,8 +85,8 @@ describe('parseCSVFromString', () => {
 			value: Column.OneOf(['a', 1]),
 		});
 
-		it('should parse valid value', () => {
-			const res = parseCSVFromString('value\na\n1', table);
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString('value\na\n1', table);
 			expect(res).toEqual([{ value: 'a' }, { value: 1 }]);
 		});
 
@@ -102,13 +102,13 @@ describe('parseCSVFromString', () => {
 			value: Column.OptionalString(),
 		});
 
-		it('should parse valid value', () => {
-			const res = parseCSVFromString('value\na\n"with\nnewlint"', table);
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString('value\na\n"with\nnewlint"', table);
 			expect(res).toEqual([{ value: 'a' }, { value: 'with\nnewlint' }]);
 		});
 
-		it('should parse as null if empty', () => {
-			const res = parseCSVFromString('value\n\n', table);
+		it('should parse as null if empty', async () => {
+			const res = await parseCSVFromString('value\n\n', table);
 			expect(res).toEqual([{ value: null }]);
 		});
 	});
@@ -118,13 +118,13 @@ describe('parseCSVFromString', () => {
 			value: Column.OptionalNumber(),
 		});
 
-		it('should parse valid value', () => {
-			const res = parseCSVFromString('value\n100\n-5\n4.2', table);
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString('value\n100\n-5\n4.2', table);
 			expect(res).toEqual([{ value: 100 }, { value: -5 }, { value: 4.2 }]);
 		});
 
-		it('should parse as null if empty', () => {
-			const res = parseCSVFromString('value\n\n', table);
+		it('should parse as null if empty', async () => {
+			const res = await parseCSVFromString('value\n\n', table);
 			expect(res).toEqual([{ value: null }]);
 		});
 
@@ -137,8 +137,8 @@ describe('parseCSVFromString', () => {
 			value: Column.OptionalBoolean(),
 		});
 
-		it('should parse valid value', () => {
-			const res = parseCSVFromString(
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString(
 				'value\ntrue\nTRUE\nTrue\n1\nfalse\nFALSE\nFalse\n0',
 				table,
 			);
@@ -154,8 +154,8 @@ describe('parseCSVFromString', () => {
 			]);
 		});
 
-		it('should parse as null if empty', () => {
-			const res = parseCSVFromString('value\n\n', table);
+		it('should parse as null if empty', async () => {
+			const res = await parseCSVFromString('value\n\n', table);
 			expect(res).toEqual([{ value: null }]);
 		});
 
@@ -168,13 +168,13 @@ describe('parseCSVFromString', () => {
 			value: Column.OptionalDate(),
 		});
 
-		it('should parse valid value (ISO format)', () => {
-			const res = parseCSVFromString('value\n1996-11-13', table);
+		it('should parse valid value (ISO format)', async () => {
+			const res = await parseCSVFromString('value\n1996-11-13', table);
 			expect(res).toEqual([{ value: new Date('1996-11-13') }]);
 		});
 
-		it('should parse as null if empty', () => {
-			const res = parseCSVFromString('value\n\n', table);
+		it('should parse as null if empty', async () => {
+			const res = await parseCSVFromString('value\n\n', table);
 			expect(res).toEqual([{ value: null }]);
 		});
 
@@ -187,13 +187,13 @@ describe('parseCSVFromString', () => {
 			value: Column.OptionalOneOf(['a', 1]),
 		});
 
-		it('should parse valid value', () => {
-			const res = parseCSVFromString('value\na\n1', table);
+		it('should parse valid value', async () => {
+			const res = await parseCSVFromString('value\na\n1', table);
 			expect(res).toEqual([{ value: 'a' }, { value: 1 }]);
 		});
 
-		it('should parse as null if empty', () => {
-			const res = parseCSVFromString('value\n\n', table);
+		it('should parse as null if empty', async () => {
+			const res = await parseCSVFromString('value\n\n', table);
 			expect(res).toEqual([{ value: null }]);
 		});
 
@@ -206,26 +206,28 @@ describe('parseCSVFromString', () => {
 			value: Column.String(),
 		});
 
-		it('should trim value before parsing by default', () => {
-			const res = parseCSVFromString('value\n  hi  ', table);
+		it('should trim value before parsing by default', async () => {
+			const res = await parseCSVFromString('value\n  hi  ', table);
 			expect(res).toEqual([{ value: 'hi' }]);
 		});
 
-		it('should not trim if option is set to false', () => {
-			const res = parseCSVFromString('value\n  hi  ', table, { trim: false });
+		it('should not trim if option is set to false', async () => {
+			const res = await parseCSVFromString('value\n  hi  ', table, {
+				trim: false,
+			});
 			expect(res).toEqual([{ value: '  hi  ' }]);
 		});
 
-		it('should not include unknown columns by default', () => {
-			const res = parseCSVFromString('value,unknown\na,b', table);
+		it('should not include unknown columns by default', async () => {
+			const res = await parseCSVFromString('value,unknown\na,b', table);
 			expect(res).toEqual([{ value: 'a' }]);
 		});
 
-		it('should include unknown columns if set to false', () => {
-			const res = parseCSVFromString('value,unknown\na,b', table, {
+		it('should include unknown columns if set to false', async () => {
+			const res = await parseCSVFromString('value,unknown\na,b', table, {
 				includeUnknownColumns: true,
 			});
-			// @ts-ignore
+			// @ts-expect-error expects mismatch table schema
 			expect(res).toEqual([{ value: 'a', unknown: 'b' }]);
 		});
 	});

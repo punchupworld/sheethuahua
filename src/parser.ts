@@ -81,28 +81,30 @@ export function parseCSVFromString<
 	csvString: string,
 	columnsSchema: C,
 	options: CSVParserOptions = {},
-): Static<C>[] {
-	const { trim, includeUnknownColumns } = {
-		...defaultCSVParserOptions,
-		...options,
-	};
+): Promise<Static<C>[]> {
+	return new Promise((resolve, reject) => {
+		const { trim, includeUnknownColumns } = {
+			...defaultCSVParserOptions,
+			...options,
+		};
 
-	const outputSchema = Type.Array(columnsSchema);
+		const outputSchema = Type.Array(columnsSchema);
 
-	const data = Value.Convert(
-		outputSchema,
-		csvParse(csvString, processRow(trim)),
-	);
+		const data = Value.Convert(
+			outputSchema,
+			csvParse(csvString, processRow(trim)),
+		);
 
-	if (!includeUnknownColumns) {
-		Value.Clean(outputSchema, data);
-	}
+		if (!includeUnknownColumns) {
+			Value.Clean(outputSchema, data);
+		}
 
-	if (!Value.Check(outputSchema, data)) {
-		throw Error(formatParsingError(Value.Errors(outputSchema, data)));
-	}
-
-	return data;
+		if (!Value.Check(outputSchema, data)) {
+			reject(Error(formatParsingError(Value.Errors(outputSchema, data))));
+		} else {
+			resolve(data);
+		}
+	});
 }
 
 const processRow = (trim: boolean) => (obj: Record<any, string>) =>

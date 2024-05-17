@@ -73,7 +73,7 @@ const userTable = Table({
 // Get type-safe data from the URL
 const usersFromUrl = await parseCSVFromUrl('some-url-to/data.csv', userTable);
 // Or from string
-const usersFromString = parseCSVFromString('name,age\na,27', userTable);
+const usersFromString = await parseCSVFromString('name,age\na,27', userTable);
 
 // Can also infer row type from the table schema
 type User = RowType<typeof userTable>;
@@ -195,7 +195,7 @@ const userTable = Table({
 //     role: "Admin" | "Guest";
 // }[]
 const usersFromUrl = await parseCSVFromUrl('some-url-to/data.csv', userTable);
-const usersFromString = parseCSVFromString('name,age\na,27', userTable);
+const usersFromString = await parseCSVFromString('name,age\na,27', userTable);
 ```
 
 The `CSVFetcherOptions` can be supplied to the `parseCSVFromUrl()` and `CSVParserOptions` can be supplied to the `parseCSVFromString()`.
@@ -207,7 +207,7 @@ const usersFromUrl = await parseCSVFromUrl('some-url-to/data.csv', {
 	// CSVFetcherOptions
 });
 
-const usersFromString = parseCSVFromString('name,age\na,27', {
+const usersFromString = await parseCSVFromString('name,age\na,27', {
 	// CSVParserOptions
 });
 ```
