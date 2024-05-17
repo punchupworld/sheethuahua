@@ -28,11 +28,12 @@
 		"prepare": "husky",
 		"test": "bun test",
 		"build": "rm -rf dist && tsc && tsc-alias",
-		"lint": "publint",
+		"lint": "eslint --fix src",
 		"release": "release-it"
 	},
 	"lint-staged": {
 		"README.md": "doctoc --github",
+		"*.ts": "eslint --fix",
 		"*": "prettier --write --ignore-unknown"
 	},
 	"dependencies": {
@@ -45,8 +46,12 @@
 		"@release-it/conventional-changelog": "^8.0.1",
 		"@types/bun": "latest",
 		"@types/d3-dsv": "^3.0.7",
+		"@typescript-eslint/eslint-plugin": "^7.9.0",
+		"@typescript-eslint/parser": "^7.9.0",
 		"bun-plugin-dts": "^0.2.3",
 		"doctoc": "^2.2.1",
+		"eslint": "^8.57.0",
+		"eslint-plugin-tsdoc": "^0.2.17",
 		"husky": "^9.0.11",
 		"lint-staged": "^15.2.2",
 		"prettier": "^3.2.5",

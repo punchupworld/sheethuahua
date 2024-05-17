@@ -6,8 +6,8 @@
 		"release": true
 	},
 	"hooks": {
-		"before:init": ["bun test"],
-		"after:bump": ["bun run build", "bun run lint"]
+		"before:init": ["bun lint", "bun test"],
+		"after:bump": ["bun run build", "bunx publint"]
 	},
 	"plugins": {
 		"@release-it/conventional-changelog": {
