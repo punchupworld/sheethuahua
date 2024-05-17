@@ -226,5 +226,6 @@ All options are optional but availability varies between each type.
 
 - `range?: string` - Which part of the sheet to use eg. "A1:B10" [(see more)](https://developers.google.com/chart/interactive/docs/spreadsheets#query-source-ranges)
 - `headers?: number` - How many rows are header rows. If not specified, Google Sheets will guess from the header and body type. [(see more)](https://developers.google.com/chart/interactive/docs/spreadsheets#queryurlformat)
+- `fetchRequestInit?: FetchRequestInit` - Options for fetch() request [(see more)](https://developer.mozilla.org/en-US/docs/Web/API/Fetch#options)
 - `trim?: boolean` _(default: true)_ - Trim whitespaces of each cell before parsing.
 - `includeUnknownColumns?: boolean` _(default: false)_ - Include columns that are not defined in the table.
