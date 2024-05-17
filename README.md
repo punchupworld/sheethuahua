@@ -6,17 +6,19 @@ Type-safe Google Sheets and CSV parser for TypeScript and JavaScript
 
 Using [TypeBox](https://github.com/sinclairzx81/typebox), [d3-dsv](https://d3js.org/d3-dsv) and [Web Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) under the hood, Sheethuahua should be supported by every modern browsers and back-end runtime.
 
+[![NPM Version](https://img.shields.io/npm/v/sheethuahua)](https://www.npmjs.com/package/sheethuahua)
+
 **Table of contents**
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Quick Start](#quick-start)
-- [Ideology and Terminology](#ideology-and-terminology)
+- [Concepts](#concepts)
 - [Define Table and Column](#define-table-and-column)
-- [Using with Google Sheets](#using-with-google-sheets)
-- [Using with CSV File](#using-with-csv-file)
-- [CSV Parser Options](#csv-parser-options)
+- [Using with Public Google Sheets](#using-with-public-google-sheets)
+- [Using with a CSV File](#using-with-a-csv-file)
+- [Options](#options)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -28,7 +30,7 @@ Install the package
 npm i sheethuahua
 ```
 
-Using public Google Sheets
+Using with a public Google Sheets
 
 ```ts
 import { Column, Spreadsheet, Table, type RowType } from 'sheethuahua';
@@ -50,7 +52,7 @@ const users = await sheets.get('users');
 type User = RowType<typeof userTable>;
 ```
 
-Using with URL or string of CSV file
+Using with URL or string of a CSV file
 
 ```ts
 import {
@@ -69,15 +71,15 @@ const userTable = Table({
 });
 
 // Get type-safe data from the URL
-const users = await parseCSVFromUrl('some-url-to/data.csv', userTable);
+const usersFromUrl = await parseCSVFromUrl('some-url-to/data.csv', userTable);
 // Or from string
-const users = parseCSVFromString('name,age\na,27', userTable);
+const usersFromString = parseCSVFromString('name,age\na,27', userTable);
 
 // Can also infer row type from the table schema
 type User = RowType<typeof userTable>;
 ```
 
-## Ideology and Terminology
+## Concepts
 
 Sheethuahua was designed to make an unknown Spreadsheet or CSV data structure become known with 2 steps:
 
@@ -100,9 +102,9 @@ const userTable = Table('users', {
 });
 ```
 
-From the example, we expect a table name "users" to have 3 columns: "name" with `String` type, "age" with `Number` type, and "role" with one of "Admin" or "Guest" type. Table name can be omitted to create `AnonymousTable` (Otherwise, `NamedTable` is created).
+From the example, we expect a table name "users" to have "name", "age", and "role" columns with coresponded type. Table name can be omitted to create `AnonymousTable` (Otherwise, `NamedTable` is created).
 
-Naturally, a spreadsheet and CSV don't include any explicit type (everything is string by default). Sheethuahua will try to parse it into the expected `Column` type as defined in the `Table`. The following `Column` types are supported:
+Every cell in a spreadsheet and CSV is a string by default. Sheethuahua will try to parse it into the expected `Column` type as defined in the `Table`. The following `Column` types are supported:
 
 - **Required column type**: can't be empty.
   - `String()` expects anything except an empty string.
@@ -126,11 +128,13 @@ The body row type can be inferred from the `Table` schema using `RowType`.
 type User = RowType<typeof userTable>;
 ```
 
-## Using with Google Sheets
+## Using with Public Google Sheets
 
 **Important:** Google Sheets has [a very low rate limit for requesting data](https://developers.google.com/sheets/api/limits). It should be used with Static Site Generation (SSG), cache, or both.
 
-First, target Google Sheets **must be public** (anyone with the link has "Viewer" permission in the sharing option). Then a `Spreadsheet` can be defined by providing `sheetsId` (Can be found from the Sheets URL: `https://docs.google.com/spreadsheets/d/{sheetsId}/`) and one or more `NamedTable` it has. **The table's name must match the Google Sheets Sheet's name.**
+A `Spreadsheet` can be defined with `sheetsId` (Can be found from the Sheets URL: `docs.google.com/spreadsheets/d/{sheetsId}/`) and one or more child `NamedTable`.
+
+_Note: The table's name must match the Google Sheets Sheet's name._
 
 ```ts
 const userTable = Table('users', {
@@ -145,7 +149,7 @@ const groupTable = Table('groups' {
 const sheets = Spreadsheet('<sheetsId>', [userTable, groupTable]);
 ```
 
-To fetch and parse the data, we can use `.get(tableName: string)` method. Returned data will have an array of objects of defined `Column` type. An error will be thrown if the data can not be parsed as expected type.
+Spreadsheet's `.get()` is used to fetch and parse the data as an array of objects of defined `Column` type. An error will be thrown if the data can not be parsed as expected type.
 
 ```ts
 // const users: {
@@ -160,9 +164,21 @@ const users = await sheets.get('users');
 const groups = await sheets.get('groups');
 ```
 
-[CSVParserOptions](#csv-parser-options) can be supplied as a last argument of `Spreadsheet` as spreadsheet-wide options, or a last argument of `.get` method for just once.
+`SheetOptions` can be supplied to the `Spreadsheet()` as spreadsheet-wide options, or `.get()` for just once.
 
-## Using with CSV File
+_See more in [Options](#options)_
+
+```ts
+const sheets = Spreadsheet('<sheetsId>', [userTable, groupTable], {
+	// SheetOptions
+});
+
+const users = await sheets.get('users', {
+	// SheetOptions
+});
+```
+
+## Using with a CSV File
 
 Sheethuahua also supports any CSV file from either a URL or string by supplying `AnonymousTable` into the `parseCSVFromUrl()` or `parseCSVFromString()`. Returned data will have an array of objects of defined `Column` type. An error will be thrown if the data can not be parsed as expected type.
 
@@ -178,28 +194,37 @@ const userTable = Table({
 //     age: number;
 //     role: "Admin" | "Guest";
 // }[]
-const users = await parseCSVFromUrl('some-url-to/data.csv', userTable);
-const users = parseCSVFromString('name,age\na,27', userTable);
+const usersFromUrl = await parseCSVFromUrl('some-url-to/data.csv', userTable);
+const usersFromString = parseCSVFromString('name,age\na,27', userTable);
 ```
 
-[CSVParserOptions](#csv-parser-options) can be supplied as a last argument of both functions.
+The `CSVFetcherOptions` can be supplied to the `parseCSVFromUrl()` and `CSVParserOptions` can be supplied to the `parseCSVFromString()`.
 
-## CSV Parser Options
-
-`CSVParserOptions` can be used to custom CSV parser behavior.
+_See more in [Options](#options)_
 
 ```ts
-interface CSVParserOptions {
-	trim?: boolean;
-	includeUnknownColumns?: boolean;
-	headerRowNumber?: number;
-	firstBodyRowNumber?: number;
-	lastBodyRowNumber?: number;
-}
+const usersFromUrl = await parseCSVFromUrl('some-url-to/data.csv', {
+	// CSVFetcherOptions
+});
+
+const usersFromString = parseCSVFromString('name,age\na,27', {
+	// CSVParserOptions
+});
 ```
 
-- **trim**: boolean (default: true) - trim white space in each cell before parsing
-- **includeUnknownColumns**: boolean (default: false) - include columns that are not defined in the `Table`
-- **headerRowNumber**: number (default: 1) - Row number of a header row
-- **firstBodyRowNumber**: number (default: 2) - Row number of the first body row
-- **lastBodyRowNumber**: number (default: undefined) - Row number of a last body row. If undefined, it will return from the first row body to the last row of source data.
+## Options
+
+All options are optional but availability varies between each type.
+
+| Name                  | `SheetOptions` | `CSVFetcherOptions` | `CSVParserOptions` |
+| --------------------- | -------------- | ------------------- | ------------------ |
+| range                 | ✅             | ❌                  | ❌                 |
+| headers               | ✅             | ❌                  | ❌                 |
+| fetchRequestInit      | ✅             | ✅                  | ❌                 |
+| trim                  | ✅             | ✅                  | ✅                 |
+| includeUnknownColumns | ✅             | ✅                  | ✅                 |
+
+- `range?: string` - Which part of the sheet to use eg. "A1:B10" [(see more)](https://developers.google.com/chart/interactive/docs/spreadsheets#query-source-ranges)
+- `headers?: number` - How many rows are header rows. If not specified, Google Sheets will guess from the header and body type. [(see more)](https://developers.google.com/chart/interactive/docs/spreadsheets#queryurlformat)
+- `trim?: boolean` _(default: true)_ - Trim whitespaces of each cell before parsing.
+- `includeUnknownColumns?: boolean` _(default: false)_ - Include columns that are not defined in the table.
