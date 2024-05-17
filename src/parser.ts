@@ -1,6 +1,6 @@
 import { Type, TypeGuard, type Static } from '@sinclair/typebox';
 import { Value, type ValueErrorIterator } from '@sinclair/typebox/value';
-import { csvParseRows } from 'd3-dsv';
+import { csvParse } from 'd3-dsv';
 import type { TAnonymousTable, TColumnsDefinition } from './table';
 
 const ROW_INDEX_OFFSET = 1;
@@ -9,9 +9,6 @@ const NULL_ERROR_ALIAS = 'empty';
 export interface CSVParserOptions {
 	trim?: boolean;
 	includeUnknownColumns?: boolean;
-	headerRowNumber?: number;
-	firstBodyRowNumber?: number;
-	lastBodyRowNumber?: number;
 }
 
 export interface CSVFetcherOptions extends CSVParserOptions {
@@ -19,15 +16,10 @@ export interface CSVFetcherOptions extends CSVParserOptions {
 }
 
 const defaultCSVParserOptions: {
-	[Property in keyof Omit<
-		CSVParserOptions,
-		'lastBodyRowNumber'
-	>]-?: CSVParserOptions[Property];
+	[Property in keyof CSVParserOptions]-?: CSVParserOptions[Property];
 } = {
 	trim: true,
 	includeUnknownColumns: false,
-	headerRowNumber: 1,
-	firstBodyRowNumber: 2,
 };
 
 export async function parseCSVFromUrl<
@@ -56,61 +48,16 @@ export function parseCSVFromString<
 	columnsSchema: C,
 	options: CSVParserOptions = {},
 ): Static<C>[] {
-	const {
-		trim,
-		includeUnknownColumns,
-		headerRowNumber,
-		firstBodyRowNumber,
-		lastBodyRowNumber,
-	} = {
+	const { trim, includeUnknownColumns } = {
 		...defaultCSVParserOptions,
 		...options,
 	};
-
-	if (headerRowNumber >= firstBodyRowNumber) {
-		throw Error(
-			`headerRowNumber (${headerRowNumber}) must be less than firstBodyRowNumber (${firstBodyRowNumber}).`,
-		);
-	} else if (lastBodyRowNumber && firstBodyRowNumber >= lastBodyRowNumber) {
-		throw Error(
-			`firstBodyRowNumber (${firstBodyRowNumber}) must be less than lastBodyRowNumber (${lastBodyRowNumber}).`,
-		);
-	}
-
-	const rows = csvParseRows(csvString, (row) =>
-		trim ? row.map((cell) => cell.trim()) : row,
-	);
-
-	if (rows.length < 2) {
-		throw Error(
-			`Source table much have at least 2 rows (1 header + 1 body), but currently have ${rows.length}.`,
-		);
-	} else if (lastBodyRowNumber && lastBodyRowNumber > rows.length) {
-		throw Error(
-			`lastBodyRowNumber (${lastBodyRowNumber}) must be in the table range (${ROW_INDEX_OFFSET}-${rows.length}).`,
-		);
-	} else if (firstBodyRowNumber > rows.length) {
-		throw Error(
-			`firstBodyRowNumber (${firstBodyRowNumber}) must be in the table range (${ROW_INDEX_OFFSET}-${rows.length}).`,
-		);
-	}
-
-	const headerRow = rows[headerRowNumber - ROW_INDEX_OFFSET];
-
-	const bodyRows = rows
-		.slice(
-			firstBodyRowNumber - ROW_INDEX_OFFSET,
-			lastBodyRowNumber && lastBodyRowNumber + 1 - ROW_INDEX_OFFSET,
-		)
-		.map((row) => row.map((cell) => (cell.length > 0 ? cell : null)));
 
 	const outputSchema = Type.Array(columnsSchema);
 
 	const data = Value.Convert(
 		outputSchema,
-		bodyRows.map((row) =>
-			headerRow.reduce((obj, key, i) => ({ ...obj, [key]: row[i] }), {}),
-		),
+		csvParse(csvString, processRow(trim)),
 	);
 
 	if (!includeUnknownColumns) {
@@ -118,18 +65,23 @@ export function parseCSVFromString<
 	}
 
 	if (!Value.Check(outputSchema, data)) {
-		throw Error(
-			formatParsingError(Value.Errors(outputSchema, data), firstBodyRowNumber),
-		);
+		throw Error(formatParsingError(Value.Errors(outputSchema, data)));
 	}
 
 	return data;
 }
 
-const formatParsingError = (
-	errors: ValueErrorIterator,
-	firstBodyRowNumber: number,
-): string =>
+const processRow = (trim: boolean) => (obj: Record<any, string>) =>
+	Object.entries(obj).reduce<Record<any, string | null>>(
+		(newObj, [key, value]) => {
+			const newValue = trim ? value.trim() : value;
+			newObj[key] = newValue.length > 0 ? newValue : null;
+			return newObj;
+		},
+		{},
+	);
+
+const formatParsingError = (errors: ValueErrorIterator): string =>
 	[
 		'The following values mismatch the column type:',
 		...[...errors].map(({ path, schema, value }) => {
@@ -147,7 +99,7 @@ const formatParsingError = (
 					)
 				: `a ${schema.type}`;
 
-			return `- Row ${+row + firstBodyRowNumber} column ${column} is ${value ?? NULL_ERROR_ALIAS} (expect ${expectation})`;
+			return `- Row ${+row + ROW_INDEX_OFFSET} column ${column} is ${value ?? NULL_ERROR_ALIAS} (expect ${expectation})`;
 		}),
 	].join('\n');
 

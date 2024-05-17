@@ -3,14 +3,6 @@ import { Column, Table, parseCSVFromString } from '../../src';
 import { expectToThrow } from '../matchers';
 
 describe('parseCSVFromString', () => {
-	it('should throw error if source table have less than 2 rows', () => {
-		const table = Table({
-			value: Column.String(),
-		});
-
-		expectToThrow(() => parseCSVFromString('value\n', table));
-	});
-
 	describe('String column', () => {
 		const table = Table({
 			value: Column.String(),
@@ -235,41 +227,6 @@ describe('parseCSVFromString', () => {
 			});
 			// @ts-ignore
 			expect(res).toEqual([{ value: 'a', unknown: 'b' }]);
-		});
-
-		it('should use custom header, body rows number if specified', () => {
-			const res = parseCSVFromString('not-header\nvalue\na\nb\nc', table, {
-				headerRowNumber: 2,
-				firstBodyRowNumber: 3,
-				lastBodyRowNumber: 4,
-			});
-			expect(res).toEqual([{ value: 'a' }, { value: 'b' }]);
-		});
-
-		it('should throw if custom row number is not in correct order', () => {
-			expectToThrow(() =>
-				parseCSVFromString('value\na\nb\nc', table, {
-					headerRowNumber: 2,
-				}),
-			);
-			expectToThrow(() =>
-				parseCSVFromString('value\na\nb\nc', table, {
-					lastBodyRowNumber: 1,
-				}),
-			);
-		});
-
-		it('should throw if custom row number is out of table range', () => {
-			expectToThrow(() =>
-				parseCSVFromString('value\na\nb\nc', table, {
-					lastBodyRowNumber: 5,
-				}),
-			);
-			expectToThrow(() =>
-				parseCSVFromString('value\na\nb\nc', table, {
-					firstBodyRowNumber: 5,
-				}),
-			);
 		});
 	});
 });
