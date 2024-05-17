@@ -6,12 +6,30 @@ import type { TAnonymousTable, TColumnsDefinition } from './table';
 const ROW_INDEX_OFFSET = 1;
 const NULL_ERROR_ALIAS = 'empty';
 
+/**
+ * Options for CSV parser
+ */
 export interface CSVParserOptions {
+	/**
+	 * Trim whitespaces of each cell before parsing.
+	 * @defaultValue true
+	 */
 	trim?: boolean;
+	/**
+	 * Include columns that are not defined in the table.
+	 * @defaultValue false
+	 */
 	includeUnknownColumns?: boolean;
 }
 
+/**
+ * Options related CSV fetcher
+ */
 export interface CSVFetcherOptions extends CSVParserOptions {
+	/**
+	 * Options for fetch() request
+	 * @see {@link FetchRequestInit}
+	 */
 	fetchRequestInit?: FetchRequestInit;
 }
 
@@ -22,6 +40,14 @@ const defaultCSVParserOptions: {
 	includeUnknownColumns: false,
 };
 
+/**
+ * Fetch CSV from the URL and parse according to the given table
+ * @param url - URL to the CSV file
+ * @param columnsSchema - An anonymous table ({@link TAnonymousTable})
+ * @param options - {@link CSVFetcherOptions}
+ * @returns An array of objects corresponded to the table definition
+ * @throws If fail to fetch or parse the table
+ */
 export async function parseCSVFromUrl<
 	C extends TAnonymousTable<TColumnsDefinition>,
 >(
@@ -41,6 +67,14 @@ export async function parseCSVFromUrl<
 	return parseCSVFromString(await res.text(), columnsSchema, parserOptions);
 }
 
+/**
+ * Parse the CSV string according to the given table
+ * @param csvString - A string of CSV file content
+ * @param columnsSchema - An anonymous table ({@link TAnonymousTable})
+ * @param options - {@link CSVParserOptions}
+ * @returns An array of objects corresponded to the table definition
+ * @throws If fail to parse the table
+ */
 export function parseCSVFromString<
 	C extends TAnonymousTable<TColumnsDefinition>,
 >(
