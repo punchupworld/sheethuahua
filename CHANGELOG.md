@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.0.0](https://github.com/Th1nkK1D/sheethuahua/compare/1.0.0...2.0.0) (2024-05-17)
+
+### ⚠ BREAKING CHANGES
+
+- parseCSVFromString now return a promise
+- remove sheets uncompatible custom header and body row number options
+
+### Features
+
+- add TSDoc for exported variables, functions and types ([26af842](https://github.com/Th1nkK1D/sheethuahua/commit/26af8425e18318e91c8a381fe82c0ca3f90a8a92))
+- parseCSVFromString now return a promise ([0f951e4](https://github.com/Th1nkK1D/sheethuahua/commit/0f951e44e8f883c11c589509fade40102bd76167))
+- remove sheets uncompatible custom header and body row number options ([07721c1](https://github.com/Th1nkK1D/sheethuahua/commit/07721c14ab1129ca7d0cdb62bb5d08e2e0bf8c57))
+- support sheets API query params ([7c91207](https://github.com/Th1nkK1D/sheethuahua/commit/7c91207758589ff256bf8af0d00193077d73484e))
+
 ## 1.0.0 (2024-05-08)
 
 ### Features
