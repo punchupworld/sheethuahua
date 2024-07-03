@@ -1,6 +1,6 @@
 import { Type, TypeGuard, type Static } from '@sinclair/typebox';
 import { Value, type ValueErrorIterator } from '@sinclair/typebox/value';
-import { csvParse } from 'd3-dsv';
+import { csvParse, csvParseRows } from 'd3-dsv';
 import type { TAnonymousTable, TColumnsDefinition } from './table';
 
 const ROW_INDEX_OFFSET = 1;
@@ -89,6 +89,24 @@ export function parseCSVFromString<
 		};
 
 		const outputSchema = Type.Array(columnsSchema);
+		const expectedColumnSchemas = Object.entries(columnsSchema.properties);
+
+		const [headers] = csvParseRows(csvString);
+
+		const missingHeaders = expectedColumnSchemas.filter(
+			([name]) => !headers.includes(name),
+		);
+
+		if (missingHeaders.length > 0) {
+			const listFormatter = (str: string[]) =>
+				new Intl.ListFormat('en', {
+					type: 'conjunction',
+				}).format(str.map((str) => `"${str}"`));
+
+			throw `Column ${listFormatter(
+				missingHeaders.map(([name]) => name),
+			)} are missing from the header row (received ${listFormatter(headers)})`;
+		}
 
 		const data = Value.Convert(
 			outputSchema,

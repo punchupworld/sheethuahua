@@ -3,6 +3,16 @@ import { Column, Table, parseCSVFromString } from '../../src';
 import { expectToThrow } from '../matchers';
 
 describe('parseCSVFromString', () => {
+	describe('Headers', () => {
+		const table = Table({
+			a: Column.String(),
+			b: Column.String(),
+		});
+
+		it('should throw error if columns are missing', () =>
+			expectToThrow(() => parseCSVFromString('unknown_column', table)));
+	});
+
 	describe('String column', () => {
 		const table = Table({
 			value: Column.String(),
