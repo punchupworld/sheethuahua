@@ -1,6 +1,7 @@
 import { Type, TypeGuard, type Static } from '@sinclair/typebox';
 import { Value, type ValueErrorIterator } from '@sinclair/typebox/value';
-import { csvParse, csvParseRows } from 'd3-dsv';
+import { csvParseRows } from 'd3-dsv';
+import { Column, type TColumn } from './column';
 import type { TAnonymousTable, TColumnsDefinition } from './table';
 
 const ROW_INDEX_OFFSET = 1;
@@ -89,33 +90,46 @@ export function parseCSVFromString<
 		};
 
 		const outputSchema = Type.Array(columnsSchema);
-		const expectedColumnSchemas = Object.entries(columnsSchema.properties);
 
-		const [headers] = csvParseRows(csvString);
+		const [headerRow, ...bodyRows] = csvParseRows(csvString);
 
-		const missingHeaders = expectedColumnSchemas.filter(
-			([name]) => !headers.includes(name),
+		const missingHeaders = Object.keys(columnsSchema.properties).filter(
+			(name) => !headerRow.includes(name),
 		);
 
 		if (missingHeaders.length > 0) {
-			const listFormatter = (str: string[]) =>
-				new Intl.ListFormat('en', {
-					type: 'conjunction',
-				}).format(str.map((str) => `"${str}"`));
+			const formatArray = (str: string[]) =>
+				listFormatter.format(str.map((str) => `"${str}"`));
 
-			throw `Column ${listFormatter(
+			throw `Column ${formatArray(
 				missingHeaders.map(([name]) => name),
-			)} are missing from the header row (received ${listFormatter(headers)})`;
+			)} are missing from the header row (received ${formatArray(headerRow)})`;
 		}
 
-		const data = Value.Convert(
-			outputSchema,
-			csvParse(csvString, processRow(trim)),
+		const headerSchemas = headerRow.map<[string, TColumn | undefined]>(
+			(name) => [
+				name,
+				name in columnsSchema.properties
+					? columnsSchema.properties[name]
+					: includeUnknownColumns
+						? Column.String()
+						: undefined,
+			],
 		);
 
-		if (!includeUnknownColumns) {
-			Value.Clean(outputSchema, data);
-		}
+		const data = bodyRows.map((cells) =>
+			headerSchemas.reduce<Record<string, unknown>>(
+				(rowObj, [name, schema], i) => {
+					if (schema) {
+						const newValue = trim ? cells[i].trim() : cells[i];
+						rowObj[name] =
+							newValue.length > 0 ? Value.Convert(schema, newValue) : null;
+					}
+					return rowObj;
+				},
+				{},
+			),
+		);
 
 		if (!Value.Check(outputSchema, data)) {
 			reject(Error(formatParsingError(Value.Errors(outputSchema, data))));
@@ -124,16 +138,6 @@ export function parseCSVFromString<
 		}
 	});
 }
-
-const processRow = (trim: boolean) => (obj: Record<any, string>) =>
-	Object.entries(obj).reduce<Record<any, string | null>>(
-		(newObj, [key, value]) => {
-			const newValue = trim ? value.trim() : value;
-			newObj[key] = newValue.length > 0 ? newValue : null;
-			return newObj;
-		},
-		{},
-	);
 
 const formatParsingError = (errors: ValueErrorIterator): string =>
 	[
@@ -158,5 +162,5 @@ const formatParsingError = (errors: ValueErrorIterator): string =>
 	].join('\n');
 
 const listFormatter = new Intl.ListFormat('en', {
-	type: 'disjunction',
+	type: 'conjunction',
 });
