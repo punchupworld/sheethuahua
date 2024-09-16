@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.0](https://github.com/Th1nkK1D/sheethuahua/compare/2.0.0...2.1.0) (2024-09-16)
+
+### Features
+
+- add early missing column in header row validation ([e1e568f](https://github.com/Th1nkK1D/sheethuahua/commit/e1e568f95e2b6b5c494257bb1be9d10db686c15a))
+
 ## [2.0.0](https://github.com/Th1nkK1D/sheethuahua/compare/1.0.0...2.0.0) (2024-05-17)
 
 ### ⚠ BREAKING CHANGES
