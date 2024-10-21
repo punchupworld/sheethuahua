@@ -1,62 +1,23 @@
-import { Type, TypeGuard, type Static } from '@sinclair/typebox';
-import { Value, type ValueErrorIterator } from '@sinclair/typebox/value';
+import { Kind, type Static, type TObject } from '@sinclair/typebox';
+import { Value } from '@sinclair/typebox/value';
 import { csvParseRows } from 'd3-dsv';
-import { Column, type TColumn } from './column';
-import type { TAnonymousTable, TColumnsDefinition } from './table';
+import { checkColumnSchema, type TColumn } from './column';
 
 const ROW_INDEX_OFFSET = 1;
-const NULL_ERROR_ALIAS = 'empty';
-
-/**
- * Options for CSV parser
- */
-export interface CSVParserOptions {
-	/**
-	 * Trim whitespaces of each cell before parsing.
-	 * @defaultValue true
-	 */
-	trim?: boolean;
-	/**
-	 * Include columns that are not defined in the table.
-	 * @defaultValue false
-	 */
-	includeUnknownColumns?: boolean;
-}
-
-/**
- * Options related CSV fetcher
- */
-export interface CSVFetcherOptions extends CSVParserOptions {
-	/**
-	 * Options for fetch() request
-	 * @see {@link FetchRequestInit}
-	 */
-	fetchRequestInit?: FetchRequestInit;
-}
-
-const defaultCSVParserOptions: {
-	[Property in keyof CSVParserOptions]-?: CSVParserOptions[Property];
-} = {
-	trim: true,
-	includeUnknownColumns: false,
-};
 
 /**
  * Fetch CSV from the URL and parse according to the given table
  * @param url - URL to the CSV file
- * @param columnsSchema - An anonymous table ({@link TAnonymousTable})
- * @param options - {@link CSVFetcherOptions}
+ * @param schema - Output schema mapping of each row
+ * @param fetchRequestInit - Options for fetch() request  {@link FetchRequestInit}
  * @returns An array of objects corresponded to the table definition
  * @throws If fail to fetch or parse the table
  */
-export async function parseCSVFromUrl<
-	C extends TAnonymousTable<TColumnsDefinition>,
->(
+export async function parseCSVFromUrl<T extends TObject>(
 	url: string,
-	columnsSchema: C,
-	options: CSVFetcherOptions = {},
-): Promise<Static<C>[]> {
-	const { fetchRequestInit, ...parserOptions } = options;
+	schema: T,
+	fetchRequestInit?: FetchRequestInit,
+): Promise<Static<T>[]> {
 	const res = await fetch(url, fetchRequestInit);
 
 	if (!res.ok) {
@@ -65,102 +26,55 @@ export async function parseCSVFromUrl<
 		);
 	}
 
-	return parseCSVFromString(await res.text(), columnsSchema, parserOptions);
+	return parseCSVFromString(await res.text(), schema);
 }
 
 /**
  * Parse the CSV string according to the given table
  * @param csvString - A string of CSV file content
- * @param columnsSchema - An anonymous table ({@link TAnonymousTable})
- * @param options - {@link CSVParserOptions}
- * @returns An array of objects corresponded to the table definition
+ * @param schema - Output schema mapping of each row
+ * @returns An array of given schema
  * @throws If fail to parse the table
  */
-export function parseCSVFromString<
-	C extends TAnonymousTable<TColumnsDefinition>,
->(
+export function parseCSVFromString<T extends TObject>(
 	csvString: string,
-	columnsSchema: C,
-	options: CSVParserOptions = {},
-): Promise<Static<C>[]> {
-	return new Promise((resolve, reject) => {
-		const { trim, includeUnknownColumns } = {
-			...defaultCSVParserOptions,
-			...options,
-		};
+	schema: T,
+): Static<T>[] {
+	const [headerRow, ...bodyRows] = csvParseRows(csvString);
 
-		const outputSchema = Type.Array(columnsSchema);
+	const parsedData = bodyRows.map((cols, rowIndex) =>
+		Object.entries(schema.properties).reduce<Record<string, unknown>>(
+			(obj, [key, value]) => {
+				if (checkColumnSchema(value)) {
+					const { columnName, ...columnSchema } = value as TColumn;
+					const columnIndex = headerRow.indexOf(columnName ?? key);
 
-		const [headerRow, ...bodyRows] = csvParseRows(csvString);
-
-		const missingHeaders = Object.keys(columnsSchema.properties).filter(
-			(name) => !headerRow.includes(name),
-		);
-
-		if (missingHeaders.length > 0) {
-			const formatArray = (str: string[]) =>
-				listFormatter.format(str.map((str) => `"${str}"`));
-
-			throw `Column ${formatArray(
-				missingHeaders.map(([name]) => name),
-			)} are missing from the header row (received ${formatArray(headerRow)})`;
-		}
-
-		const headerSchemas = headerRow.map<[string, TColumn | undefined]>(
-			(name) => [
-				name,
-				name in columnsSchema.properties
-					? columnsSchema.properties[name]
-					: includeUnknownColumns
-						? Column.String()
-						: undefined,
-			],
-		);
-
-		const data = bodyRows.map((cells) =>
-			headerSchemas.reduce<Record<string, unknown>>(
-				(rowObj, [name, schema], i) => {
-					if (schema) {
-						const newValue = trim ? cells[i].trim() : cells[i];
-						rowObj[name] =
-							newValue.length > 0 ? Value.Convert(schema, newValue) : null;
+					if (columnIndex < 0) {
+						throw `Column "${columnName ?? key}" not found.`;
 					}
-					return rowObj;
-				},
-				{},
-			),
-		);
 
-		if (!Value.Check(outputSchema, data)) {
-			reject(Error(formatParsingError(Value.Errors(outputSchema, data))));
-		} else {
-			resolve(data);
-		}
-	});
+					const trimmedValue = cols[columnIndex].trim();
+
+					if (!trimmedValue.length && schema.required?.includes(key)) {
+						throw `Column ${columnName} cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`;
+					}
+
+					if (trimmedValue.length) {
+						const parsedValue = Value.Convert(columnSchema, trimmedValue);
+						const error = Value.Errors(columnSchema, parsedValue).First();
+
+						if (error) {
+							throw `Unexpected value in the column ${columnName}, "${error.value}" is not a ${error.schema[Kind].toLowerCase()} (row ${rowIndex + ROW_INDEX_OFFSET})`;
+						}
+
+						obj[key] = parsedValue;
+					}
+				}
+				return obj;
+			},
+			{},
+		),
+	);
+
+	return parsedData;
 }
-
-const formatParsingError = (errors: ValueErrorIterator): string =>
-	[
-		'The following values mismatch the column type:',
-		...[...errors].map(({ path, schema, value }) => {
-			const [row, column] = path.replace('/', '').split('/');
-
-			const expectation = TypeGuard.IsUnion(schema)
-				? listFormatter.format(
-						schema.anyOf.map((option) =>
-							TypeGuard.IsLiteral(option)
-								? `${option.const}`
-								: TypeGuard.IsNull(option)
-									? NULL_ERROR_ALIAS
-									: option.type,
-						),
-					)
-				: `a ${schema.type}`;
-
-			return `- Row ${+row + ROW_INDEX_OFFSET} column ${column} is ${value ?? NULL_ERROR_ALIAS} (expect ${expectation})`;
-		}),
-	].join('\n');
-
-const listFormatter = new Intl.ListFormat('en', {
-	type: 'conjunction',
-});

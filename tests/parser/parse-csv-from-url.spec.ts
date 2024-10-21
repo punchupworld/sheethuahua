@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'bun:test';
-import { Column, Table, parseCSVFromUrl } from '../../src';
+import { Column, parseCSVFromUrl, t } from '../../src';
 import { mockFetch } from '../setup';
 
 describe('parseCSVFromUrl', () => {
 	const csvUrl = '/somefile.csv';
 
-	const tableSchema = Table({
-		id: Column.Number(),
-		value: Column.String(),
+	const tableSchema = t.Object({
+		id: Column(t.Number()),
+		value: Column(t.String()),
 	});
 
 	it('should call fetch with given url', async () => {
