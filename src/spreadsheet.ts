@@ -1,18 +1,10 @@
-import {
-	Type,
-	TypeGuard,
-	type Intersect,
-	type Static,
-	type TIndexFromPropertyKey,
-	type TKeyOf,
-} from '@sinclair/typebox';
-import { parseCSVFromUrl, type CSVFetcherOptions } from './parser';
-import type { TNamedTable } from './table';
+import { type Static, type TObject } from '@sinclair/typebox';
+import { parseCSVFromUrl } from './parser';
 
 /**
  * Options for sheet getter
  */
-interface SheetOptions extends CSVFetcherOptions {
+interface SheetOptions {
 	/**
 	 * Which part of the sheet to use.
 	 * @example
@@ -31,39 +23,29 @@ interface SheetOptions extends CSVFetcherOptions {
 }
 
 /**
- * Define a spreadsheet coresponded to a Google Sheets document.
+ * Define a spreadsheet corresponded to a Google Sheets document.
  * @param sheetsId - Google Sheets ID can be found from the URL `docs.google.com/spreadsheets/d/{sheetsId}/`
- * @param tables - An array of tables coresponded to each sheets inside the spreadsheet
  * @param globalOptions - {@link SheetOptions} which will be applied in every `.get` call
  * @returns A spreadsheet object
  */
-export function Spreadsheet<T extends TNamedTable<any, any>[]>(
+export function Spreadsheet(
 	sheetsId: string,
-	tables: [...T],
 	globalOptions: SheetOptions = {},
 ) {
-	const tablesSchema = Type.Intersect(tables);
-
 	return {
 		/**
 		 * Fetch and parse the sheet from given table name.
 		 * @param tableName - The table name
-		 * @param options - {@link SheetOptions} which will overwrite the spreadsheet's globalOptions
+		 * @param schema - Output schema mapping of each row
+		 * @param options - {@link SheetOptions}
 		 * @returns An array of objects corresponded to the table definition
 		 * @throws If fail to fetch or parse the table
 		 */
-		async get<N extends Static<TKeyOf<typeof tablesSchema>>>(
-			tableName: N,
+		async get<T extends TObject>(
+			tableName: string,
+			schema: T,
 			options: SheetOptions = {},
-		): Promise<Static<TIndexFromPropertyKey<Intersect<T>, N>>[]> {
-			const columnsSchema = Type.Index(tablesSchema, [tableName]);
-
-			if (TypeGuard.IsNever(columnsSchema)) {
-				throw Error(
-					`Table "${tableName}" is not defined when calling Spreadsheet function`,
-				);
-			}
-
+		): Promise<Static<T>[]> {
 			const { range, headers, ...fetcherOptions } = {
 				...globalOptions,
 				...options,
@@ -80,7 +62,7 @@ export function Spreadsheet<T extends TNamedTable<any, any>[]>(
 			try {
 				const res = await parseCSVFromUrl(
 					`https://docs.google.com/spreadsheets/d/${sheetsId}/gviz/tq?${queryParams.toString()}`,
-					columnsSchema,
+					schema,
 					fetcherOptions,
 				);
 

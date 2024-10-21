@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { Spreadsheet, Table } from '../src';
+import { Spreadsheet, t } from '../src';
 import { mockFetch } from './setup';
 
 describe('Spreadsheet.get', () => {
@@ -7,11 +7,11 @@ describe('Spreadsheet.get', () => {
 	const sheetsId = 'some-sheets-id';
 
 	it('should fetch with given sheetsId', async () => {
-		const sheets = Spreadsheet(sheetsId, [Table(tableName, {})]);
+		const sheets = Spreadsheet(sheetsId);
 
 		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
 
-		await sheets.get(tableName);
+		await sheets.get(tableName, t.Object({}));
 
 		const requestedURL = mockFetch.mock.lastCall?.[0];
 
@@ -19,11 +19,11 @@ describe('Spreadsheet.get', () => {
 	});
 
 	it('should include sheet from given table name and csv export type from fetch query', async () => {
-		const sheets = Spreadsheet(sheetsId, [Table(tableName, {})]);
+		const sheets = Spreadsheet(sheetsId);
 
 		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
 
-		await sheets.get(tableName);
+		await sheets.get(tableName, t.Object({}));
 
 		const queryParams = new URLSearchParams(
 			mockFetch.mock.lastCall?.[0].split('?')[1],
@@ -38,14 +38,14 @@ describe('Spreadsheet.get', () => {
 		const range = 'A1:ZZZ999';
 		const headers = 2;
 
-		const sheets = Spreadsheet(sheetsId, [Table(tableName, {})], {
+		const sheets = Spreadsheet(sheetsId, {
 			range,
 			headers,
 		});
 
 		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
 
-		await sheets.get(tableName, {});
+		await sheets.get(tableName, t.Object({}));
 
 		const queryParams = new URLSearchParams(
 			mockFetch.mock.lastCall?.[0].split('?')[1],
@@ -60,14 +60,14 @@ describe('Spreadsheet.get', () => {
 		const range = 'A1:ZZZ999';
 		const headers = 2;
 
-		const sheets = Spreadsheet(sheetsId, [Table(tableName, {})], {
+		const sheets = Spreadsheet(sheetsId, {
 			range: 'A:B',
 			headers: 1,
 		});
 
 		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
 
-		await sheets.get(tableName, { range, headers });
+		await sheets.get(tableName, t.Object({}), { range, headers });
 
 		const queryParams = new URLSearchParams(
 			mockFetch.mock.lastCall?.[0].split('?')[1],
