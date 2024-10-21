@@ -13,7 +13,7 @@ const ROW_INDEX_OFFSET = 1;
  * @returns An array of objects corresponded to the table definition
  * @throws If fail to fetch or parse the table
  */
-export async function parseCSVFromUrl<T extends TObject>(
+export async function fetchCsv<T extends TObject>(
 	url: string,
 	schema: T,
 	fetchRequestInit?: FetchRequestInit,
@@ -26,21 +26,21 @@ export async function parseCSVFromUrl<T extends TObject>(
 		);
 	}
 
-	return parseCSVFromString(await res.text(), schema);
+	return parseCsv(await res.text(), schema);
 }
 
 /**
  * Parse the CSV string according to the given table
- * @param csvString - A string of CSV file content
+ * @param content - A string of CSV file content
  * @param schema - Output schema mapping of each row
  * @returns An array of given schema
  * @throws If fail to parse the table
  */
-export function parseCSVFromString<T extends TObject>(
-	csvString: string,
+export function parseCsv<T extends TObject>(
+	content: string,
 	schema: T,
 ): Static<T>[] {
-	const [headerRow, ...bodyRows] = csvParseRows(csvString);
+	const [headerRow, ...bodyRows] = csvParseRows(content);
 
 	const parsedData = bodyRows.map((cols, rowIndex) =>
 		Object.entries(schema.properties).reduce<Record<string, unknown>>(

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test';
-import { Column, parseCSVFromUrl, t } from '../../src';
+import { Column, fetchCsv, t } from '../../src';
 import { mockFetch } from '../setup';
 
-describe('parseCSVFromUrl', () => {
+describe('fetchCsv', () => {
 	const csvUrl = '/somefile.csv';
 
 	const tableSchema = t.Object({
@@ -13,7 +13,7 @@ describe('parseCSVFromUrl', () => {
 	it('should call fetch with given url', async () => {
 		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
 
-		await parseCSVFromUrl(csvUrl, tableSchema);
+		await fetchCsv(csvUrl, tableSchema);
 
 		const requestedURL = mockFetch.mock.lastCall?.[0];
 
@@ -23,7 +23,7 @@ describe('parseCSVFromUrl', () => {
 	it('should return parsed csv', async () => {
 		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
 
-		const res = await parseCSVFromUrl(csvUrl, tableSchema);
+		const res = await fetchCsv(csvUrl, tableSchema);
 
 		expect(res).toEqual([{ id: 0, value: 'a' }]);
 	});

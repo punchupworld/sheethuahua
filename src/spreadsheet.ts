@@ -1,5 +1,5 @@
 import { type Static, type TObject } from '@sinclair/typebox';
-import { parseCSVFromUrl } from './parser';
+import { fetchCsv } from './parser';
 
 /**
  * Options for sheet getter
@@ -60,7 +60,7 @@ export function Spreadsheet(
 			if (headers !== undefined) queryParams.append('headers', `${headers}`);
 
 			try {
-				const res = await parseCSVFromUrl(
+				const res = await fetchCsv(
 					`https://docs.google.com/spreadsheets/d/${sheetsId}/gviz/tq?${queryParams.toString()}`,
 					schema,
 					fetcherOptions,

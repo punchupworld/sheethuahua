@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test';
-import { Column, parseCSVFromString, t } from '../../src';
+import { Column, parseCsv, t } from '../../src';
 import { expectToThrow } from '../matchers';
 
-describe('parseCSVFromString', () => {
+describe('parseCsv', () => {
 	describe('Headers', () => {
 		const schema = t.Object({
 			a: Column(t.String()),
@@ -10,7 +10,7 @@ describe('parseCSVFromString', () => {
 		});
 
 		it('should throw error if columns are missing', () =>
-			expectToThrow(() => parseCSVFromString('unknown_column\na', schema)));
+			expectToThrow(() => parseCsv('unknown_column\na', schema)));
 	});
 
 	describe('Column', () => {
@@ -19,7 +19,7 @@ describe('parseCSVFromString', () => {
 				value: Column(t.String()),
 			});
 
-			const res = parseCSVFromString('value\n a ', schema);
+			const res = parseCsv('value\n a ', schema);
 			expect(res).toEqual([{ value: 'a' }]);
 		});
 
@@ -29,7 +29,7 @@ describe('parseCSVFromString', () => {
 				explicitColumn: Column('Explicit Column', t.Number()),
 			});
 
-			const res = parseCSVFromString('value,Explicit Column\na,1', schema);
+			const res = parseCsv('value,Explicit Column\na,1', schema);
 			expect(res).toEqual([{ value: 'a', explicitColumn: 1 }]);
 		});
 
@@ -39,12 +39,12 @@ describe('parseCSVFromString', () => {
 			});
 
 			it('should parse valid value', async () => {
-				const res = parseCSVFromString('value\na\n"with\nnewlint"', schema);
+				const res = parseCsv('value\na\n"with\nnewlint"', schema);
 				expect(res).toEqual([{ value: 'a' }, { value: 'with\nnewlint' }]);
 			});
 
 			it('should throw if empty', () =>
-				expectToThrow(() => parseCSVFromString('value\n\n', schema)));
+				expectToThrow(() => parseCsv('value\n\n', schema)));
 		});
 
 		describe('Number', () => {
@@ -53,15 +53,15 @@ describe('parseCSVFromString', () => {
 			});
 
 			it('should parse valid value', async () => {
-				const res = parseCSVFromString('value\n100\n-5\n4.2', schema);
+				const res = parseCsv('value\n100\n-5\n4.2', schema);
 				expect(res).toEqual([{ value: 100 }, { value: -5 }, { value: 4.2 }]);
 			});
 
 			it('should throw if empty', () =>
-				expectToThrow(() => parseCSVFromString('value\n\n', schema)));
+				expectToThrow(() => parseCsv('value\n\n', schema)));
 
 			it('should throw if invalid', () =>
-				expectToThrow(() => parseCSVFromString('value\na\n', schema)));
+				expectToThrow(() => parseCsv('value\na\n', schema)));
 		});
 
 		describe('Boolean', () => {
@@ -70,7 +70,7 @@ describe('parseCSVFromString', () => {
 			});
 
 			it('should parse valid value', async () => {
-				const res = parseCSVFromString(
+				const res = parseCsv(
 					'value\ntrue\nTRUE\nTrue\n1\nfalse\nFALSE\nFalse\n0',
 					schema,
 				);
@@ -87,10 +87,10 @@ describe('parseCSVFromString', () => {
 			});
 
 			it('should throw if empty', () =>
-				expectToThrow(() => parseCSVFromString('value\n\n', schema)));
+				expectToThrow(() => parseCsv('value\n\n', schema)));
 
 			it('should throw if invalid', () =>
-				expectToThrow(() => parseCSVFromString('value\na\n', schema)));
+				expectToThrow(() => parseCsv('value\na\n', schema)));
 		});
 
 		describe('Date', () => {
@@ -99,15 +99,15 @@ describe('parseCSVFromString', () => {
 			});
 
 			it('should parse valid value (ISO format)', async () => {
-				const res = parseCSVFromString('value\n1996-11-13', schema);
+				const res = parseCsv('value\n1996-11-13', schema);
 				expect(res).toEqual([{ value: new Date('1996-11-13') }]);
 			});
 
 			it('should throw if empty', () =>
-				expectToThrow(() => parseCSVFromString('value\n\n', schema)));
+				expectToThrow(() => parseCsv('value\n\n', schema)));
 
 			it('should throw if invalid', () =>
-				expectToThrow(() => parseCSVFromString('value\nnotdate\n', schema)));
+				expectToThrow(() => parseCsv('value\nnotdate\n', schema)));
 		});
 
 		// describe('OneOf', () => {
@@ -134,7 +134,7 @@ describe('parseCSVFromString', () => {
 			});
 
 			it('should not include optional column key if empty', async () => {
-				const res = parseCSVFromString('a,b\n1,1\n2,', schema);
+				const res = parseCsv('a,b\n1,1\n2,', schema);
 				expect(res).toEqual([{ a: 1, b: 1 }, { a: 2 }]);
 			});
 		});
