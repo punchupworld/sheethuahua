@@ -37,7 +37,7 @@
 		"*": "prettier --write --ignore-unknown"
 	},
 	"dependencies": {
-		"@sinclair/typebox": "^0.32.20",
+		"@sinclair/typebox": "^0.33.17",
 		"d3-dsv": "^3.0.1"
 	},
 	"devDependencies": {
