@@ -110,22 +110,22 @@ describe('parseCsv', () => {
 				expectToThrow(() => parseCsv('value\nnotdate\n', schema)));
 		});
 
-		// describe('OneOf', () => {
-		// 	const schema = t.Object({
-		// 		value: Column.OneOf(['a', 1]),
-		// 	});
+		describe('OneOf', () => {
+			const schema = t.Object({
+				value: Column(t.OneOf(['a', 1])),
+			});
 
-		// 	it('should parse valid value', async () => {
-		// 		const res = parseCSVFromString('value\na\n1', schema);
-		// 		expect(res).toEqual([{ value: 'a' }, { value: 1 }]);
-		// 	});
+			it('should parse valid value', async () => {
+				const res = parseCsv('value\na\n1', schema);
+				expect(res).toEqual([{ value: 'a' }, { value: 1 }]);
+			});
 
-		// 	it('should throw if empty', () =>
-		// 		expectToThrow(() => parseCSVFromString('value\n\n', schema)));
+			it('should throw if empty', () =>
+				expectToThrow(() => parseCsv('value\n\n', schema)));
 
-		// 	it('should throw if value is not in the definition', () =>
-		// 		expectToThrow(() => parseCSVFromString('value\nb\n', schema)));
-		// });
+			it('should throw if value is not in the definition', () =>
+				expectToThrow(() => parseCsv('value\nb\n', schema)));
+		});
 
 		describe('Optional', () => {
 			const schema = t.Object({
