@@ -1,13 +1,13 @@
 import { expect } from 'bun:test';
 
-export async function expectToThrow(fn: () => unknown) {
-	let hasThrown = false;
+export async function expectToThrow(fn: () => unknown, expectedError: any) {
+	let receivedError: any;
 
 	try {
 		await fn();
-	} catch {
-		hasThrown = true;
+	} catch (e) {
+		receivedError = e;
 	}
 
-	expect(hasThrown).toBeTrue();
+	expect(receivedError).toBe(expectedError);
 }

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test';
 import { Column, Spreadsheet, t } from '../src';
 import { mockFetch } from './setup';
 
-describe('Spreadsheet.get', () => {
+describe('.get', () => {
 	const tableName = 'Users';
 	const sheetsId = 'some-sheets-id';
 
