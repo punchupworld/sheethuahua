@@ -1,6 +1,6 @@
 import type { TSchema } from '@sinclair/typebox';
 
-const ColumnKind = 'columnName';
+export const ColumnKind = 'columnName';
 
 /**
  * Column schema type
@@ -19,8 +19,4 @@ export function Column<T extends TSchema>(name: string, schema: T): TColumn<T> {
 		...schema,
 		[ColumnKind]: name,
 	};
-}
-
-export function checkColumnSchema(value: unknown): boolean {
-	return typeof value === 'object' && value !== null && ColumnKind in value;
 }

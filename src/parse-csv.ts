@@ -1,5 +1,4 @@
 import {
-	Kind,
 	TypeGuard,
 	type Static,
 	type TObject,
@@ -7,7 +6,7 @@ import {
 } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 import { csvParseRows } from 'd3-dsv';
-import { checkColumnSchema, type TColumn } from './column';
+import { ColumnKind, type TColumn } from './column';
 
 const ROW_INDEX_OFFSET = 1;
 
@@ -54,7 +53,13 @@ export function parseCsv<T extends TCsvSchema>(
 					const error = Value.Errors(columnSchema, parsedValue).First();
 
 					if (error) {
-						throw `Unexpected value in the column "${columnName}", "${error.value}" is not a ${error.schema[Kind].toLowerCase()} (row ${rowIndex + ROW_INDEX_OFFSET})`;
+						const mainMessage = TypeGuard.IsUnion(columnSchema)
+							? error.message.replace(
+									'union value',
+									`one of [${columnSchema.anyOf.map((value) => value.const).join(', ')}]`,
+								)
+							: error.message;
+						throw `${mainMessage} but received "${trimmedValue}" (column "${columnName}", row ${rowIndex + ROW_INDEX_OFFSET})`;
 					}
 
 					return parsedValue;
@@ -104,4 +109,8 @@ function traverseSchemaWithColumn(
 			) || []
 		);
 	}
+}
+
+function checkColumnSchema(value: unknown): boolean {
+	return typeof value === 'object' && value !== null && ColumnKind in value;
 }

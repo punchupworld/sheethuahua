@@ -55,7 +55,7 @@ describe('Column', () => {
 		it('should throw if invalid', () =>
 			expectToThrow(
 				() => parseCsv('value\na\n', schema),
-				'Unexpected value in the column "value", "a" is not a number (row 1)',
+				'Expected number but received "a" (column "value", row 1)',
 			));
 	});
 
@@ -79,7 +79,7 @@ describe('Column', () => {
 		it('should throw if invalid', () =>
 			expectToThrow(
 				() => parseCsv('value\na\n', schema),
-				'Unexpected value in the column "value", "a" is not a boolean (row 1)',
+				'Expected boolean but received "a" (column "value", row 1)',
 			));
 	});
 
@@ -99,8 +99,8 @@ describe('Column', () => {
 
 		it('should throw if invalid', () =>
 			expectToThrow(
-				() => parseCsv('value\nnotdate\n', schema),
-				'Unexpected value in the column "value", "notdate" is not a date (row 1)',
+				() => parseCsv('value\na\n', schema),
+				'Expected Date but received "a" (column "value", row 1)',
 			));
 	});
 
@@ -121,7 +121,7 @@ describe('Column', () => {
 		it('should throw if value is not in the definition', () =>
 			expectToThrow(
 				() => parseCsv('value\na\nb', schema),
-				'Unexpected value in the column "value", "b" is not a union (row 2)',
+				'Expected one of [a, 1] but received "b" (column "value", row 2)',
 			));
 	});
 
