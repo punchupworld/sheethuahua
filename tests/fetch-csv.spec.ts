@@ -6,8 +6,8 @@ describe('fetchCsv', () => {
 	const csvUrl = '/somefile.csv';
 
 	const tableSchema = t.Object({
-		id: Column(t.Number()),
-		value: Column(t.String()),
+		id: Column('id', t.Number()),
+		value: Column('value', t.String()),
 	});
 
 	it('should call fetch with given url', async () => {

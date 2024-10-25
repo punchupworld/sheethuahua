@@ -5,8 +5,8 @@ import { expectToThrow } from './matchers';
 describe('parseCsv', () => {
 	describe('Headers', () => {
 		const schema = t.Object({
-			a: Column(t.String()),
-			b: Column(t.String()),
+			a: Column('a', t.String()),
+			b: Column('b', t.String()),
 		});
 
 		it('should throw error if columns are missing', () =>
@@ -16,26 +16,16 @@ describe('parseCsv', () => {
 	describe('Column', () => {
 		it('should trim each cell before parsing', async () => {
 			const schema = t.Object({
-				value: Column(t.String()),
+				value: Column('value', t.String()),
 			});
 
 			const res = parseCsv('value\n a ', schema);
 			expect(res).toEqual([{ value: 'a' }]);
 		});
 
-		it('should use explicit column name if provided', async () => {
-			const schema = t.Object({
-				value: Column(t.String()),
-				explicitColumn: Column('Explicit Column', t.Number()),
-			});
-
-			const res = parseCsv('value,Explicit Column\na,1', schema);
-			expect(res).toEqual([{ value: 'a', explicitColumn: 1 }]);
-		});
-
 		describe('String', () => {
 			const schema = t.Object({
-				value: Column(t.String()),
+				value: Column('value', t.String()),
 			});
 
 			it('should parse valid value', async () => {
@@ -49,7 +39,7 @@ describe('parseCsv', () => {
 
 		describe('Number', () => {
 			const schema = t.Object({
-				value: Column(t.Number()),
+				value: Column('value', t.Number()),
 			});
 
 			it('should parse valid value', async () => {
@@ -66,7 +56,7 @@ describe('parseCsv', () => {
 
 		describe('Boolean', () => {
 			const schema = t.Object({
-				value: Column(t.Boolean()),
+				value: Column('value', t.Boolean()),
 			});
 
 			it('should parse valid value', async () => {
@@ -95,7 +85,7 @@ describe('parseCsv', () => {
 
 		describe('Date', () => {
 			const schema = t.Object({
-				value: Column(t.Date()),
+				value: Column('value', t.Date()),
 			});
 
 			it('should parse valid value (ISO format)', async () => {
@@ -112,7 +102,7 @@ describe('parseCsv', () => {
 
 		describe('OneOf', () => {
 			const schema = t.Object({
-				value: Column(t.OneOf(['a', 1])),
+				value: Column('value', t.OneOf(['a', 1])),
 			});
 
 			it('should parse valid value', async () => {
@@ -129,8 +119,8 @@ describe('parseCsv', () => {
 
 		describe('Optional', () => {
 			const schema = t.Object({
-				a: Column(t.Number()),
-				b: Column(t.Optional(t.Number())),
+				a: Column('a', t.Number()),
+				b: Column('b', t.Optional(t.Number())),
 			});
 
 			it('should not include optional column key if empty', async () => {

@@ -6,30 +6,18 @@ const ColumnKind = 'columnName';
  * Column schema type
  */
 export type TColumn<T extends TSchema = TSchema> = T & {
-	[ColumnKind]: string | null;
+	[ColumnKind]: string;
 };
 
-/**
- * Map CSV with Column with the corresponded schema
- * @param schema - Column schema
- */
-export function Column<T extends TSchema>(schema: T): TColumn<T>;
 /**
  * Map with CSV Column with the corresponded schema
  * @param name - Column name
  * @param schema - Column schema
  */
-export function Column<T extends TSchema>(name: string, schema: T): TColumn<T>;
-export function Column<T extends TSchema>(arg1: string | T, arg2?: T): unknown {
-	if (typeof arg1 === 'string') {
-		return {
-			...arg2,
-			[ColumnKind]: arg1,
-		};
-	}
+export function Column<T extends TSchema>(name: string, schema: T): TColumn<T> {
 	return {
-		...arg1,
-		[ColumnKind]: null,
+		...schema,
+		[ColumnKind]: name,
 	};
 }
 

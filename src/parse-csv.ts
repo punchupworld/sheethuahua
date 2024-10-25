@@ -5,11 +5,6 @@ import { checkColumnSchema, type TColumn } from './column';
 
 const ROW_INDEX_OFFSET = 1;
 
-interface ColumnProperty {
-	name: string;
-	index: number;
-}
-
 /**
  * Parse the CSV string according to the given table
  * @param content - A string of CSV file content
@@ -23,18 +18,18 @@ export function parseCsv<T extends TObject>(
 ): Static<T>[] {
 	const [headerRow, ...bodyRows] = csvParseRows(content);
 
-	const columnPropertyMap = new Map<string, ColumnProperty>(
-		Object.entries(schema.properties).reduce<[string, ColumnProperty][]>(
-			(pair, [key, value]) => {
+	const columnIndexMap = new Map<string, number>(
+		Object.values(schema.properties).reduce<[string, number][]>(
+			(pair, value) => {
 				if (checkColumnSchema(value)) {
-					const name = (value as TColumn).columnName ?? key;
+					const name = (value as TColumn).columnName;
 					const index = headerRow.indexOf(name);
 
 					if (index < 0) {
 						throw `Column "${name}" is referenced in the schema but does not found`;
 					}
 
-					pair.push([key, { name, index }]);
+					pair.push([name, index]);
 				}
 				return pair;
 			},
@@ -46,11 +41,12 @@ export function parseCsv<T extends TObject>(
 		Object.entries(schema.properties).reduce<Record<string, unknown>>(
 			(obj, [key, value]) => {
 				if (checkColumnSchema(value)) {
-					const column = columnPropertyMap.get(key) as ColumnProperty;
-					const trimmedValue = cols[column.index].trim();
+					const name = (value as TColumn).columnName;
+					const index = columnIndexMap.get(key) as number;
+					const trimmedValue = cols[index].trim();
 
 					if (!trimmedValue && schema.required?.includes(key)) {
-						throw `Column ${column.name} cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`;
+						throw `Column ${name} cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`;
 					}
 
 					if (trimmedValue) {
@@ -58,7 +54,7 @@ export function parseCsv<T extends TObject>(
 						const error = Value.Errors(value, parsedValue).First();
 
 						if (error) {
-							throw `Unexpected value in the column ${column.name}, "${error.value}" is not a ${error.schema[Kind].toLowerCase()} (row ${rowIndex + ROW_INDEX_OFFSET})`;
+							throw `Unexpected value in the column ${name}, "${error.value}" is not a ${error.schema[Kind].toLowerCase()} (row ${rowIndex + ROW_INDEX_OFFSET})`;
 						}
 
 						obj[key] = parsedValue;
