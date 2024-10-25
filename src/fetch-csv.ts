@@ -1,5 +1,5 @@
-import { type Static, type TObject } from '@sinclair/typebox';
-import { parseCsv } from './parse-csv';
+import { type Static } from '@sinclair/typebox';
+import { parseCsv, type TCsvSchema } from './parse-csv';
 
 /**
  * Fetch CSV from the URL and parse according to the given table
@@ -9,7 +9,7 @@ import { parseCsv } from './parse-csv';
  * @returns An array of objects corresponded to the table definition
  * @throws If fail to fetch or parse the table
  */
-export async function fetchCsv<T extends TObject>(
+export async function fetchCsv<T extends TCsvSchema>(
 	url: string,
 	schema: T,
 	fetchRequestInit?: FetchRequestInit,

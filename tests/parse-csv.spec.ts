@@ -15,22 +15,18 @@ describe('parseCsv', () => {
 
 	describe('Column', () => {
 		it('should trim each cell before parsing', async () => {
-			const schema = t.Object({
-				value: Column('value', t.String()),
-			});
+			const schema = Column('value', t.String());
 
 			const res = parseCsv('value\n a ', schema);
-			expect(res).toEqual([{ value: 'a' }]);
+			expect(res).toEqual(['a']);
 		});
 
 		describe('String', () => {
-			const schema = t.Object({
-				value: Column('value', t.String()),
-			});
+			const schema = Column('value', t.String());
 
 			it('should parse valid value', async () => {
 				const res = parseCsv('value\na\n"with\nnewlint"', schema);
-				expect(res).toEqual([{ value: 'a' }, { value: 'with\nnewlint' }]);
+				expect(res).toEqual(['a', 'with\nnewlint']);
 			});
 
 			it('should throw if empty', () =>
@@ -38,13 +34,11 @@ describe('parseCsv', () => {
 		});
 
 		describe('Number', () => {
-			const schema = t.Object({
-				value: Column('value', t.Number()),
-			});
+			const schema = Column('value', t.Number());
 
 			it('should parse valid value', async () => {
 				const res = parseCsv('value\n100\n-5\n4.2', schema);
-				expect(res).toEqual([{ value: 100 }, { value: -5 }, { value: 4.2 }]);
+				expect(res).toEqual([100, -5, 4.2]);
 			});
 
 			it('should throw if empty', () =>
@@ -55,9 +49,7 @@ describe('parseCsv', () => {
 		});
 
 		describe('Boolean', () => {
-			const schema = t.Object({
-				value: Column('value', t.Boolean()),
-			});
+			const schema = Column('value', t.Boolean());
 
 			it('should parse valid value', async () => {
 				const res = parseCsv(
@@ -65,14 +57,14 @@ describe('parseCsv', () => {
 					schema,
 				);
 				expect(res).toEqual([
-					{ value: true },
-					{ value: true },
-					{ value: true },
-					{ value: true },
-					{ value: false },
-					{ value: false },
-					{ value: false },
-					{ value: false },
+					true,
+					true,
+					true,
+					true,
+					false,
+					false,
+					false,
+					false,
 				]);
 			});
 
@@ -84,13 +76,11 @@ describe('parseCsv', () => {
 		});
 
 		describe('Date', () => {
-			const schema = t.Object({
-				value: Column('value', t.Date()),
-			});
+			const schema = Column('value', t.Date());
 
 			it('should parse valid value (ISO format)', async () => {
 				const res = parseCsv('value\n1996-11-13', schema);
-				expect(res).toEqual([{ value: new Date('1996-11-13') }]);
+				expect(res).toEqual([new Date('1996-11-13')]);
 			});
 
 			it('should throw if empty', () =>
@@ -101,13 +91,11 @@ describe('parseCsv', () => {
 		});
 
 		describe('OneOf', () => {
-			const schema = t.Object({
-				value: Column('value', t.OneOf(['a', 1])),
-			});
+			const schema = Column('value', t.OneOf(['a', 1]));
 
 			it('should parse valid value', async () => {
 				const res = parseCsv('value\na\n1', schema);
-				expect(res).toEqual([{ value: 'a' }, { value: 1 }]);
+				expect(res).toEqual(['a', 1]);
 			});
 
 			it('should throw if empty', () =>
@@ -127,6 +115,62 @@ describe('parseCsv', () => {
 				const res = parseCsv('a,b\n1,1\n2,', schema);
 				expect(res).toEqual([{ a: 1, b: 1 }, { a: 2 }]);
 			});
+		});
+	});
+
+	describe('Schema', () => {
+		it('should support single root column', () => {
+			const schema = Column('value', t.String());
+
+			const res = parseCsv('value\n a ', schema);
+			expect(res).toEqual(['a']);
+		});
+
+		it('should support object schema', () => {
+			const schema = t.Object({
+				email: Column('email', t.String()),
+				phone: Column('phone', t.Number()),
+			});
+
+			const res = parseCsv('email,phone\ntest@email,1234', schema);
+			expect(res).toEqual([{ email: 'test@email', phone: 1234 }]);
+		});
+
+		it('should support object schema', () => {
+			const schema = t.Object({
+				email: Column('email', t.String()),
+				phone: Column('phone', t.Number()),
+			});
+
+			const res = parseCsv('email,phone\ntest@email,1234', schema);
+			expect(res).toEqual([{ email: 'test@email', phone: 1234 }]);
+		});
+
+		it('should support tuple schema', () => {
+			const schema = t.Tuple([
+				Column('email', t.String()),
+				Column('phone', t.Number()),
+			]);
+
+			const res = parseCsv('email,phone\ntest@email,1234', schema);
+			expect(res).toEqual([['test@email', 1234]]);
+		});
+
+		it('should support nested schema', () => {
+			const schema = t.Object({
+				contact: t.Object({
+					email: Column('email', t.String()),
+					phone: t.Tuple([
+						Column('phone1', t.Number()),
+						Column('phone2', t.Number()),
+					]),
+				}),
+			});
+
+			const res = parseCsv('email,phone1,phone2\ntest@email,1234,5678', schema);
+			expect(res).toEqual([
+				{ contact: { email: 'test@email', phone: [1234, 5678] } },
+			]);
 		});
 	});
 });

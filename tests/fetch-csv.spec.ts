@@ -5,13 +5,10 @@ import { mockFetch } from './setup';
 describe('fetchCsv', () => {
 	const csvUrl = '/somefile.csv';
 
-	const tableSchema = t.Object({
-		id: Column('id', t.Number()),
-		value: Column('value', t.String()),
-	});
+	const tableSchema = Column('value', t.String());
 
 	it('should call fetch with given url', async () => {
-		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
+		mockFetch.mockResolvedValue(new Response('value\na'));
 
 		await fetchCsv(csvUrl, tableSchema);
 
@@ -21,10 +18,10 @@ describe('fetchCsv', () => {
 	});
 
 	it('should return parsed csv', async () => {
-		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
+		mockFetch.mockResolvedValue(new Response('value\na'));
 
 		const res = await fetchCsv(csvUrl, tableSchema);
 
-		expect(res).toEqual([{ id: 0, value: 'a' }]);
+		expect(res).toEqual(['a']);
 	});
 });

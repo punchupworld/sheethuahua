@@ -1,5 +1,6 @@
-import { type Static, type TObject } from '@sinclair/typebox';
+import { type Static } from '@sinclair/typebox';
 import { fetchCsv } from './fetch-csv';
+import type { TCsvSchema } from './parse-csv';
 
 /**
  * Options for sheet getter
@@ -41,7 +42,7 @@ export function Spreadsheet(
 		 * @returns An array of objects corresponded to the table definition
 		 * @throws If fail to fetch or parse the table
 		 */
-		async get<T extends TObject>(
+		async get<T extends TCsvSchema>(
 			tableName: string,
 			schema: T,
 			options: SheetOptions = {},

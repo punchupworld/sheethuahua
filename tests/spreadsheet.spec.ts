@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { Spreadsheet, t } from '../src';
+import { Column, Spreadsheet, t } from '../src';
 import { mockFetch } from './setup';
 
 describe('Spreadsheet.get', () => {
@@ -9,9 +9,9 @@ describe('Spreadsheet.get', () => {
 	it('should fetch with given sheetsId', async () => {
 		const sheets = Spreadsheet(sheetsId);
 
-		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
+		mockFetch.mockResolvedValue(new Response('value\na'));
 
-		await sheets.get(tableName, t.Object({}));
+		await sheets.get(tableName, Column('value', t.String()));
 
 		const requestedURL = mockFetch.mock.lastCall?.[0];
 
@@ -21,9 +21,9 @@ describe('Spreadsheet.get', () => {
 	it('should include sheet from given table name and csv export type from fetch query', async () => {
 		const sheets = Spreadsheet(sheetsId);
 
-		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
+		mockFetch.mockResolvedValue(new Response('value\na'));
 
-		await sheets.get(tableName, t.Object({}));
+		await sheets.get(tableName, Column('value', t.String()));
 
 		const queryParams = new URLSearchParams(
 			mockFetch.mock.lastCall?.[0].split('?')[1],
