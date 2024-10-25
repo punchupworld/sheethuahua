@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
-import { Column, fetchCsv, t } from '../../src';
-import { mockFetch } from '../setup';
+import { Column, fetchCsv, t } from '../src';
+import { mockFetch } from './setup';
 
 describe('fetchCsv', () => {
 	const csvUrl = '/somefile.csv';

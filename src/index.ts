@@ -7,5 +7,6 @@ export const t = {
 };
 
 export * from './column';
-export * from './parser';
+export * from './fetch-csv';
+export * from './parse-csv';
 export * from './spreadsheet';

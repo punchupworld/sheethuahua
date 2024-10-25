@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
-import { Column, parseCsv, t } from '../../src';
-import { expectToThrow } from '../matchers';
+import { Column, parseCsv, t } from '../src';
+import { expectToThrow } from './matchers';
 
 describe('parseCsv', () => {
 	describe('Headers', () => {

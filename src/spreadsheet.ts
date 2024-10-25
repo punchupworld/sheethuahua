@@ -1,5 +1,5 @@
 import { type Static, type TObject } from '@sinclair/typebox';
-import { fetchCsv } from './parser';
+import { fetchCsv } from './fetch-csv';
 
 /**
  * Options for sheet getter
