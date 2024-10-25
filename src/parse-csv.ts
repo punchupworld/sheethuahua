@@ -46,7 +46,7 @@ export function parseCsv<T extends TCsvSchema>(
 				const trimmedValue = cols[index].trim();
 
 				if (!trimmedValue && !isOptional) {
-					throw `Column ${columnName} cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`;
+					throw `Column "${columnName}" cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`;
 				}
 
 				if (trimmedValue) {
@@ -54,7 +54,7 @@ export function parseCsv<T extends TCsvSchema>(
 					const error = Value.Errors(columnSchema, parsedValue).First();
 
 					if (error) {
-						throw `Unexpected value in the column ${columnName}, "${error.value}" is not a ${error.schema[Kind].toLowerCase()} (row ${rowIndex + ROW_INDEX_OFFSET})`;
+						throw `Unexpected value in the column "${columnName}", "${error.value}" is not a ${error.schema[Kind].toLowerCase()} (row ${rowIndex + ROW_INDEX_OFFSET})`;
 					}
 
 					return parsedValue;
