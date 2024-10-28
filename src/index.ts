@@ -1,7 +1,7 @@
 import * as type from '@sinclair/typebox';
 import * as helper from './schema-helper';
 
-export const t = {
+export const t: typeof type & typeof helper = {
 	...type,
 	...helper,
 };
