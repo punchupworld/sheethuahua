@@ -1,12 +1,8 @@
-import * as type from '@sinclair/typebox';
-import * as helper from './schema-helper';
+import './error';
 
-export const t: typeof type & typeof helper = {
-	...type,
-	...helper,
-};
-
+export * as t from '@sinclair/typebox';
 export * from './column';
 export * from './fetch-csv';
 export * from './parse-csv';
 export * from './spreadsheet';
+export * from './transform';

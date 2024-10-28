@@ -1,10 +1,11 @@
 import {
+	OptionalKind,
 	TypeGuard,
-	type Static,
+	type StaticDecode,
 	type TObject,
 	type TTuple,
 } from '@sinclair/typebox';
-import { Value } from '@sinclair/typebox/value';
+import { Value, type ValueError } from '@sinclair/typebox/value';
 import { csvParseRows } from 'd3-dsv';
 import { ColumnKind, type TColumn } from './column';
 
@@ -22,75 +23,55 @@ export type TCsvSchema = TColumn | TObject | TTuple;
 export function parseCsv<T extends TCsvSchema>(
 	content: string,
 	schema: T,
-): Static<T>[] {
+): StaticDecode<T>[] {
 	const [headerRow, ...bodyRows] = csvParseRows(content);
 
-	const columnIndexMap = new Map<string, number>();
+	const columnMatching = new Map<string, number>();
 
-	traverseSchemaWithColumn(schema, ({ columnName }) => {
+	collectColumnsInSchema(schema, ({ columnName }) => {
 		const index = headerRow.indexOf(columnName);
 
 		if (index < 0) {
-			throw `Column "${columnName}" is referenced in the schema but does not found`;
+			throw `Column "${columnName}" is not found`;
 		}
 
-		columnIndexMap.set(columnName, index);
+		columnMatching.set(columnName, index);
 	});
 
 	const parsedData = bodyRows.map((cols, rowIndex) =>
-		traverseSchemaWithColumn(
-			schema,
-			({ columnName, ...columnSchema }, isOptional) => {
-				const index = columnIndexMap.get(columnName) as number;
-				const trimmedValue = cols[index].trim();
+		collectColumnsInSchema(schema, ({ columnName, ...transform }) => {
+			const trimmedValue =
+				cols[columnMatching.get(columnName) as number].trim();
 
-				if (!trimmedValue && !isOptional) {
-					throw `Column "${columnName}" cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`;
+			if (!trimmedValue && !transform[OptionalKind]) {
+				throw `Column "${columnName}" cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`;
+			}
+
+			if (trimmedValue) {
+				try {
+					return Value.Decode(transform, trimmedValue);
+				} catch (e) {
+					throw `${(e as ValueError).message} but received "${trimmedValue}" (column "${columnName}", row ${rowIndex + ROW_INDEX_OFFSET})`;
 				}
-
-				if (trimmedValue) {
-					const parsedValue = Value.Convert(columnSchema, trimmedValue);
-					const error = Value.Errors(columnSchema, parsedValue).First();
-
-					if (error) {
-						const mainMessage = TypeGuard.IsUnion(columnSchema)
-							? error.message.replace(
-									'union value',
-									`one of [${columnSchema.anyOf.map((value) => value.const).join(', ')}]`,
-								)
-							: error.message;
-						throw `${mainMessage} but received "${trimmedValue}" (column "${columnName}", row ${rowIndex + ROW_INDEX_OFFSET})`;
-					}
-
-					return parsedValue;
-				}
-			},
-		),
+			}
+		}),
 	);
 
 	return parsedData;
 }
 
-function traverseSchemaWithColumn(
+function collectColumnsInSchema(
 	schema: unknown,
-	processColumn: (
-		columnSchema: TColumn,
-		optional?: boolean,
-	) => Static<TColumn> | undefined,
-	optional?: boolean,
+	processColumn: (columnSchema: TColumn) => StaticDecode<TColumn> | undefined,
 ): unknown {
 	if (checkColumnSchema(schema)) {
-		return processColumn(schema as TColumn, optional);
+		return processColumn(schema as TColumn);
 	}
 
 	if (TypeGuard.IsObject(schema)) {
 		return Object.entries(schema.properties).reduce<Record<string, unknown>>(
 			(obj, [key, value]) => {
-				const output = traverseSchemaWithColumn(
-					value,
-					processColumn,
-					!schema.required || !schema.required.includes(key),
-				);
+				const output = collectColumnsInSchema(value, processColumn);
 
 				if (output !== undefined) {
 					obj[key] = output;
@@ -105,7 +86,7 @@ function traverseSchemaWithColumn(
 	if (TypeGuard.IsTuple(schema)) {
 		return (
 			schema.items?.map((value) =>
-				traverseSchemaWithColumn(value, processColumn),
+				collectColumnsInSchema(value, processColumn),
 			) || []
 		);
 	}

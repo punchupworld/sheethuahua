@@ -1,4 +1,4 @@
-import { type Static } from '@sinclair/typebox';
+import { type StaticDecode } from '@sinclair/typebox';
 import { fetchCsv } from './fetch-csv';
 import type { TCsvSchema } from './parse-csv';
 
@@ -46,7 +46,7 @@ export function Spreadsheet(
 			tableName: string,
 			schema: T,
 			options: SheetOptions = {},
-		): Promise<Static<T>[]> {
+		): Promise<StaticDecode<T>[]> {
 			const { range, headers, ...fetcherOptions } = {
 				...globalOptions,
 				...options,

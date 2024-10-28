@@ -1,11 +1,11 @@
-import type { TSchema } from '@sinclair/typebox';
+import { type TString, type TTransform } from '@sinclair/typebox';
 
 export const ColumnKind = 'columnName';
 
 /**
  * Column schema type
  */
-export type TColumn<T extends TSchema = TSchema> = T & {
+export type TColumn<T = any> = TTransform<TString, T> & {
 	[ColumnKind]: string;
 };
 
@@ -14,7 +14,10 @@ export type TColumn<T extends TSchema = TSchema> = T & {
  * @param name - Column name
  * @param schema - Column schema
  */
-export function Column<T extends TSchema>(name: string, schema: T): TColumn<T> {
+export function Column<T>(
+	name: string,
+	schema: TTransform<TString, T>,
+): TColumn<T> {
 	return {
 		...schema,
 		[ColumnKind]: name,

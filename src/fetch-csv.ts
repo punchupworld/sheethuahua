@@ -1,4 +1,4 @@
-import { type Static } from '@sinclair/typebox';
+import { type StaticDecode } from '@sinclair/typebox';
 import { parseCsv, type TCsvSchema } from './parse-csv';
 
 /**
@@ -13,7 +13,7 @@ export async function fetchCsv<T extends TCsvSchema>(
 	url: string,
 	schema: T,
 	fetchRequestInit?: FetchRequestInit,
-): Promise<Static<T>[]> {
+): Promise<StaticDecode<T>[]> {
 	const res = await fetch(url, fetchRequestInit);
 
 	if (!res.ok) {
