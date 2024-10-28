@@ -20,7 +20,7 @@ describe('Column', () => {
 		const schema = Column('value', t.String());
 
 		const res = parseCsv('value\n a ', schema);
-		expect(res).toEqual(['a']);
+		expect(res).toStrictEqual(['a']);
 	});
 
 	describe('String', () => {
@@ -28,7 +28,7 @@ describe('Column', () => {
 
 		it('should parse valid value', async () => {
 			const res = parseCsv('value\na\n"with\nnewlint"', schema);
-			expect(res).toEqual(['a', 'with\nnewlint']);
+			expect(res).toStrictEqual(['a', 'with\nnewlint']);
 		});
 
 		it('should throw if empty', () =>
@@ -43,7 +43,7 @@ describe('Column', () => {
 
 		it('should parse valid value', async () => {
 			const res = parseCsv('value\n100\n-5\n4.2', schema);
-			expect(res).toEqual([100, -5, 4.2]);
+			expect(res).toStrictEqual([100, -5, 4.2]);
 		});
 
 		it('should throw if empty', () =>
@@ -67,7 +67,16 @@ describe('Column', () => {
 				'value\ntrue\nTRUE\nTrue\n1\nfalse\nFALSE\nFalse\n0',
 				schema,
 			);
-			expect(res).toEqual([true, true, true, true, false, false, false, false]);
+			expect(res).toStrictEqual([
+				true,
+				true,
+				true,
+				true,
+				false,
+				false,
+				false,
+				false,
+			]);
 		});
 
 		it('should throw if empty', () =>
@@ -88,7 +97,7 @@ describe('Column', () => {
 
 		it('should parse valid value (ISO format)', async () => {
 			const res = parseCsv('value\n1996-11-13', schema);
-			expect(res).toEqual([new Date('1996-11-13')]);
+			expect(res).toStrictEqual([new Date('1996-11-13')]);
 		});
 
 		it('should throw if empty', () =>
@@ -109,7 +118,7 @@ describe('Column', () => {
 
 		it('should parse valid value', async () => {
 			const res = parseCsv('value\na\n1', schema);
-			expect(res).toEqual(['a', 1]);
+			expect(res).toStrictEqual(['a', 1]);
 		});
 
 		it('should throw if empty', () =>
@@ -143,7 +152,7 @@ describe('Schema', () => {
 		const schema = Column('value', t.String());
 
 		const res = parseCsv('value\n a ', schema);
-		expect(res).toEqual(['a']);
+		expect(res).toStrictEqual(['a']);
 	});
 
 	it('should support object schema', () => {
@@ -153,7 +162,7 @@ describe('Schema', () => {
 		});
 
 		const res = parseCsv('email,phone\ntest@email,1234', schema);
-		expect(res).toEqual([{ email: 'test@email', phone: 1234 }]);
+		expect(res).toStrictEqual([{ email: 'test@email', phone: 1234 }]);
 	});
 
 	it('should support object schema', () => {
@@ -163,7 +172,7 @@ describe('Schema', () => {
 		});
 
 		const res = parseCsv('email,phone\ntest@email,1234', schema);
-		expect(res).toEqual([{ email: 'test@email', phone: 1234 }]);
+		expect(res).toStrictEqual([{ email: 'test@email', phone: 1234 }]);
 	});
 
 	it('should support tuple schema', () => {
@@ -173,7 +182,7 @@ describe('Schema', () => {
 		]);
 
 		const res = parseCsv('email,phone\ntest@email,1234', schema);
-		expect(res).toEqual([['test@email', 1234]]);
+		expect(res).toStrictEqual([['test@email', 1234]]);
 	});
 
 	it('should support nested schema', () => {
@@ -188,7 +197,7 @@ describe('Schema', () => {
 		});
 
 		const res = parseCsv('email,phone1,phone2\ntest@email,1234,5678', schema);
-		expect(res).toEqual([
+		expect(res).toStrictEqual([
 			{ contact: { email: 'test@email', phone: [1234, 5678] } },
 		]);
 	});

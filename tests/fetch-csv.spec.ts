@@ -21,5 +21,5 @@ it('should return parsed csv', async () => {
 
 	const res = await fetchCsv(csvUrl, tableSchema);
 
-	expect(res).toEqual(['a']);
+	expect(res).toStrictEqual(['a']);
 });
