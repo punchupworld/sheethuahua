@@ -2,7 +2,7 @@ import {
 	TypeGuard,
 	type Static,
 	type TObject,
-	type TSchema,
+	type TTuple,
 } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 import { csvParseRows } from 'd3-dsv';
@@ -10,7 +10,7 @@ import { ColumnKind, type TColumn } from './column';
 
 const ROW_INDEX_OFFSET = 1;
 
-export type TCsvSchema = TColumn | TObject | TSchema;
+export type TCsvSchema = TColumn | TObject | TTuple;
 
 /**
  * Parse the CSV string according to the given table
