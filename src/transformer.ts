@@ -20,6 +20,10 @@ import {
 } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 
+/**
+ * Create boolean transformer
+ * @param options - Validation options (see {@link SchemaOptions})
+ */
 export function asBoolean(options?: SchemaOptions) {
 	return createTransformer(
 		(str) => {
@@ -39,6 +43,10 @@ export function asBoolean(options?: SchemaOptions) {
 	);
 }
 
+/**
+ * Create date transformer
+ * @param options - Validation options (see {@link DateOptions})
+ */
 export function asDate(options?: DateOptions) {
 	return createTransformer(
 		(str) => new global.Date(str),
@@ -47,6 +55,10 @@ export function asDate(options?: DateOptions) {
 	);
 }
 
+/**
+ * Create number transformer
+ * @param options - Validation options (see {@link NumberOptions})
+ */
 export function asNumber(options?: NumberOptions) {
 	return createTransformer(
 		(str) => +str,
@@ -55,6 +67,11 @@ export function asNumber(options?: NumberOptions) {
 	);
 }
 
+/**
+ * Create oneOf transformer
+ * @param values - An array of possible values
+ * @param options - Validation options (see {@link NumberOptions})
+ */
 export function asOneOf<T extends TLiteralValue[]>(
 	values: [...T],
 	options?: SchemaOptions,
@@ -70,6 +87,10 @@ export function asOneOf<T extends TLiteralValue[]>(
 	);
 }
 
+/**
+ * Create string transformer
+ * @param options - Validation options (see {@link StringOptions})
+ */
 export function asString(options?: StringOptions) {
 	return createTransformer(
 		(str) => str,
@@ -78,12 +99,23 @@ export function asString(options?: StringOptions) {
 	);
 }
 
+/**
+ * Create custom transformer
+ * @param decode - A function to parsed string from CSV cell
+ * @param encode - A function to format value back to string
+ */
 export function createTransformer<T>(
 	decode: (value: string) => T,
 	encode: (value: T) => string,
 ): TTransform<TString, T> & {
 	optional: () => TOptional<TTransform<TString, T | undefined>>;
 };
+/**
+ * Create custom transformer
+ * @param decode - A function to parsed string from CSV cell
+ * @param encode - A function to format value back to string
+ * @param decodeSchema - A schema to validate decoded value
+ */
 export function createTransformer<S extends TSchema, T = Static<S>>(
 	decode: (value: string) => unknown,
 	encode: (value: T) => string,
@@ -108,6 +140,9 @@ export function createTransformer<S extends TSchema>(
 		...Transform(String())
 			.Decode((value) => safeDecode(value))
 			.Encode(encode),
+		/**
+		 * Create optional variation of this transformer
+		 */
 		optional: () =>
 			Optional(
 				Transform(String())
