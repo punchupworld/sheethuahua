@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { Column, Spreadsheet, t } from '../src';
+import { Column, Spreadsheet, as, t } from '../src';
 import { mockFetch } from './setup';
 
 describe('.get', () => {
@@ -11,7 +11,7 @@ describe('.get', () => {
 
 		mockFetch.mockResolvedValue(new Response('value\na'));
 
-		await sheets.get(tableName, Column('value', t.String()));
+		await sheets.get(tableName, Column('value', as.String()));
 
 		const requestedURL = mockFetch.mock.lastCall?.[0];
 
@@ -23,7 +23,7 @@ describe('.get', () => {
 
 		mockFetch.mockResolvedValue(new Response('value\na'));
 
-		await sheets.get(tableName, Column('value', t.String()));
+		await sheets.get(tableName, Column('value', as.String()));
 
 		const queryParams = new URLSearchParams(
 			mockFetch.mock.lastCall?.[0].split('?')[1],

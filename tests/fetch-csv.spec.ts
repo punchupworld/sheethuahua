@@ -1,10 +1,10 @@
 import { expect, it } from 'bun:test';
-import { Column, fetchCsv, t } from '../src';
+import { Column, as, fetchCsv } from '../src';
 import { mockFetch } from './setup';
 
 const csvUrl = '/somefile.csv';
 
-const tableSchema = Column('value', t.String());
+const tableSchema = Column('value', as.String());
 
 it('should call fetch with given url', async () => {
 	mockFetch.mockResolvedValue(new Response('value\na'));
