@@ -44,14 +44,18 @@ export function parseCsv<T extends TCsvSchema>(
 				cols[columnMatching.get(columnName) as number].trim();
 
 			if (!trimmedValue && !transform[OptionalKind]) {
-				throw `Column "${columnName}" cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`;
+				throw new Error(
+					`Column "${columnName}" cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`,
+				);
 			}
 
 			if (trimmedValue) {
 				try {
 					return Value.Decode(transform, trimmedValue);
 				} catch (e) {
-					throw `${(e as ValueError).message} but received "${trimmedValue}" (column "${columnName}", row ${rowIndex + ROW_INDEX_OFFSET})`;
+					throw new Error(
+						`${(e as ValueError).message} but received "${trimmedValue}" (column "${columnName}", row ${rowIndex + ROW_INDEX_OFFSET})`,
+					);
 				}
 			}
 		}),

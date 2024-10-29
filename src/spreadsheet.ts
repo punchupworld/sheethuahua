@@ -36,14 +36,14 @@ export function Spreadsheet(
 	return {
 		/**
 		 * Fetch and parse the sheet from given table name.
-		 * @param tableName - The table name
+		 * @param sheet - The sheet name
 		 * @param schema - Output schema mapping of each row
 		 * @param options - {@link SheetOptions}
 		 * @returns An array of objects corresponded to the table definition
 		 * @throws If fail to fetch or parse the table
 		 */
 		async get<T extends TCsvSchema>(
-			tableName: string,
+			sheet: string,
 			schema: T,
 			options: SheetOptions = {},
 		): Promise<StaticDecode<T>[]> {
@@ -53,7 +53,7 @@ export function Spreadsheet(
 			};
 
 			const queryParams = new URLSearchParams({
-				sheet: tableName,
+				sheet,
 				tqx: 'out:csv',
 			});
 
@@ -70,7 +70,7 @@ export function Spreadsheet(
 				return res;
 			} catch (e) {
 				throw Error(
-					`Could not get "${tableName}" table. ${e instanceof Error ? e.message : ''}`.trim(),
+					`Could not get sheet "${sheet}" -> ${e instanceof Error ? e.message : ''}`.trim(),
 				);
 			}
 		},
