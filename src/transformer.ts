@@ -3,6 +3,7 @@ import {
 	Date,
 	Literal,
 	Number,
+	Optional,
 	String,
 	Transform,
 	Union,
@@ -12,6 +13,7 @@ import {
 	type Static,
 	type StringOptions,
 	type TLiteralValue,
+	type TOptional,
 	type TSchema,
 	type TString,
 	type TTransform,
@@ -36,6 +38,7 @@ export function asBoolean(options?: SchemaOptions) {
 		Boolean(options),
 	);
 }
+
 export function asDate(options?: DateOptions) {
 	return createTransformer(
 		(str) => new global.Date(str),
@@ -78,22 +81,38 @@ export function asString(options?: StringOptions) {
 export function createTransformer<T>(
 	decode: (value: string) => T,
 	encode: (value: T) => string,
-): TTransform<TString, T>;
+): TTransform<TString, T> & {
+	optional: () => TOptional<TTransform<TString, T | undefined>>;
+};
 export function createTransformer<S extends TSchema, T = Static<S>>(
 	decode: (value: string) => unknown,
 	encode: (value: T) => string,
 	decodeSchema: S,
-): TTransform<TString, T>;
+): TTransform<TString, T> & {
+	optional: () => TOptional<TTransform<TString, T | undefined>>;
+};
 export function createTransformer<S extends TSchema>(
 	decode: (value: string) => unknown,
 	encode: (value: unknown) => string,
 	validateSchema?: S,
 ) {
-	return Transform(String())
-		.Decode((value) => {
-			const output = decode(value);
-			if (validateSchema) Value.Assert(validateSchema, output);
-			return output;
-		})
-		.Encode(encode);
+	function safeDecode(value: string) {
+		const output = decode(value);
+		if (validateSchema) {
+			Value.Assert(validateSchema, output);
+		}
+		return output;
+	}
+
+	return {
+		...Transform(String())
+			.Decode((value) => safeDecode(value))
+			.Encode(encode),
+		optional: () =>
+			Optional(
+				Transform(String())
+					.Decode((value) => (value.length ? safeDecode(value) : undefined))
+					.Encode(encode),
+			),
+	};
 }

@@ -2,7 +2,7 @@ import { Value } from '@sinclair/typebox/value';
 import { describe, expect, it } from 'bun:test';
 import { asBoolean, asDate, asNumber, asOneOf, asString } from '../src';
 
-describe('Boolean', () => {
+describe('asBoolean', () => {
 	it.each(['1', 'true', 'TRUE'])('should decode %p as true', (value) => {
 		const output = Value.Decode(asBoolean(), value);
 		expect(output).toBeTrue();
@@ -24,9 +24,21 @@ describe('Boolean', () => {
 		const output = Value.Encode(asBoolean(), bool);
 		expect(output).toBe(str);
 	});
+
+	describe('optional', () => {
+		it('should decode empty string as undefined', () => {
+			const output = Value.Decode(asBoolean().optional(), '');
+			expect(output).toBeUndefined();
+		});
+
+		it('should decode correctly like non-optional', () => {
+			const output = Value.Decode(asBoolean().optional(), 'False');
+			expect(output).toBeFalse();
+		});
+	});
 });
 
-describe('Date', () => {
+describe('asDate', () => {
 	it.each(['1996-11-13', new Date().toISOString()])(
 		'should decode %s as a valid date object',
 		(val) => {
@@ -47,9 +59,24 @@ describe('Date', () => {
 		const output = Value.Encode(asDate(), date);
 		expect(output).toBe(date.toISOString());
 	});
+
+	describe('optional', () => {
+		it('should decode empty string as undefined', () => {
+			const output = Value.Decode(asDate().optional(), '');
+			expect(output).toBeUndefined();
+		});
+
+		it('should decode correctly like non-optional', () => {
+			const output = Value.Decode(
+				asDate().optional(),
+				new Date().toISOString(),
+			);
+			expect(output).toBeValidDate();
+		});
+	});
 });
 
-describe('Number', () => {
+describe('asNumber', () => {
 	it('should decode string of number as a number', () => {
 		const output = Value.Decode(asNumber(), '2.5');
 		expect(output).toBe(2.5);
@@ -63,9 +90,21 @@ describe('Number', () => {
 		const output = Value.Encode(asNumber(), 2.5);
 		expect(output).toBe('2.5');
 	});
+
+	describe('optional', () => {
+		it('should decode empty string as undefined', () => {
+			const output = Value.Decode(asNumber().optional(), '');
+			expect(output).toBeUndefined();
+		});
+
+		it('should decode correctly like non-optional', () => {
+			const output = Value.Decode(asNumber().optional(), '2.5');
+			expect(output).toBe(2.5);
+		});
+	});
 });
 
-describe('OneOf', () => {
+describe('asOneOf', () => {
 	const values = [1, 2, 'a', 'b'];
 
 	it.each(values.map((val) => [val.toString(), val]))(
@@ -89,9 +128,21 @@ describe('OneOf', () => {
 			expect(output).toBe(out);
 		},
 	);
+
+	describe('optional', () => {
+		it('should decode empty string as undefined', () => {
+			const output = Value.Decode(asOneOf(values).optional(), '');
+			expect(output).toBeUndefined();
+		});
+
+		it('should decode correctly like non-optional', () => {
+			const output = Value.Decode(asOneOf(values).optional(), '1');
+			expect(output).toBe(1);
+		});
+	});
 });
 
-describe('String', () => {
+describe('asString', () => {
 	it('should decode exactly the same as input', () => {
 		const output = Value.Decode(asString(), 'a');
 		expect(output).toBe('a');
@@ -100,5 +151,17 @@ describe('String', () => {
 	it('should encode exactly the same as input', () => {
 		const output = Value.Encode(asString(), 'a');
 		expect(output).toBe('a');
+	});
+
+	describe('optional', () => {
+		it('should decode empty string as undefined', () => {
+			const output = Value.Decode(asString().optional(), '');
+			expect(output).toBeUndefined();
+		});
+
+		it('should decode correctly like non-optional', () => {
+			const output = Value.Encode(asString().optional(), 'a');
+			expect(output).toBe('a');
+		});
 	});
 });

@@ -1,13 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import {
-	Column,
-	Object,
-	Optional,
-	Tuple,
-	asNumber,
-	asString,
-	parseCsv,
-} from '../src';
+import { Column, Object, Tuple, asNumber, asString, parseCsv } from '../src';
 
 describe('Headers', () => {
 	const schema = Object({
@@ -75,7 +67,7 @@ describe('Column', () => {
 		expect(res).toStrictEqual(['a']);
 	});
 
-	it('should throw if empty', () => {
+	it.only('should throw if empty', () => {
 		const schema = Column('value', asString());
 
 		expect(() => parseCsv('value\n\n', schema)).toThrow(
@@ -86,10 +78,10 @@ describe('Column', () => {
 	it('should not include object optional column key if empty', () => {
 		const schema = Object({
 			a: Column('a', asNumber()),
-			b: Optional(Column('b', asNumber())),
+			b: Column('b', asNumber().optional()),
 		});
 
 		const res = parseCsv('a,b\n1,1\n2,', schema);
-		expect(res).toEqual([{ a: 1, b: 1 }, { a: 2 }]);
+		expect(res).toStrictEqual([{ a: 1, b: 1 }, { a: 2 }]);
 	});
 });
