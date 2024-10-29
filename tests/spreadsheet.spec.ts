@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { Column, Spreadsheet, as, t } from '../src';
+import { Column, Object, Spreadsheet, asString } from '../src';
 import { mockFetch } from './setup';
 
 describe('.get', () => {
@@ -11,7 +11,7 @@ describe('.get', () => {
 
 		mockFetch.mockResolvedValue(new Response('value\na'));
 
-		await sheets.get(tableName, Column('value', as.String()));
+		await sheets.get(tableName, Column('value', asString()));
 
 		const requestedURL = mockFetch.mock.lastCall?.[0];
 
@@ -23,7 +23,7 @@ describe('.get', () => {
 
 		mockFetch.mockResolvedValue(new Response('value\na'));
 
-		await sheets.get(tableName, Column('value', as.String()));
+		await sheets.get(tableName, Column('value', asString()));
 
 		const queryParams = new URLSearchParams(
 			mockFetch.mock.lastCall?.[0].split('?')[1],
@@ -45,7 +45,7 @@ describe('.get', () => {
 
 		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
 
-		await sheets.get(tableName, t.Object({}));
+		await sheets.get(tableName, Object({}));
 
 		const queryParams = new URLSearchParams(
 			mockFetch.mock.lastCall?.[0].split('?')[1],
@@ -67,7 +67,7 @@ describe('.get', () => {
 
 		mockFetch.mockResolvedValue(new Response('id,value\n0,a'));
 
-		await sheets.get(tableName, t.Object({}), { range, headers });
+		await sheets.get(tableName, Object({}), { range, headers });
 
 		const queryParams = new URLSearchParams(
 			mockFetch.mock.lastCall?.[0].split('?')[1],

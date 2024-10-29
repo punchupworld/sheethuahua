@@ -1,10 +1,18 @@
 import { describe, expect, it } from 'bun:test';
-import { Column, as, parseCsv, t } from '../src';
+import {
+	Column,
+	Object,
+	Optional,
+	Tuple,
+	asNumber,
+	asString,
+	parseCsv,
+} from '../src';
 
 describe('Headers', () => {
-	const schema = t.Object({
-		a: Column('a', as.String()),
-		b: Column('b', as.String()),
+	const schema = Object({
+		a: Column('a', asString()),
+		b: Column('b', asString()),
 	});
 
 	it('should throw error if column is missing', () =>
@@ -15,16 +23,16 @@ describe('Headers', () => {
 
 describe('Schema', () => {
 	it('should support single root column', () => {
-		const schema = Column('value', as.String());
+		const schema = Column('value', asString());
 
 		const res = parseCsv('value\n a ', schema);
 		expect(res).toStrictEqual(['a']);
 	});
 
 	it('should support object schema', () => {
-		const schema = t.Object({
-			email: Column('email', as.String()),
-			phone: Column('phone', as.Number()),
+		const schema = Object({
+			email: Column('email', asString()),
+			phone: Column('phone', asNumber()),
 		});
 
 		const res = parseCsv('email,phone\ntest@email,1234', schema);
@@ -32,9 +40,9 @@ describe('Schema', () => {
 	});
 
 	it('should support tuple schema', () => {
-		const schema = t.Tuple([
-			Column('email', as.String()),
-			Column('phone', as.Number()),
+		const schema = Tuple([
+			Column('email', asString()),
+			Column('phone', asNumber()),
 		]);
 
 		const res = parseCsv('email,phone\ntest@email,1234', schema);
@@ -42,12 +50,12 @@ describe('Schema', () => {
 	});
 
 	it('should support nested schema', () => {
-		const schema = t.Object({
-			contact: t.Object({
-				email: Column('email', as.String()),
-				phone: t.Tuple([
-					Column('phone1', as.Number()),
-					Column('phone2', as.Number()),
+		const schema = Object({
+			contact: Object({
+				email: Column('email', asString()),
+				phone: Tuple([
+					Column('phone1', asNumber()),
+					Column('phone2', asNumber()),
 				]),
 			}),
 		});
@@ -61,14 +69,14 @@ describe('Schema', () => {
 
 describe('Column', () => {
 	it('should trim each cell before parsing', () => {
-		const schema = Column('value', as.String());
+		const schema = Column('value', asString());
 
 		const res = parseCsv('value\n a ', schema);
 		expect(res).toStrictEqual(['a']);
 	});
 
 	it('should throw if empty', () => {
-		const schema = Column('value', as.String());
+		const schema = Column('value', asString());
 
 		expect(() => parseCsv('value\n\n', schema)).toThrow(
 			'Column "value" cannot be empty (row 1)',
@@ -76,9 +84,9 @@ describe('Column', () => {
 	});
 
 	it('should not include object optional column key if empty', () => {
-		const schema = t.Object({
-			a: Column('a', as.Number()),
-			b: t.Optional(Column('b', as.Number())),
+		const schema = Object({
+			a: Column('a', asNumber()),
+			b: Optional(Column('b', asNumber())),
 		});
 
 		const res = parseCsv('a,b\n1,1\n2,', schema);
