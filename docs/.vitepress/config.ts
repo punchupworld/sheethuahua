@@ -6,12 +6,13 @@ import typedocSidebar from '../references/typedoc-sidebar.json';
 export default defineConfig({
 	title: 'Sheethuahua',
 	description:
-		'Type-safe Google Sheets and CSV parser for TypeScript and JavaScript',
+		'Type-safe CSV and Google Sheets parser for TypeScript and JavaScript',
+	head: [['link', { rel: 'icon', href: '/favicon.png' }]],
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
 		nav: [
 			{ text: 'Home', link: '/' },
-			{ text: 'Examples', link: '/markdown-examples' },
+			{ text: 'Docs', link: '/introduction' },
 		],
 		sidebar: [
 			// @ts-ignore

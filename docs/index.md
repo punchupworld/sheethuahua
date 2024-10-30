@@ -4,17 +4,68 @@ layout: home
 
 hero:
   name: 'Sheethuahua'
-  tagline: Type-safe Google Sheets and CSV parser for TypeScript and JavaScript
+  text: Type-safe CSV and Sheets parser
+  tagline: Designed for TypeScript and JavaScript
+  image: /sheethuahua.webp
   actions:
     - theme: brand
       text: Getting Started
-      link: /getting-started
+      link: /guide/getting-started
+    - theme: alt
+      text: Learn more
+      link: /introduction
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: Schema Validation
+    details: The CSV you want is what you want, no surprise.
+  - title: Type Inferred
+    details: Never forget what your parsed data look like.
+  - title: Custom Transformation
+    details: Got your own rules? Write a function and parse CSV as you needed.
 ---
+
+<br/>
+
+### 1. Adopt our little doggo
+
+```bash
+npm i sheethuaha
+```
+
+### 2. Describe what you want
+
+```js
+import { Column, Object, asNumber, asString } from 'sheethuahua';
+
+const outputSchema = Object({
+	id: Column('ID', asNumber()),
+	name: Column('Name', asString()),
+	contact: Object({
+		email: Column('Email Address', asString()),
+		phone: Column('Phone Number', asString().optional()),
+	}),
+});
+```
+
+### 3. And confidently get it
+
+```js
+import { parseCsv, fetchCsv, Spreadsheet } from 'sheethuahua';
+
+// const output: {
+//     id: number;
+//     name: string;
+//     contact: {
+//         email?: string | undefined;
+//         phone: string;
+//     };
+// }[]
+const output = await parseCsv('some,csv,string', outputSchema);
+
+// or from URL
+const output = await fetchCsv('https://url-to-csv', outputSchema);
+
+// or from Google Sheets
+const sheets = Spreadsheet('google-sheets-id');
+const output = await sheets.get('Sheet1', outputSchema);
+```
