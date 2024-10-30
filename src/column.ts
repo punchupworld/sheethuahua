@@ -19,7 +19,7 @@ export type TColumn<
 export function Column<T extends TTransform<TString, any>>(
 	name: string,
 	transformer: T,
-) {
+): TColumn<T> {
 	return {
 		...transformer,
 		[ColumnKind]: name,

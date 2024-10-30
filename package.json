@@ -29,7 +29,11 @@
 		"test": "bun test",
 		"build": "rm -rf dist && tsc && tsc-alias",
 		"lint": "eslint --fix src",
-		"release": "release-it"
+		"release": "release-it",
+		"docs:collect": "typedoc",
+		"docs:dev": "vitepress dev docs",
+		"docs:build": "vitepress build docs",
+		"docs:preview": "vitepress preview docs"
 	},
 	"lint-staged": {
 		"README.md": "doctoc --github",
@@ -59,6 +63,12 @@
 		"publint": "^0.2.7",
 		"release-it": "^17.2.1",
 		"tsc-alias": "^1.8.8",
-		"typescript": "^5.4.5"
+		"typedoc": "^0.26.10",
+		"typedoc-plugin-markdown": "^4.2.9",
+		"typedoc-plugin-remark": "^1.0.3",
+		"typedoc-vitepress-theme": "^1.0.2",
+		"typescript": "^5.4.5",
+		"vitepress": "^1.4.2",
+		"vitepress-sidebar": "^1.28.0"
 	}
 }
