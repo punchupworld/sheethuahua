@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
-import { Column, Object, Spreadsheet, asString } from '../src';
-import { mockFetch } from './setup';
+import { Column, Object, Spreadsheet, asString } from '../../src';
+import { mockFetch } from '../setup';
 
 describe('.get', () => {
 	const tableName = 'Users';

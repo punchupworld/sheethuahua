@@ -1,5 +1,8 @@
 import { type TString, type TTransform } from '@sinclair/typebox';
 
+/**
+ * Column kind property name for schema identification
+ */
 export const ColumnKind = 'columnName';
 
 /**
@@ -15,6 +18,10 @@ export type TColumn<
  * Map with CSV Column with the corresponded transformer
  * @param name - Column name
  * @param transformer - Column transformer
+ * @example
+ * ```ts
+ * Column('name', asString());
+ * ```
  */
 export function Column<T extends TTransform<TString, any>>(
 	name: string,

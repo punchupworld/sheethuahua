@@ -7,10 +7,12 @@ import {
 } from '@sinclair/typebox';
 import { Value, type ValueError } from '@sinclair/typebox/value';
 import { csvParseRows } from 'd3-dsv';
-import { ColumnKind, type TColumn } from './column';
+import { ColumnKind, type TColumn } from '../schema/column';
 
 const ROW_INDEX_OFFSET = 1;
-
+/**
+ * Supported schema for CSV parsers
+ */
 export type TCsvSchema = TColumn | TObject | TTuple;
 
 /**
@@ -19,6 +21,10 @@ export type TCsvSchema = TColumn | TObject | TTuple;
  * @param schema - Output schema mapping of each row
  * @returns An array of given schema
  * @throws If fail to parse the table
+ * @example
+ * ```ts
+ * const output = parseCsv('ID,Name\n1,A\n2,B\n', schema);
+ * ```
  */
 export function parseCsv<T extends TCsvSchema>(
 	content: string,

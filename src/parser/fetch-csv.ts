@@ -8,6 +8,10 @@ import { parseCsv, type TCsvSchema } from './parse-csv';
  * @param fetchRequestInit - Options for fetch() request  {@link FetchRequestInit}
  * @returns An array of objects corresponded to the table definition
  * @throws If fail to fetch or parse the table
+ * @example
+ * ```ts
+ * const output = await fetchCsv('https://url-to/data.csv', schema);
+ * ```
  */
 export async function fetchCsv<T extends TCsvSchema>(
 	url: string,

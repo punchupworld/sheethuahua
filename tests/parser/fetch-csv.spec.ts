@@ -1,6 +1,6 @@
 import { expect, it } from 'bun:test';
-import { Column, asString, fetchCsv } from '../src';
-import { mockFetch } from './setup';
+import { Column, asString, fetchCsv } from '../../src';
+import { mockFetch } from '../setup';
 
 const csvUrl = '/somefile.csv';
 

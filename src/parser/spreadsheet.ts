@@ -3,7 +3,7 @@ import { fetchCsv } from './fetch-csv';
 import type { TCsvSchema } from './parse-csv';
 
 /**
- * Options for sheet getter
+ * Options for Sheets getter function
  */
 export interface SheetOptions {
 	/**
@@ -28,6 +28,10 @@ export interface SheetOptions {
  * @param sheetsId - Google Sheets ID can be found from the URL `docs.google.com/spreadsheets/d/{sheetsId}/`
  * @param globalOptions - {@link SheetOptions} which will be applied in every `.get` call
  * @returns A spreadsheet object
+ * @example
+ * ```ts
+ * const sheets = Spreadsheet('google-sheets-id');
+ * ```
  */
 export function Spreadsheet(
 	sheetsId: string,
@@ -41,6 +45,10 @@ export function Spreadsheet(
 		 * @param options - {@link SheetOptions}
 		 * @returns An array of objects corresponded to the table definition
 		 * @throws If fail to fetch or parse the table
+		 * @example
+		 * ```ts
+		 * const output = await sheets.get('SheetName', schema);
+		 * ```
 		 */
 		async get<T extends TCsvSchema>(
 			sheet: string,

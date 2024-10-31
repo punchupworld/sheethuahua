@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { Column, Object, Tuple, asNumber, asString, parseCsv } from '../src';
+import { Column, Object, Tuple, asNumber, asString, parseCsv } from '../../src';
 
 describe('Headers', () => {
 	const schema = Object({
