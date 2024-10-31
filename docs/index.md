@@ -10,7 +10,7 @@ hero:
   actions:
     - theme: brand
       text: Getting Started
-      link: /guide/getting-started
+      link: /guide/1-getting-started
     - theme: alt
       text: Learn more
       link: /introduction
@@ -34,10 +34,10 @@ npm i sheethuaha
 
 ### 2. Describe what you want
 
-```js
+```ts
 import { Column, Object, asNumber, asString } from 'sheethuahua';
 
-const outputSchema = Object({
+const schema = Object({
 	id: Column('ID', asNumber()),
 	name: Column('Name', asString()),
 	contact: Object({
@@ -49,7 +49,7 @@ const outputSchema = Object({
 
 ### 3. And confidently get it
 
-```js
+```ts
 import { parseCsv, fetchCsv, Spreadsheet } from 'sheethuahua';
 
 // const output: {
@@ -60,12 +60,12 @@ import { parseCsv, fetchCsv, Spreadsheet } from 'sheethuahua';
 //         phone: string;
 //     };
 // }[]
-const output = await parseCsv('some,csv,string', outputSchema);
+const output = parseCsv('some,csv,string', schema);
 
 // or from URL
-const output = await fetchCsv('https://url-to-csv', outputSchema);
+const output = await fetchCsv('https://url-to-csv', schema);
 
 // or from Google Sheets
 const sheets = Spreadsheet('google-sheets-id');
-const output = await sheets.get('Sheet1', outputSchema);
+const output = await sheets.get('Sheet1', schema);
 ```

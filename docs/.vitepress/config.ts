@@ -10,6 +10,7 @@ export default defineConfig({
 	head: [['link', { rel: 'icon', href: '/favicon.png' }]],
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
+		logo: '/favicon.png',
 		nav: [
 			{ text: 'Home', link: '/' },
 			{ text: 'Docs', link: '/introduction' },
@@ -34,5 +35,12 @@ export default defineConfig({
 		socialLinks: [
 			{ icon: 'github', link: 'https://github.com/punchupworld/sheethuahua' },
 		],
+		search: {
+			provider: 'local',
+		},
+		footer: {
+			message: 'Released under the MIT License.',
+			copyright: 'Copyright © 2024-present Punch Up',
+		},
 	},
 });
