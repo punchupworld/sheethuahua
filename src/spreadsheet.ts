@@ -5,7 +5,7 @@ import type { TCsvSchema } from './parse-csv';
 /**
  * Options for sheet getter
  */
-interface SheetOptions {
+export interface SheetOptions {
 	/**
 	 * Which part of the sheet to use.
 	 * @example
