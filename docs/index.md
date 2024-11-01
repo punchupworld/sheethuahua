@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: 'Sheethuahua'
-  text: Type-safe CSV and Sheets parser
+  text: Type-safe CSV and Google Sheets Parser
   tagline: Designed for TypeScript and JavaScript
   image: /sheethuahua.webp
   actions:

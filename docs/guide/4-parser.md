@@ -15,7 +15,7 @@ const schema = Object({
 
 ## parseCsv
 
-[`parseCsv()`](http://localhost:5173/references/functions/parseCsv.html) use CSV string as the data source.
+[`parseCsv()`](/references/functions/parseCsv.html) use CSV string as the data source.
 
 ```ts
 import { parseCsv } from 'sheethuahua';
@@ -31,7 +31,7 @@ const output = parseCsv(input, schema);
 
 ## fetchCsv
 
-[`fetchCsv()`](http://localhost:5173/references/functions/fetchCsv.html) use URL to the CSV file as the data source.
+[`fetchCsv()`](/references/functions/fetchCsv.html) use URL to the CSV file as the data source.
 
 ```ts
 import { fetchCsv } from 'sheethuahua';
@@ -45,7 +45,7 @@ const output = await fetchCsv('https://url-to/data.csv', schema);
 
 ## Spreadsheets
 
-[`Spreadsheets()`](http://localhost:5173/references/functions/Spreadsheets.html) use Google Sheets as a data source. Providing _Sheets ID_ and call `.get()` to parse the data from specific sheet's name and corresponded schema.
+[`Spreadsheets()`](/references/functions/Spreadsheet.html) use Google Sheets as a data source. Providing _Sheets ID_ and call `.get()` to parse the data from specific sheet's name and corresponded schema.
 
 ::: tip
 _Sheets ID_ can be found from the Google Sheets URL: `https://docs.google.com/spreadsheets/d/{sheetsId}/`
@@ -64,5 +64,7 @@ const output = await sheets.get('SheetName', schema);
 ```
 
 ::: warning
-Google Sheets has [a very low rate limit](https://developers.google.com/sheets/api/limits). It should be used with Static Site Generation (SSG), cache, or both.
-:::
+
+1. The sheets must be publicly accessible (At least anyone with the link can view).
+2. Google Sheets has [a very low rate limit](https://developers.google.com/sheets/api/limits). It should be used with Static Site Generation (SSG), cache, or both.
+   :::
