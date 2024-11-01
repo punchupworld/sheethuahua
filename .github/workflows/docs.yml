@@ -1,0 +1,42 @@
+name: Update Website
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'website'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: bun install
+      - name: Collect types
+        run: bun docs:collect
+      - name: Build VitePress
+        run: bun docs:build
+        env:
+          BASE_PATH: '/sheethuahua/'
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs/.vitepress/dist'
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
