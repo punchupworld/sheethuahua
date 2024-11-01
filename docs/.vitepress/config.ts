@@ -9,7 +9,10 @@ export default defineConfig({
 		'Type-safe CSV and Google Sheets parser for TypeScript and JavaScript',
 	base: process.env.BASE_PATH,
 	head: [
-		['link', { rel: 'icon', href: '/favicon.png' }],
+		[
+			'link',
+			{ rel: 'icon', href: `${process.env.BASE_PATH ?? '/'}favicon.png` },
+		],
 		[
 			'meta',
 			{
