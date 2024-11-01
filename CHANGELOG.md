@@ -1,5 +1,36 @@
 # Changelog
 
+## [3.0.0](https://github.com/Th1nkK1D/sheethuahua/compare/2.1.0...3.0.0) (2024-11-01)
+
+**Old API has been deprecated. Please check out the new API at the [new official documentation website](https://punchupworld.github.io/sheethuahua/).**
+
+### ⚠ BREAKING CHANGES
+
+- required name in column to support non object schema
+- shorten parser functions name to fetchCsv and parseCsv
+- move spreadsheet table name and schema definition to get function
+- replace table with typebox object and simplify column type
+
+### Features
+
+- bring oneOf back as a schema helper ([0aff565](https://github.com/Th1nkK1D/sheethuahua/commit/0aff565b9eb8ea6044c3a25271aca97a8b38225e))
+- move spreadsheet table name and schema definition to get function ([340f9e2](https://github.com/Th1nkK1D/sheethuahua/commit/340f9e21f3f05f61bcdb651dcafaddcfbbf71954))
+- replace table with typebox object and simplify column type ([78bdd52](https://github.com/Th1nkK1D/sheethuahua/commit/78bdd523e1dab5346b6d160f27cb0cae33654a6f))
+- required name in column to support non object schema ([471c7b3](https://github.com/Th1nkK1D/sheethuahua/commit/471c7b338f9f5b6baf2444b7a8face7b2269c553))
+- rewrite parsing logic using type transform ([ccbf73d](https://github.com/Th1nkK1D/sheethuahua/commit/ccbf73d31d8c2fcfe383f0764017186370e24712))
+- shorten parser functions name to fetchCsv and parseCsv ([5573121](https://github.com/Th1nkK1D/sheethuahua/commit/55731215420af3612c7bd44b3a57be128e9fec68))
+- support root column, tuple, or nested schema ([139aaa8](https://github.com/Th1nkK1D/sheethuahua/commit/139aaa829d321f9d003687cb4eb57152482a2cf3))
+
+### Bug Fixes
+
+- correct csv schema type and filter undefined from columns ([a5a23cc](https://github.com/Th1nkK1D/sheethuahua/commit/a5a23cc3b224e207292c0f615d0e81eb79452f92))
+- replace typebox with transformer optional variant for corrected typing ([ce1dcf7](https://github.com/Th1nkK1D/sheethuahua/commit/ce1dcf7eedf196cf0eaac9d75151ec918b0e3b18))
+
+### Performance Improvements
+
+- add column property map in parseCsv ([532b74e](https://github.com/Th1nkK1D/sheethuahua/commit/532b74e7d6afb86fee94b92ab50f17c271e2c6fa))
+- reorganize lib module to support treeshaking ([6134d0c](https://github.com/Th1nkK1D/sheethuahua/commit/6134d0c9fccb810d897893bab95b35afcbda2add))
+
 ## [2.1.0](https://github.com/Th1nkK1D/sheethuahua/compare/2.0.0...2.1.0) (2024-09-16)
 
 ### Features
