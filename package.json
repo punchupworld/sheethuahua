@@ -36,7 +36,6 @@
 		"docs:preview": "vitepress preview docs"
 	},
 	"lint-staged": {
-		"README.md": "doctoc --github",
 		"*.ts": "eslint --fix",
 		"*": "prettier --write --ignore-unknown"
 	},
@@ -53,7 +52,6 @@
 		"@typescript-eslint/eslint-plugin": "^7.9.0",
 		"@typescript-eslint/parser": "^7.9.0",
 		"bun-plugin-dts": "^0.2.3",
-		"doctoc": "^2.2.1",
 		"eslint": "^8.57.0",
 		"eslint-plugin-tsdoc": "^0.2.17",
 		"husky": "^9.0.11",

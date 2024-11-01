@@ -1,12 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-**Table of Contents** _generated with [DocToc](https://github.com/thlorenz/doctoc)_
-
-- [Sheethuahua](#sheethuahua)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Sheethuahua
 
 Type-safe CSV and Google Sheets Parser for TypeScript and JavaScript
