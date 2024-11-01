@@ -38,7 +38,7 @@ export function parseCsv<T extends TCsvSchema>(
 		const index = headerRow.indexOf(columnName);
 
 		if (index < 0) {
-			throw `Column "${columnName}" is not found`;
+			throw new Error(`Column "${columnName}" is not found`);
 		}
 
 		columnMatching.set(columnName, index);
