@@ -67,7 +67,7 @@ describe('Column', () => {
 		expect(res).toStrictEqual(['a']);
 	});
 
-	it.only('should throw if empty', () => {
+	it('should throw if empty', () => {
 		const schema = Column('value', asString());
 
 		expect(() => parseCsv('value\n\n', schema)).toThrow(
@@ -75,13 +75,21 @@ describe('Column', () => {
 		);
 	});
 
-	it('should not include object optional column key if empty', () => {
+	it('should throw if transformer schema is mismatched', () => {
+		const schema = Column('value', asNumber());
+
+		expect(() => parseCsv('value\na\n', schema)).toThrow(
+			'Expected number, received "a" (column "value", row 1)',
+		);
+	});
+
+	it('should not include object optional column key without a fallback if empty', () => {
 		const schema = Object({
-			a: Column('a', asNumber()),
+			a: Column('a', asNumber().optional(0)),
 			b: Column('b', asNumber().optional()),
 		});
 
-		const res = parseCsv('a,b\n1,1\n2,', schema);
-		expect(res).toStrictEqual([{ a: 1, b: 1 }, { a: 2 }]);
+		const res = parseCsv('a,b\n1,1\n,', schema);
+		expect(res).toStrictEqual([{ a: 1, b: 1 }, { a: 0 }]);
 	});
 });

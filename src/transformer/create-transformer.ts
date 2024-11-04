@@ -16,17 +16,15 @@ import { Value } from '@sinclair/typebox/value';
 export type TTransformer<T> = TTransform<TString, T> & {
 	/**
 	 * Get optional variant of this transformer
-	 * @returns Optional Transformer
+	 * @param fallback - fallback value when the input is empty
+	 * @returns TTransform, with optional kind if no fallback is given
 	 */
-	optional: () => TTransformerOptional<T>;
+	optional: <D extends T | undefined>(
+		fallback?: D,
+	) => [D] extends [T]
+		? TTransform<TString, T>
+		: TOptional<TTransform<TString, T | undefined>>;
 };
-
-/**
- * Transformer that can accept empty string and return `undefined`
- */
-export type TTransformerOptional<T> = TOptional<
-	TTransform<TString, T | undefined>
->;
 
 /**
  * Create custom transformer
@@ -79,17 +77,15 @@ export function createTransformer<S extends TSchema>(
 	}
 
 	return {
-		...Transform(String())
+		...Transform(String({ minLength: 1 }))
 			.Decode((value) => safeDecode(value))
 			.Encode(encode),
-		/**
-		 * Create optional variation of this transformer
-		 */
-		optional: () =>
-			Optional(
-				Transform(String())
-					.Decode((value) => (value.length ? safeDecode(value) : undefined))
-					.Encode(encode),
-			),
+		optional(fallback: unknown = undefined) {
+			const transform = Transform(String())
+				.Decode((value) => (value.length ? safeDecode(value) : fallback))
+				.Encode(encode);
+
+			return fallback === undefined ? Optional(transform) : transform;
+		},
 	};
 }

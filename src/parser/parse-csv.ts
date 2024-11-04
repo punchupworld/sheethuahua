@@ -1,11 +1,14 @@
 import {
-	OptionalKind,
 	TypeGuard,
 	type StaticDecode,
 	type TObject,
 	type TTuple,
 } from '@sinclair/typebox';
-import { Value, type ValueError } from '@sinclair/typebox/value';
+import {
+	TransformDecodeCheckError,
+	TransformDecodeError,
+	Value,
+} from '@sinclair/typebox/value';
 import { csvParseRows } from 'd3-dsv';
 import { ColumnKind, type TColumn } from '../schema/column';
 
@@ -49,20 +52,20 @@ export function parseCsv<T extends TCsvSchema>(
 			const trimmedValue =
 				cols[columnMatching.get(columnName) as number].trim();
 
-			if (!trimmedValue && !transform[OptionalKind]) {
-				throw new Error(
-					`Column "${columnName}" cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`,
-				);
-			}
-
-			if (trimmedValue) {
-				try {
-					return Value.Decode(transform, trimmedValue);
-				} catch (e) {
+			try {
+				return Value.Decode(transform, trimmedValue);
+			} catch (e) {
+				if (e instanceof TransformDecodeCheckError) {
 					throw new Error(
-						`${(e as ValueError).message} but received "${trimmedValue}" (column "${columnName}", row ${rowIndex + ROW_INDEX_OFFSET})`,
+						`Column "${columnName}" cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`,
 					);
 				}
+				if (e instanceof TransformDecodeError) {
+					throw new Error(
+						`${e.message}, received "${trimmedValue}" (column "${columnName}", row ${rowIndex + ROW_INDEX_OFFSET})`,
+					);
+				}
+				throw e;
 			}
 		}),
 	);

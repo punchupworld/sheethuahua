@@ -57,7 +57,7 @@ type Items = StaticDecode<typeof schema>;
 
 ## Optional Variant
 
-Transformer required value by default. If the column can be left empty you can call `.optional()` variant of the transformer. An empty cell will be parsed as `undefined` instead of throwing an error.
+Transformer required value by default and will throw when input is an empty string. If the column can be left empty you can call `.optional()` variant of the transformer. An empty cell will be parsed as `undefined` and omitted from `Object` instead of throwing an error.
 
 ```ts{3}
 const schema = Object({
@@ -68,6 +68,23 @@ const schema = Object({
 // type Person: {
 //     id: number;
 //     name?: string | undefined;
+// }
+type Person = StaticDecode<typeof schema>;
+```
+
+### Fallback
+
+You can provide fallback value to use when column is empty instead of `undefined`.
+
+```ts{3}
+const schema = Object({
+	id: Column('ID', asNumber()),
+	name: Column('Name', asString().optional('anonymous')),
+});
+
+// type Person: {
+//     id: number;
+//     name: string; (will be 'anonymous' when the value is empty)
 // }
 type Person = StaticDecode<typeof schema>;
 ```
