@@ -8,12 +8,12 @@
 		"TypeScript"
 	],
 	"license": "MIT",
-	"homepage": "https://github.com/Th1nkK1D/sheethuahua#readme",
+	"homepage": "https://punchupworld.github.io/sheethuahua/",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Th1nkK1D/sheethuahua.git"
+		"url": "git+https://github.com/punchupworld/sheethuahua.git"
 	},
-	"bugs": "https://github.com/Th1nkK1D/sheethuahua/issues",
+	"bugs": "https://github.com/punchupworld/sheethuahua/issues",
 	"author": "Th1nkK1D <witheep@gmail.com>",
 	"exports": {
 		".": "./dist/index.js"
