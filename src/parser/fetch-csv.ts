@@ -2,12 +2,12 @@ import { type StaticDecode } from '@sinclair/typebox';
 import { parseCsv, type TCsvSchema } from './parse-csv';
 
 /**
- * Fetch CSV from the URL and parse according to the given table
+ * Fetch CSV from the URL and parse according to the given schema
  * @param url - URL to the CSV file
  * @param schema - Output schema mapping of each row
  * @param fetchRequestInit - Options for fetch() request  {@link FetchRequestInit}
  * @returns An array of objects corresponded to the table definition
- * @throws If fail to fetch or parse the table
+ * @throws If fail to fetch or parse the schema
  * @example
  * ```ts
  * const output = await fetchCsv('https://url-to/data.csv', schema);

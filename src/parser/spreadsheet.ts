@@ -39,12 +39,12 @@ export function Spreadsheet(
 ) {
 	return {
 		/**
-		 * Fetch and parse the sheet from given table name.
+		 * Fetch and parse the sheet from given sheet name.
 		 * @param sheet - The sheet name
 		 * @param schema - Output schema mapping of each row
 		 * @param options - {@link SheetOptions}
-		 * @returns An array of objects corresponded to the table definition
-		 * @throws If fail to fetch or parse the table
+		 * @returns An array of objects corresponded to the sheet definition
+		 * @throws If fail to fetch or parse the sheet
 		 * @example
 		 * ```ts
 		 * const output = await sheets.get('SheetName', schema);

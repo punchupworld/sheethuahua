@@ -22,7 +22,7 @@ Sheethuahua provide following transformers:
 | [`asDate()`](/references/functions/asDate.html)       | `Date`                               | Date          |
 | [`asOneOf()`](/references/functions/asOneOf.html)     | Union type of given `Literal` values | Dropdown      |
 
-Built-in transformers accept _options_ for further decode's output validation.
+Built-in transformers accept _options_ for further decodes output validation.
 
 ```ts
 Column('Count', asNumber({ minimum: 0, maximum: 10 }));

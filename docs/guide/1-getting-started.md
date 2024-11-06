@@ -1,7 +1,6 @@
 # Getting Started
 
-Sheethuahua is available on [NPM](https://www.npmjs.com/package/sheethuahua) [![NPM Version](https://img.shields.io/npm/v/sheethuahua)](https://www.npmjs.com/package/sheethuahua)
-
+Sheethuahua is available on [NPM](https://www.npmjs.com/package/sheethuahua) ![NPM Version](https://img.shields.io/npm/v/sheethuahua)
 ::: code-group
 
 ```bash [npm]

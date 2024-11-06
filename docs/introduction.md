@@ -9,6 +9,6 @@ Using [TypeBox](https://github.com/sinclairzx81/typebox), [d3-dsv](https://d3js.
 
 ## Notes for Google Sheets
 
-Google Sheets has a great potential of being an API read-only database with a user friendly interface for content editor. But it has [a very low rate limit](https://developers.google.com/sheets/api/limits). **It should be used with Static Site Generation (SSG), cache, or both**.
+Google Sheets has a great potential of being an API read-only database with a user-friendly interface for content editor. But it has [a very low rate limit](https://developers.google.com/sheets/api/limits). **It should be used with Static Site Generation (SSG), cache, or both**.
 
 > WeVis's [Parliament Watch](https://parliamentwatch.wevis.info/) use Google Sheets as a database with SSG.

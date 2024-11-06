@@ -19,11 +19,11 @@ const ROW_INDEX_OFFSET = 1;
 export type TCsvSchema = TColumn | TObject | TTuple;
 
 /**
- * Parse the CSV string according to the given table
+ * Parse the CSV string according to the given schema
  * @param content - A string of CSV file content
  * @param schema - Output schema mapping of each row
  * @returns An array of given schema
- * @throws If fail to parse the table
+ * @throws If fail to parse the schema
  * @example
  * ```ts
  * const output = parseCsv('ID,Name\n1,A\n2,B\n', schema);

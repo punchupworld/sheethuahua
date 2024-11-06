@@ -12,7 +12,7 @@ hero:
       text: Getting Started
       link: /guide/1-getting-started
     - theme: alt
-      text: Learn more
+      text: Learn More
       link: /introduction
 
 features:
@@ -56,8 +56,8 @@ import { parseCsv, fetchCsv, Spreadsheet } from 'sheethuahua';
 //     id: number;
 //     name: string;
 //     contact: {
-//         email?: string | undefined;
-//         phone: string;
+//         email: string;
+//         phone?: string | undefined;
 //     };
 // }[]
 const output = parseCsv('some,csv,string', schema);

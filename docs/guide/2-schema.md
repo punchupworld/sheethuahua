@@ -96,7 +96,7 @@ const schema = Object({
 ```
 
 > [!NOTE]
-> Any column in CSV that is not referenced in the schema will be ignore.
+> Any column in CSV that is not referenced in the schema will be ignored.
 
 ## Infer Type
 
