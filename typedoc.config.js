@@ -5,7 +5,6 @@ const config = {
 	plugin: ['typedoc-plugin-markdown', 'typedoc-vitepress-theme'],
 	out: 'docs/references',
 	docsRoot: './docs',
-	gitRevision: 'main',
 	readme: 'none',
 	hideBreadcrumbs: true,
 	parametersFormat: 'table',
