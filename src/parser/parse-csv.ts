@@ -5,9 +5,9 @@ import {
 	type TTuple,
 } from '@sinclair/typebox';
 import {
+	Decode,
 	TransformDecodeCheckError,
 	TransformDecodeError,
-	Value,
 } from '@sinclair/typebox/value';
 import { csvParseRows } from 'd3-dsv';
 import { ColumnKind, type TColumn } from '../schema/column';
@@ -53,7 +53,7 @@ export function parseCsv<T extends TCsvSchema>(
 				cols[columnMatching.get(columnName) as number].trim();
 
 			try {
-				return Value.Decode(transform, trimmedValue);
+				return Decode(transform, trimmedValue);
 			} catch (e) {
 				if (e instanceof TransformDecodeCheckError) {
 					throw new Error(

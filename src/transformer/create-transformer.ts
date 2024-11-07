@@ -8,7 +8,7 @@ import {
 	type TString,
 	type TTransform,
 } from '@sinclair/typebox';
-import { Value } from '@sinclair/typebox/value';
+import { Assert } from '@sinclair/typebox/value';
 
 /**
  * Transformer type
@@ -71,7 +71,7 @@ export function createTransformer<S extends TSchema>(
 	function safeDecode(value: string) {
 		const output = decode(value);
 		if (validateSchema) {
-			Value.Assert(validateSchema, output);
+			Assert(validateSchema, output);
 		}
 		return output;
 	}

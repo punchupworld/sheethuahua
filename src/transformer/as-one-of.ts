@@ -4,7 +4,7 @@ import {
 	type SchemaOptions,
 	type TLiteralValue,
 } from '@sinclair/typebox';
-import { Value } from '@sinclair/typebox/value';
+import { Convert } from '@sinclair/typebox/value';
 import { createTransformer } from './create-transformer';
 
 export type { SchemaOptions, TLiteralValue };
@@ -27,7 +27,7 @@ export function asOneOf<T extends TLiteralValue[]>(
 		options,
 	);
 	return createTransformer(
-		(str) => Value.Convert(schema, str),
+		(str) => Convert(schema, str),
 		(val) => val.toString(),
 		schema,
 	);
