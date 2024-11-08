@@ -52,14 +52,16 @@ type Items = StaticDecode<typeof schema>;
 ```
 
 ::: tip
-[TypeBox's Type](https://github.com/sinclairzx81/typebox?tab=readme-ov-file#types) can be supplied to the [`createTransformer()`](/references/functions/createTransformer.html) 3rd argument to validate the decode output.
-:::
+
+- If encode function is not provided, a function returning an empty string will be used.
+- [TypeBox's Type](https://github.com/sinclairzx81/typebox?tab=readme-ov-file#types) can be supplied to the [`createTransformer()`](/references/functions/createTransformer.html) 3rd argument to validate the decode output and encode input.
+  :::
 
 ## Optional Variant
 
 Transformer required value by default and will throw when input is an empty string. If the column can be left empty you can call `.optional()` variant of the transformer. An empty cell will be parsed as `undefined` and omitted from `Object` instead of throwing an error.
 
-```ts{3}
+```ts{3,8}
 const schema = Object({
 	id: Column('ID', asNumber()),
 	name: Column('Name', asString().optional()),
@@ -74,9 +76,9 @@ type Person = StaticDecode<typeof schema>;
 
 ### Fallback
 
-You can provide fallback value to use when column is empty instead of `undefined`.
+You can provide a fallback value when column is empty instead of `undefined`
 
-```ts{3}
+```ts{3,8}
 const schema = Object({
 	id: Column('ID', asNumber()),
 	name: Column('Name', asString().optional('anonymous')),
@@ -84,7 +86,7 @@ const schema = Object({
 
 // type Person: {
 //     id: number;
-//     name: string; (will be 'anonymous' when the value is empty)
+//     name: string; (will be 'anonymous' when the cell is empty)
 // }
 type Person = StaticDecode<typeof schema>;
 ```

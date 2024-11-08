@@ -18,6 +18,10 @@ describe('default', () => {
 		const output = Encode(asString(), 'a');
 		expect(output).toBe('a');
 	});
+
+	it.each([null, undefined])('should throw if try to encode %p', (value) => {
+		expect(() => Encode(asString(), value)).toThrow('Expected string');
+	});
 });
 
 describe('optional', () => {
@@ -33,7 +37,17 @@ describe('optional', () => {
 	});
 
 	it('should decode correctly like non-optional', () => {
+		const output = Decode(asString().optional(), 'a');
+		expect(output).toBe('a');
+	});
+
+	it('should encode correctly like non-optional', () => {
 		const output = Encode(asString().optional(), 'a');
 		expect(output).toBe('a');
+	});
+
+	it('should encode undefined as an empty string', () => {
+		const output = Encode(asString().optional(), undefined);
+		expect(output).toBe('');
 	});
 });

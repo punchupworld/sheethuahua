@@ -29,6 +29,13 @@ describe('default', () => {
 		const output = Encode(asDate(), date);
 		expect(output).toBe(date.toISOString());
 	});
+
+	it.each([null, undefined, 'what'])(
+		'should throw if try to encode %p',
+		(value) => {
+			expect(() => Encode(asDate(), value)).toThrow('Expected Date');
+		},
+	);
 });
 
 describe('optional', () => {
@@ -46,5 +53,20 @@ describe('optional', () => {
 	it('should decode correctly like non-optional', () => {
 		const output = Decode(asDate().optional(), new Date().toISOString());
 		expect(output).toBeValidDate();
+	});
+
+	it('should encode correctly like non-optional', () => {
+		const date = new Date();
+		const output = Encode(asDate().optional(), date);
+		expect(output).toBe(date.toISOString());
+	});
+
+	it('should encode undefined as an empty string', () => {
+		const output = Encode(asDate().optional(), undefined);
+		expect(output).toBe('');
+	});
+
+	it('should throw if try to encode non-date value', () => {
+		expect(() => Encode(asDate(), 'what')).toThrow('Expected Date');
 	});
 });

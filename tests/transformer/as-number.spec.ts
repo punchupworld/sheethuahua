@@ -22,6 +22,13 @@ describe('default', () => {
 		const output = Encode(asNumber(), 2.5);
 		expect(output).toBe('2.5');
 	});
+
+	it.each([null, undefined, 'what'])(
+		'should throw if try to encode %p',
+		(value) => {
+			expect(() => Encode(asNumber(), value)).toThrow('Expected number');
+		},
+	);
 });
 
 describe('optional', () => {
@@ -39,5 +46,19 @@ describe('optional', () => {
 	it('should decode correctly like non-optional', () => {
 		const output = Decode(asNumber().optional(), '2.5');
 		expect(output).toBe(2.5);
+	});
+
+	it('should encode correctly like non-optional', () => {
+		const output = Encode(asNumber().optional(), 2.5);
+		expect(output).toBe('2.5');
+	});
+
+	it('should encode undefined as an empty string', () => {
+		const output = Encode(asNumber().optional(), undefined);
+		expect(output).toBe('');
+	});
+
+	it('should throw if try to encode non-number value', () => {
+		expect(() => Encode(asNumber(), 'what')).toThrow('Expected number');
 	});
 });

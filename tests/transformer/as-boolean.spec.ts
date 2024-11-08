@@ -30,6 +30,13 @@ describe('default', () => {
 		const output = Encode(asBoolean(), bool);
 		expect(output).toBe(str);
 	});
+
+	it.each([null, undefined, 'what'])(
+		'should throw if try to encode %p',
+		(value) => {
+			expect(() => Encode(asBoolean(), value)).toThrow('Expected boolean');
+		},
+	);
 });
 
 describe('optional', () => {
@@ -47,5 +54,19 @@ describe('optional', () => {
 	it('should decode correctly like non-optional', () => {
 		const output = Decode(asBoolean().optional(), 'False');
 		expect(output).toBeFalse();
+	});
+
+	it('should encode correctly like non-optional', () => {
+		const output = Encode(asBoolean().optional(), false);
+		expect(output).toBe('false');
+	});
+
+	it('should encode undefined as an empty string', () => {
+		const output = Encode(asBoolean().optional(), undefined);
+		expect(output).toBe('');
+	});
+
+	it('should throw if try to encode non-boolean value', () => {
+		expect(() => Encode(asBoolean(), 'what')).toThrow('Expected boolean');
 	});
 });

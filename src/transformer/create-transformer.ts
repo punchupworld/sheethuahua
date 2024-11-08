@@ -41,7 +41,7 @@ export type TTransformer<T> = TTransform<TString, T> & {
  */
 export function createTransformer<T>(
 	decode: (value: string) => T,
-	encode: (value: T) => string,
+	encode?: (value: T) => string,
 ): TTransformer<T>;
 /**
  * Create custom transformer
@@ -65,7 +65,7 @@ export function createTransformer<S extends TSchema, T = Static<S>>(
 ): TTransformer<T>;
 export function createTransformer<S extends TSchema>(
 	decode: (value: string) => unknown,
-	encode: (value: unknown) => string,
+	encode: (value: unknown) => string = () => '',
 	validateSchema?: S,
 ) {
 	function safeDecode(value: string) {
@@ -76,14 +76,21 @@ export function createTransformer<S extends TSchema>(
 		return output;
 	}
 
+	function safeEncode(value: unknown) {
+		if (validateSchema) {
+			Assert(validateSchema, value);
+		}
+		return encode(value);
+	}
+
 	return {
 		...Transform(String({ minLength: 1 }))
-			.Decode((value) => safeDecode(value))
-			.Encode(encode),
+			.Decode(safeDecode)
+			.Encode(safeEncode),
 		optional(fallback: unknown = undefined) {
 			const transform = Transform(String())
-				.Decode((value) => (value.length ? safeDecode(value) : fallback))
-				.Encode(encode);
+				.Decode((value) => (value?.length ? safeDecode(value) : fallback))
+				.Encode((value) => (value !== undefined ? safeEncode(value) : ''));
 
 			return fallback === undefined ? Optional(transform) : transform;
 		},

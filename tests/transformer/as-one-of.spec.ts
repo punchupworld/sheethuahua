@@ -32,6 +32,15 @@ describe('default', () => {
 			expect(output).toBe(out);
 		},
 	);
+
+	it.each([null, undefined, 'what'])(
+		'should throw if try to encode %p',
+		(value) => {
+			expect(() => Encode(asOneOf(values), value)).toThrow(
+				'Expected union value',
+			);
+		},
+	);
 });
 
 describe('optional', () => {
@@ -49,5 +58,21 @@ describe('optional', () => {
 	it('should decode correctly like non-optional', () => {
 		const output = Decode(asOneOf(values).optional(), '1');
 		expect(output).toBe(1);
+	});
+
+	it('should encode correctly like non-optional', () => {
+		const output = Encode(asOneOf(values).optional(), 1);
+		expect(output).toBe('1');
+	});
+
+	it('should encode undefined as an empty string', () => {
+		const output = Encode(asOneOf(values).optional(), undefined);
+		expect(output).toBe('');
+	});
+
+	it('should throw if try to encode non-member value', () => {
+		expect(() => Encode(asOneOf(values), 'what')).toThrow(
+			'Expected union value',
+		);
 	});
 });
