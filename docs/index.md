@@ -16,12 +16,15 @@ hero:
       link: /introduction
 
 features:
-  - title: Schema Validation
-    details: The CSV you want is what you want, no surprise.
-  - title: Type Inferred
-    details: Never forget what your parsed data look like.
-  - title: Custom Transformation
-    details: Got your own rules? Write a function and parse CSV as you needed.
+  - icon: 🔍
+    title: Validate and Infer Type
+    details: Define what you expect with a schema and never run into a surprise.
+  - icon: 🛠️
+    title: Custom Transformation
+    details: Got your own rules? Write a function to transform CSV value as needed.
+  - icon: 🔄
+    title: Convert Back and Forth
+    details: CSV to JS data and vice versa. Using a single defined schema.
 ---
 
 <br/>

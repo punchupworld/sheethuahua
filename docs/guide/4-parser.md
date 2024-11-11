@@ -1,6 +1,6 @@
 # Parser
 
-Parser validate and transform the input data from the given _data source_ and the _schema_. If validation has failed, the error will be thrown.
+Parser validate and decode the input CSV from the given _data source_ and the _schema_. If validation has failed, the error will be thrown.
 
 Let's use this schema as an example:
 
@@ -67,4 +67,5 @@ const output = await sheets.get('SheetName', schema);
 
 1. The sheets must be publicly accessible (At least anyone with the link can view).
 2. Google Sheets has [a very low rate limit](https://developers.google.com/sheets/api/limits). It should be used with Static Site Generation (SSG), cache, or both.
-   :::
+
+:::

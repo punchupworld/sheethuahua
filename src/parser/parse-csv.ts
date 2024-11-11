@@ -1,5 +1,4 @@
 import {
-	TypeGuard,
 	type StaticDecode,
 	type TObject,
 	type TTuple,
@@ -10,7 +9,8 @@ import {
 	TransformDecodeError,
 } from '@sinclair/typebox/value';
 import { csvParseRows } from 'd3-dsv';
-import { ColumnKind, type TColumn } from '../schema/column';
+import { type TColumn } from '../schema/column';
+import { collectColumnsInSchema } from '../utils/traverser';
 
 const ROW_INDEX_OFFSET = 1;
 /**
@@ -47,7 +47,7 @@ export function parseCsv<T extends TCsvSchema>(
 		columnMatching.set(columnName, index);
 	});
 
-	const parsedData = bodyRows.map((cols, rowIndex) =>
+	return bodyRows.map((cols, rowIndex) =>
 		collectColumnsInSchema(schema, ({ columnName, ...transform }) => {
 			const trimmedValue =
 				cols[columnMatching.get(columnName) as number].trim();
@@ -69,42 +69,4 @@ export function parseCsv<T extends TCsvSchema>(
 			}
 		}),
 	);
-
-	return parsedData;
-}
-
-function collectColumnsInSchema(
-	schema: unknown,
-	processColumn: (columnSchema: TColumn) => StaticDecode<TColumn> | undefined,
-): unknown {
-	if (checkColumnSchema(schema)) {
-		return processColumn(schema as TColumn);
-	}
-
-	if (TypeGuard.IsObject(schema)) {
-		return Object.entries(schema.properties).reduce<Record<string, unknown>>(
-			(obj, [key, value]) => {
-				const output = collectColumnsInSchema(value, processColumn);
-
-				if (output !== undefined) {
-					obj[key] = output;
-				}
-
-				return obj;
-			},
-			{},
-		);
-	}
-
-	if (TypeGuard.IsTuple(schema)) {
-		return (
-			schema.items?.map((value) =>
-				collectColumnsInSchema(value, processColumn),
-			) || []
-		);
-	}
-}
-
-function checkColumnSchema(value: unknown): boolean {
-	return typeof value === 'object' && value !== null && ColumnKind in value;
 }

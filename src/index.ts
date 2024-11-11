@@ -1,3 +1,5 @@
+export * from './formatter/format-to-csv';
+
 export * from './parser/fetch-csv';
 export * from './parser/parse-csv';
 export * from './parser/spreadsheet';

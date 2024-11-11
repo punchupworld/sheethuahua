@@ -1,9 +1,9 @@
 # Introduction
 
-CSV (or Google Sheets) is an easy to used data format. But it is quite unpredictable, and not that flexible. We aim to help you with **"Sheethuahua"**, a set of schema, transformer functions and type-safe parser. What you need to do is:
+CSV (or Google Sheets) is an easy to used data format. But it is quite unpredictable, and not that flexible. We aim to help you with **"Sheethuahua"**, a set of schemas, transformers, type-safe parsers and formatters. What you need to do is:
 
 1. Define the **output schema** and **how each column is mapped and transformed**
-2. Use the parser function to **get it, validate it, and parsed it**
+2. Use the parser or formatter function to **validate and transform it**
 
 Using [TypeBox](https://github.com/sinclairzx81/typebox), [d3-dsv](https://d3js.org/d3-dsv) and [Web Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) under the hood, Sheethuahua should be supported by every modern browsers and back-end runtime.
 

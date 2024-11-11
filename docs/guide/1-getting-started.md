@@ -1,6 +1,9 @@
 # Getting Started
 
-Sheethuahua is available on [NPM](https://www.npmjs.com/package/sheethuahua) ![NPM Version](https://img.shields.io/npm/v/sheethuahua)
+Sheethuahua is available on [NPM](https://www.npmjs.com/package/sheethuahua) package repository.
+
+![NPM Version](https://img.shields.io/npm/v/sheethuahua)
+
 ::: code-group
 
 ```bash [npm]
@@ -25,7 +28,7 @@ bun add sheethuahua
 
 :::
 
-The package contained _schemas_, _transformers_, and _parsers_ which can be imported as needed.
+The package provide functions _(schemas, transformers, parsers, and formatters)_ which can be imported as needed.
 
 ```ts
 import {
