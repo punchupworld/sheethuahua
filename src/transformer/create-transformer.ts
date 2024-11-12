@@ -1,8 +1,10 @@
 import {
+	Any,
 	Optional,
 	String,
 	Transform,
-	type Static,
+	type StaticDecode,
+	type TAny,
 	type TOptional,
 	type TSchema,
 	type TString,
@@ -13,7 +15,10 @@ import { Assert } from '@sinclair/typebox/value';
 /**
  * Transformer type
  */
-export type TTransformer<T> = TTransform<TString, T> & {
+export type TTransformer<T, S extends TSchema = TAny> = TTransform<
+	TString,
+	T
+> & {
 	/**
 	 * Get optional variant of this transformer
 	 * @param fallback - fallback value when the input is empty
@@ -24,6 +29,10 @@ export type TTransformer<T> = TTransform<TString, T> & {
 	) => [D] extends [T]
 		? TTransform<TString, T>
 		: TOptional<TTransform<TString, T | undefined>>;
+	/**
+	 * A schema for decode's output and encode's input validation
+	 */
+	validateSchema: S;
 };
 
 /**
@@ -58,28 +67,24 @@ export function createTransformer<T>(
  *   );
  * ```
  */
-export function createTransformer<S extends TSchema, T = Static<S>>(
+export function createTransformer<S extends TSchema, T = StaticDecode<S>>(
 	decode: (value: string) => unknown,
 	encode: (value: T) => string,
 	decodeSchema: S,
-): TTransformer<T>;
-export function createTransformer<S extends TSchema>(
+): TTransformer<T, S>;
+export function createTransformer(
 	decode: (value: string) => unknown,
 	encode: (value: unknown) => string = () => '',
-	validateSchema?: S,
+	validateSchema: TSchema = Any(),
 ) {
 	function safeDecode(value: string) {
 		const output = decode(value);
-		if (validateSchema) {
-			Assert(validateSchema, output);
-		}
+		Assert(validateSchema, output);
 		return output;
 	}
 
 	function safeEncode(value: unknown) {
-		if (validateSchema) {
-			Assert(validateSchema, value);
-		}
+		Assert(validateSchema, value);
 		return encode(value);
 	}
 
@@ -94,5 +99,6 @@ export function createTransformer<S extends TSchema>(
 
 			return fallback === undefined ? Optional(transform) : transform;
 		},
+		validateSchema,
 	};
 }

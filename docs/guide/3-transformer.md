@@ -14,13 +14,14 @@ Column('Count', asNumber());
 
 Sheethuahua provide following transformers:
 
-| Transformers                                          | Decode Output Type                   | Input Example |
-| ----------------------------------------------------- | ------------------------------------ | ------------- |
-| [`asString()`](/references/functions/asString.html)   | `string`                             | Text          |
-| [`asNumber()`](/references/functions/asNumber.html)   | `number`                             | Number        |
-| [`asBoolean()`](/references/functions/asBoolean.html) | `boolean`                            | Checkbox      |
-| [`asDate()`](/references/functions/asDate.html)       | `Date`                               | Date          |
-| [`asOneOf()`](/references/functions/asOneOf.html)     | Union type of given `Literal` values | Dropdown      |
+| Transformers                                                     | Decode Output Type                          | Input Example   |
+| ---------------------------------------------------------------- | ------------------------------------------- | --------------- |
+| [`asString()`](/references/functions/asString.html)              | `string`                                    | Text            |
+| [`asNumber()`](/references/functions/asNumber.html)              | `number`                                    | Number          |
+| [`asBoolean()`](/references/functions/asBoolean.html)            | `boolean`                                   | Checkbox        |
+| [`asDate()`](/references/functions/asDate.html)                  | `Date`                                      | Date            |
+| [`asOneOf(values)`](/references/functions/asOneOf.html)          | Union type of given `Literal` values        | Dropdown        |
+| [`asArray(itemTransformer)`](/references/functions/asArray.html) | An array of sub-transformer's decode output | Splittable text |
 
 Built-in transformers accept _options_ for further decodes output validation.
 

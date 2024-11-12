@@ -7,6 +7,7 @@ export * from './parser/spreadsheet';
 export * from './schema/column';
 export * from './schema/typebox';
 
+export * from './transformer/as-array';
 export * from './transformer/as-boolean';
 export * from './transformer/as-date';
 export * from './transformer/as-number';

@@ -2,7 +2,7 @@ import { Decode, Encode } from '@sinclair/typebox/value';
 import { describe, expect, it } from 'bun:test';
 import { asOneOf } from '../../src';
 
-const values = [1, 2, 'a', 'b'];
+const values = [1, 2, 'a', 'b'] as const;
 
 describe('default', () => {
 	it('should throw if empty', () => {

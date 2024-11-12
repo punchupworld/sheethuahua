@@ -19,7 +19,7 @@ export type { SchemaOptions, TLiteralValue };
  * ```
  */
 export function asOneOf<T extends TLiteralValue[]>(
-	values: [...T],
+	values: readonly [...T],
 	options?: SchemaOptions,
 ) {
 	const schema = Union(
@@ -28,7 +28,7 @@ export function asOneOf<T extends TLiteralValue[]>(
 	);
 	return createTransformer(
 		(str) => Convert(schema, str),
-		(val) => val.toString(),
+		(val: T[number]) => val.toString(),
 		schema,
 	);
 }
