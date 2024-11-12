@@ -40,6 +40,7 @@
 		"*": "prettier --write --ignore-unknown"
 	},
 	"dependencies": {
+		"@formkit/tempo": "^0.1.2",
 		"@sinclair/typebox": "^0.33.19",
 		"d3-dsv": "^3.0.1"
 	},

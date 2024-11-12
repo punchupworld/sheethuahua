@@ -20,11 +20,13 @@ describe('default', () => {
 	it.each(['13/11/1996', 'not date'])(
 		'should throw when decode %p',
 		(value) => {
-			expect(() => Decode(asDate(), value)).toThrow('Expected Date');
+			expect(() => Decode(asDate(), value)).toThrow(
+				'Non ISO 8601 compliant date',
+			);
 		},
 	);
 
-	it('should encode date as ISO string', () => {
+	it('should encode date as string', () => {
 		const date = new Date();
 		const output = Encode(asDate(), date);
 		expect(output).toBe(date.toISOString());
@@ -36,6 +38,52 @@ describe('default', () => {
 			expect(() => Encode(asDate(), value)).toThrow('Expected Date');
 		},
 	);
+
+	it('should use custom format if given', () => {
+		const input = '13/11/1996';
+		const tfm = asDate({
+			format: 'DD/MM/YYYY',
+		});
+
+		const date = Decode(tfm, input);
+		expect(date).toBeValidDate();
+		expect(date.getDate()).toBe(13);
+		expect(date.getMonth()).toBe(10);
+		expect(date.getFullYear()).toBe(1996);
+
+		const string = Encode(tfm, date);
+		expect(string).toBe(input);
+	});
+
+	it('should use UTC timezone by default', () => {
+		const input = '1996-11-13T00:00';
+		const tfm = asDate();
+
+		const date = Decode(tfm, input);
+		expect(date).toBeValidDate();
+		expect(date.getMonth()).toBe(10);
+		expect(date.getDate()).toBe(13);
+		expect(date.getHours()).toBe(0);
+
+		const string = Encode(tfm, date);
+		expect(string).toStartWith(input);
+	});
+
+	it('should use custom timezone if given', () => {
+		const input = '1996-11-13T00:00';
+		const tfm = asDate({
+			timezone: 'Asia/Bangkok',
+		});
+
+		const date = Decode(tfm, input);
+		expect(date).toBeValidDate();
+		expect(date.getMonth()).toBe(10);
+		expect(date.getDate()).toBe(12);
+		expect(date.getHours()).toBe(17);
+
+		const string = Encode(tfm, date);
+		expect(string).toStartWith(input);
+	});
 });
 
 describe('optional', () => {
