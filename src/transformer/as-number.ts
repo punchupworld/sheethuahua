@@ -4,7 +4,7 @@ import { createTransformer } from './create-transformer';
 export type { NumberOptions };
 
 /**
- * Create number transformer
+ * Create a number transformer
  * @param options - Validation options (see {@link NumberOptions})
  * @example
  * ```ts

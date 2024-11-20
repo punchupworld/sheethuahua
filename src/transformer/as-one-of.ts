@@ -10,8 +10,8 @@ import { createTransformer } from './create-transformer';
 export type { SchemaOptions, TLiteralValue };
 
 /**
- * Create oneOf transformer. Value must be parsable as one in the list.
- * @param values - An array of possible values
+ * Create an oneOf transformer. Value must be parsable as one of the given values.
+ * @param values - An array of expected values
  * @param options - Validation options (see {@link NumberOptions})
  * @example
  * ```ts

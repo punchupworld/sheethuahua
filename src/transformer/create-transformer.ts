@@ -41,11 +41,12 @@ export type TTransformer<T, S extends TSchema = TAny> = TTransform<
  * @param encode - A function to format value back to string
  * @example
  * ```ts
- * const asStringList = (sep: string) =>
- *   createTransformer(
- *     (str) => str.split(sep),
- *     (items) => items.join(sep),
- *   );
+ * const asMarkdownList = createTransformer(
+ * 	(str) => str
+ * 		.split('\n')
+ * 		.map((line) => line.replace('- ', '').trim())
+ * 		.filter((item) => item.length > 0),
+ * );
  * ```
  */
 export function createTransformer<T>(
@@ -53,18 +54,19 @@ export function createTransformer<T>(
 	encode?: (value: T) => string,
 ): TTransformer<T>;
 /**
- * Create custom transformer
+ * Create a custom transformer
  * @param decode - A function to parse string from CSV cell
  * @param encode - A function to format value back to string
  * @param decodeSchema - A schema to validate decoded value
  * @example
  * ```ts
- * const asStringList = (sep: string) =>
- *   createTransformer(
- *     (str) => str.split(sep),
- *     (items) => items.join(sep),
- *     Array(String())
- *   );
+ * const asMarkdownList = createTransformer(
+ * 	(str) => str
+ * 		.split('\n')
+ * 		.map((line) => line.replace('- ', '').trim())
+ * 		.filter((item) => item.length > 0),
+ * 	(items) => items.map(item => `- ${item}`).join('\n')
+ * );
  * ```
  */
 export function createTransformer<S extends TSchema, T = StaticDecode<S>>(

@@ -4,7 +4,7 @@ import { createTransformer } from './create-transformer';
 export type { StringOptions };
 
 /**
- * Create string transformer
+ * Create a string transformer
  * @param options - Validation options (see {@link StringOptions})
  * @example
  * ```ts

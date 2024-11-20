@@ -4,13 +4,14 @@ import { createTransformer, type TTransformer } from './create-transformer';
 
 export { type ArrayOptions };
 /**
- * Create array transformer.
+ * Create an array transformer. Split string with separator and apply itemTransformer to each item.
  * @param itemTransformer - Transformer for each item
  * @param separator - A string that separate each item
  * @param options - Validation options (see {@link ArrayOptions})
  * @example
  * ```ts
- * Column('categories', asArray(asString(), ' '));
+ * // Example: "food, transport, rent" -> ['food', 'transport', 'rent']
+ * Column('categories', asArray(asString()));
  * ```
  */
 export function asArray<T, S extends TSchema>(

@@ -28,13 +28,15 @@ export interface TempoOptions {
 }
 
 /**
- * Create date transformer.
+ * Create a date transformer.
  * Using {@link https://tempo.formkit.com | Tempo} to parse and format date string.
  * @param options - {@link TempoOptions} for parsing/formatting and {@link DateOptions} for validation
  * @remarks Without format option, asDate expects {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format | ISO 8601 format}
  * @example
  * ```ts
+ * // Default expect ISO 8601 format
  * Column('createdAt', asDate());
+ * // With custom format and timezone
  * Column('createdAt', asDate({
  *   format: 'DD/MM/YYYY',
  *   timezone: 'Asia/Bangkok'

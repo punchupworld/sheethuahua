@@ -5,7 +5,7 @@ layout: home
 hero:
   name: 'Sheethuahua'
   text: Type-safe CSV and Google Sheets Parser
-  tagline: Designed for TypeScript and JavaScript
+  tagline: For TypeScript and JavaScript
   image: /sheethuahua.webp
   actions:
     - theme: brand
@@ -24,7 +24,7 @@ features:
     details: Got your own rules? Write a function to transform CSV value as needed.
   - icon: 🔄
     title: Convert Back and Forth
-    details: CSV to JS data and vice versa. Using a single defined schema.
+    details: CSV to JavaScript data and vice versa, using the same schema.
 ---
 
 <br/>
@@ -35,7 +35,7 @@ features:
 npm i sheethuaha
 ```
 
-### 2. Describe what you want
+### 2. Map CSV and JS data structure
 
 ```ts
 import { Column, Object, asNumber, asString } from 'sheethuahua';
@@ -50,7 +50,7 @@ const schema = Object({
 });
 ```
 
-### 3. And confidently get it
+### 3. And confidently parse it
 
 ```ts
 import { parseCsv, fetchCsv, Spreadsheet } from 'sheethuahua';
@@ -71,4 +71,12 @@ const output = await fetchCsv('https://url-to-csv', schema);
 // or from Google Sheets
 const sheets = Spreadsheet('google-sheets-id');
 const output = await sheets.get('Sheet1', schema);
+```
+
+### 4. In case you need to format the data back
+
+```ts
+import { formatToCsv } from 'sheethuahua';
+
+const csvString = formatToCsv(output, schema);
 ```

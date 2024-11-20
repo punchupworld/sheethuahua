@@ -1,8 +1,8 @@
 # Schema
 
-Schema defined how each row from CSV/Sheet will be transformed into.
+Schemas define how each row from CSV/Sheet will be transformed into.
 
-Let's assume this table is the input data:
+Let's assume this table is the input CSV data:
 
 | ID  | Name |
 | --- | ---- |
@@ -11,7 +11,7 @@ Let's assume this table is the input data:
 
 ## Column
 
-[`Column()`](/references/functions/Column.html) map value from the column in CSV/Sheet.
+[`Column()`](/references/functions/Column.html) map value from the column in the CSV/Sheets.
 
 If we describe schema as:
 
@@ -21,7 +21,7 @@ import { Column, asString } from 'sheethuahua';
 const schema = Column('Name', asString());
 ```
 
-> "In each row, I want a value from column 'Name' and parse is as a string."
+> In each row, I want a value from column _"Name"_ and parse is as a string.
 
 Then we expect output to be like:
 
