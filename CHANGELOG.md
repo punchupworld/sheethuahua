@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.1.0](https://github.com/punchupworld/sheethuahua/compare/3.0.0...3.1.0) (2024-11-20)
+
+### Features
+
+- add asArray and include validate schema in transformer ([dcee5c5](https://github.com/punchupworld/sheethuahua/commit/dcee5c5bd89dccb55f1fac37135636af1ef90e76))
+- add formatToCsv formatter ([0f9cfc2](https://github.com/punchupworld/sheethuahua/commit/0f9cfc2af2918b8ac09e3728bcb49fdfc7552b07))
+- asDate support custom format and timezone using tempo ([5e1ba2a](https://github.com/punchupworld/sheethuahua/commit/5e1ba2a2a08a562cd0736d4faedbf514125bcb12))
+- optional transformer can accept fallback value ([b5b8e7c](https://github.com/punchupworld/sheethuahua/commit/b5b8e7ce4cfc633cd7d113c519825c509e61624e))
+- validate transformer encode input and make optional ([fc5bdd2](https://github.com/punchupworld/sheethuahua/commit/fc5bdd2153fa950784605719f5ccad6f3ccd15b2))
+
+### Performance Improvements
+
+- upgrade typebox and use tree-shakable function from value module ([00eb7c5](https://github.com/punchupworld/sheethuahua/commit/00eb7c52063b0f5cd837864bd8c27054e4b37f61))
+
 ## [3.0.0](https://github.com/Th1nkK1D/sheethuahua/compare/2.1.0...3.0.0) (2024-11-01)
 
 **Old API has been deprecated. Please check out the new API at the [new official documentation website](https://punchupworld.github.io/sheethuahua/).**
