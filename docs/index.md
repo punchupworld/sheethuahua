@@ -32,7 +32,7 @@ features:
 ### 1. Adopt our little doggo
 
 ```bash
-npm i sheethuaha
+npm i sheethuahua
 ```
 
 ### 2. Map CSV and JS data structure
