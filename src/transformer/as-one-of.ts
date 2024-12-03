@@ -15,7 +15,7 @@ export type { SchemaOptions, TLiteralValue };
  * @param options - Validation options (see {@link NumberOptions})
  * @example
  * ```ts
- * Column('createdAt', asOneOf(['Todo', 'Doing', 'Done']));
+ * Column('status', asOneOf(['Todo', 'Doing', 'Done']));
  * ```
  */
 export function asOneOf<T extends TLiteralValue[]>(
