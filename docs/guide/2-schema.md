@@ -4,10 +4,10 @@ Schemas define how each row from CSV/Sheet will be transformed into.
 
 Let's assume this table is the input CSV data:
 
-| ID  | Name |
-| --- | ---- |
-| 1   | A    |
-| 2   | B    |
+| ID  | Name    |
+| --- | ------- |
+| 1   | Samoyed |
+| 2   | Shiba   |
 
 ## Column
 
@@ -23,10 +23,10 @@ const schema = Column('Name', asString());
 
 > In each row, I want a value from column _"Name"_ and parse is as a string.
 
-Then we expect output to be like:
+Then the output will be:
 
 ```ts
-['A', 'B'];
+['Samoyed', 'Shiba'];
 ```
 
 ## Object
@@ -44,12 +44,12 @@ const schema = Object({
 });
 ```
 
-Then we expect output to be like:
+Then the output will be:
 
 ```ts
 [
-	{ id: 1, name: 'A' },
-	{ id: 2, name: 'B' },
+	{ id: 1, name: 'Samoyed' },
+	{ id: 2, name: 'Shiba' },
 ];
 ```
 
@@ -68,12 +68,12 @@ const schema = Tuple([
 ])
 ```
 
-Then we expect output to be like:
+Then the output will be:
 
 ```ts
 [
-	[1, 'A'],
-	[2, 'B'],
+	[1, 'Samoyed'],
+	[2, 'Shiba'],
 ];
 ```
 

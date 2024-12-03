@@ -10,13 +10,22 @@ Using [TypeBox](https://github.com/sinclairzx81/typebox), [d3-dsv](https://d3js.
 
 [📖 View full documentation](https://punchupworld.github.io/sheethuahua/)
 
-**1. Adopt our little doggo**
+<!-- #region doc-index -->
+
+## Quick Start 🪄
+
+### 1. Adopt our little doggo
 
 ```bash
 npm i sheethuahua
 ```
 
-**2. Map CSV and JS data structure**
+### 2. Define the schema
+
+| ID  | Name    | Email Address  | Phone Number |
+| --- | ------- | -------------- | ------------ |
+| 1   | Samoyed | samo123@doggo  | 0800000000   |
+| 2   | Shiba   | shibainu@doggo |              |
 
 ```ts
 import { Column, Object, asNumber, asString } from 'sheethuahua';
@@ -31,7 +40,7 @@ const schema = Object({
 });
 ```
 
-**3. And confidently parse it**
+### 3. Parse the data
 
 ```ts
 import { parseCsv, fetchCsv, Spreadsheet } from 'sheethuahua';
@@ -40,26 +49,50 @@ import { parseCsv, fetchCsv, Spreadsheet } from 'sheethuahua';
 //     id: number;
 //     name: string;
 //     contact: {
-//         email?: string | undefined;
-//         phone: string;
+//         email: string;
+//         phone?: string | undefined;
 //     };
 // }[]
 const output = parseCsv('some,csv,string', schema);
-
 // or from URL
 const output = await fetchCsv('https://url-to-csv', schema);
-
 // or from Google Sheets
-const sheets = Spreadsheet('google-sheets-id');
-const output = await sheets.get('Sheet1', schema);
+const output = await Spreadsheet('google-sheets-id').get('Sheet1', schema);
+
+console.log(output);
 ```
 
-**4. In case you need to format the data back**
+```json
+[
+	{
+		"id": 1,
+		"name": "Samoyed",
+		"contact": { "email": "samo123@doggo", "phone": "0800000000" }
+	},
+	{
+		"id": 2,
+		"name": "Shiba",
+		"contact": { "email": "shibainu@doggo" }
+	}
+]
+```
+
+### 4. Format back to CSV if you need
 
 ```ts
 import { formatToCsv } from 'sheethuahua';
 
 const csvString = formatToCsv(output, schema);
+
+console.log(csvString);
 ```
+
+```csv
+ID,Name,Email Address,Phone Number
+1,Samoyed,samo123@doggo,0800000000
+2,Shiba,shibainu@doggo,
+```
+
+<!-- #endregion doc-index -->
 
 Released under the MIT License - Copyright © 2024-present Punch Up

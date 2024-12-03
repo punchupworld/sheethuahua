@@ -10,7 +10,7 @@ Parsing CSV to JavaScript data is many-to-one relationship: both 0 and 'false' w
 
 [`formatToCsv()`](/references/functions/formatToCsv.html) format the array of data back to be the CSV string using encoder defined in the given schema.
 
-```ts
+```ts{13}
 import { formatToCsv } from 'sheethuahua';
 
 const schema = Object({
@@ -19,17 +19,17 @@ const schema = Object({
 });
 
 const data = [
-	{ id: 1, name: 'a' },
-	{ id: 2, name: 'b' },
+	{ id: 1, name: 'Samoyed' },
+	{ id: 2, name: 'Shiba' },
 ];
 
 const output = formatToCsv(data, schema);
 ```
 
-The output variable value will be:
+The output value will be:
 
-```
+```csv
 ID,Name
-1,a
-2,b
+1,Samoyed
+2,Shiba
 ```

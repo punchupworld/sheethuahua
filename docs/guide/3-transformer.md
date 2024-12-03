@@ -56,7 +56,7 @@ type Items = StaticDecode<typeof schema>;
 
 ::: tip
 
-- Encode function is optional. If it isn't provided, a function returning an empty string will be used. (When you don't plan to use the formatter)
+- Encode function is optional. If it isn't provided, a function returning an empty string will be used. (When you don't plan to use the [formatter](5-formatter))
 - [TypeBox's Type](https://github.com/sinclairzx81/typebox?tab=readme-ov-file#types) can be supplied to the [`createTransformer()`](/references/functions/createTransformer.html) 3rd argument to validate the decode output and encode input.
   :::
 

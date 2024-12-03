@@ -28,7 +28,7 @@ bun add sheethuahua
 
 :::
 
-The package provide functions _(schemas, transformers, parsers, and formatters)_ which can be imported as needed.
+The package provide functions _(schemas, transformers, parsers, and formatters)_ that can be imported as needed.
 
 ```ts
 import {
