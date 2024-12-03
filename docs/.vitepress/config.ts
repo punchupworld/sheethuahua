@@ -21,6 +21,14 @@ export default defineConfig({
 			},
 		],
 		['meta', { property: 'twitter:card', content: 'summary_large_image' }],
+		[
+			'script',
+			{
+				defer: 'true',
+				'data-domain': 'punchupworld.github.io/sheethuahua',
+				src: 'https://analytics.punchup.world/js/script.js',
+			},
+		],
 	],
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
