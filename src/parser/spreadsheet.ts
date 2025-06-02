@@ -16,8 +16,9 @@ export interface SheetOptions {
 	 */
 	range?: string;
 	/**
-	 * How many rows are header rows. If not specified, Google Sheets will guess from the header and body type.
-	 * @remarks If all your columns are string data, the spreadsheet might have difficulty determining which rows are header rows without this parameter.
+	 * How many rows are header rows.
+	 * @defaultValue 1
+	 * @remarks If has more than one row, the column name will be a combination of those rows.
 	 * @see {@link https://developers.google.com/chart/interactive/docs/spreadsheets#queryurlformat}
 	 */
 	headers?: number;
@@ -56,6 +57,7 @@ export function Spreadsheet(
 			options: SheetOptions = {},
 		): Promise<StaticDecode<T>[]> {
 			const { range, headers, ...fetcherOptions } = {
+				headers: 1,
 				...globalOptions,
 				...options,
 			};

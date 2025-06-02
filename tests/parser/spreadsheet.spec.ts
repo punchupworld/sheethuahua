@@ -29,12 +29,25 @@ describe('.get', () => {
 			mockFetch.mock.lastCall?.[0].split('?')[1],
 		);
 
-		expect(queryParams.length).toBe(2);
 		expect(queryParams.get('sheet')).toBe(tableName);
 		expect(queryParams.get('tqx')).toBe('out:csv');
 	});
 
-	it('should include range and headers in fetch query if specified', async () => {
+	it('should add headers with value 1 by default', async () => {
+		const sheets = Spreadsheet(sheetsId);
+
+		mockFetch.mockResolvedValue(new Response('value\na'));
+
+		await sheets.get(tableName, Column('value', asString()));
+
+		const queryParams = new URLSearchParams(
+			mockFetch.mock.lastCall?.[0].split('?')[1],
+		);
+
+		expect(queryParams.get('headers')).toBe('1');
+	});
+
+	it('should include range and overwrite headers in fetch query if specified', async () => {
 		const range = 'A1:ZZZ999';
 		const headers = 2;
 
