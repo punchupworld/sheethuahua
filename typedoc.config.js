@@ -1,4 +1,3 @@
-/* eslint-disable tsdoc/syntax */
 /** @type {import('typedoc').TypeDocOptions & import('typedoc-plugin-markdown').PluginOptions} */
 const config = {
 	entryPoints: ['./src/index.ts'],
