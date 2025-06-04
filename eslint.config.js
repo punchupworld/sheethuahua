@@ -9,9 +9,10 @@ export default defineConfig([
 			js,
 			ts,
 		},
-		extends: ['js/recommended', 'ts/recommended'],
+		extends: ['js/recommended', 'ts/strict'],
 		rules: {
 			'@typescript-eslint/no-explicit-any': 'off',
+			'@typescript-eslint/no-import-type-side-effects': 'warn',
 		},
 	},
 ]);

@@ -1,15 +1,11 @@
-import {
-	type StaticDecode,
-	type TObject,
-	type TTuple,
-} from '@sinclair/typebox';
+import type { StaticDecode, TObject, TTuple } from '@sinclair/typebox';
 import {
 	Decode,
 	TransformDecodeCheckError,
 	TransformDecodeError,
 } from '@sinclair/typebox/value';
 import { csvParseRows } from 'd3-dsv';
-import { type TColumn } from '../schema/column';
+import type { TColumn } from '../schema/column';
 import { collectColumnsInSchema } from '../utils/traverser';
 
 const ROW_INDEX_OFFSET = 1;

@@ -1,4 +1,4 @@
-import { type StaticDecode } from '@sinclair/typebox';
+import type { StaticDecode } from '@sinclair/typebox';
 import { parseCsv, type TCsvSchema } from './parse-csv';
 
 /**

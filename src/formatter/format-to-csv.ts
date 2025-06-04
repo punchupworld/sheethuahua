@@ -1,4 +1,4 @@
-import { type StaticDecode, type TSchema } from '@sinclair/typebox';
+import type { StaticDecode, TSchema } from '@sinclair/typebox';
 import { Encode, TransformEncodeError } from '@sinclair/typebox/value';
 import { csvFormatRows } from 'd3-dsv';
 import type { TCsvSchema } from '../parser/parse-csv';

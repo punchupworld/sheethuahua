@@ -1,4 +1,4 @@
-import { type TString, type TTransform } from '@sinclair/typebox';
+import type { TString, TTransform } from '@sinclair/typebox';
 
 /**
  * Column kind property name for schema identification
