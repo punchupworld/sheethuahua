@@ -22,6 +22,11 @@ export interface SheetOptions {
 	 * @see {@link https://developers.google.com/chart/interactive/docs/spreadsheets#queryurlformat}
 	 */
 	headers?: number;
+	/**
+	 * Fetch requests configuration
+	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/RequestInit}
+	 */
+	fetchRequestInit?: FetchRequestInit;
 }
 
 /**
@@ -56,7 +61,7 @@ export function Spreadsheet(
 			schema: T,
 			options: SheetOptions = {},
 		): Promise<StaticDecode<T>[]> {
-			const { range, headers, ...fetcherOptions } = {
+			const { range, headers, fetchRequestInit } = {
 				headers: 1,
 				...globalOptions,
 				...options,
@@ -74,7 +79,7 @@ export function Spreadsheet(
 				const res = await fetchCsv(
 					`https://docs.google.com/spreadsheets/d/${sheetsId}/gviz/tq?${queryParams.toString()}`,
 					schema,
-					fetcherOptions,
+					fetchRequestInit,
 				);
 
 				return res;
