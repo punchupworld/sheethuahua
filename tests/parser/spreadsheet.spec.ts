@@ -1,11 +1,10 @@
-import { describe, expect, it } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { Column, Object, Spreadsheet, asString } from '../../src';
-import { mockFetch } from '../setup';
+import { mockConsoleDebug, mockFetch } from '../setup';
 
+const tableName = 'Users';
+const sheetsId = 'some-sheets-id';
 describe('.get', () => {
-	const tableName = 'Users';
-	const sheetsId = 'some-sheets-id';
-
 	it('should fetch with given sheetsId', async () => {
 		const sheets = Spreadsheet(sheetsId);
 
@@ -89,5 +88,26 @@ describe('.get', () => {
 		expect(queryParams.length).toBe(4);
 		expect(queryParams.get('sheet')).toBe(tableName);
 		expect(queryParams.get('tqx')).toBe('out:csv');
+	});
+});
+
+describe('Options', () => {
+	const sheets = Spreadsheet(sheetsId);
+	const schema = Column('value', asString());
+
+	beforeEach(() => {
+		mockFetch.mockResolvedValue(new Response('value\na'));
+	});
+
+	it('should not call console.debug when debug is not enabled', async () => {
+		await sheets.get(tableName, schema);
+
+		expect(mockConsoleDebug).toHaveBeenCalledTimes(0);
+	});
+
+	it('should call console.debug when debug is enabled', async () => {
+		await sheets.get(tableName, schema, { debug: true });
+
+		expect(mockConsoleDebug).not.toHaveBeenCalledTimes(0);
 	});
 });

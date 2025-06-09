@@ -27,6 +27,11 @@ export interface SheetOptions {
 	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/RequestInit}
 	 */
 	fetchRequestInit?: FetchRequestInit;
+	/**
+	 * Enable debugging logs
+	 * @defaultValue false
+	 */
+	debug?: boolean;
 }
 
 /**
@@ -61,7 +66,7 @@ export function Spreadsheet(
 			schema: T,
 			options: SheetOptions = {},
 		): Promise<StaticDecode<T>[]> {
-			const { range, headers, fetchRequestInit } = {
+			const { range, headers, ...fetchOptions } = {
 				headers: 1,
 				...globalOptions,
 				...options,
@@ -75,14 +80,14 @@ export function Spreadsheet(
 			if (range !== undefined) queryParams.append('range', range);
 			if (headers !== undefined) queryParams.append('headers', `${headers}`);
 
-			try {
-				const res = await fetchCsv(
-					`https://docs.google.com/spreadsheets/d/${sheetsId}/gviz/tq?${queryParams.toString()}`,
-					schema,
-					fetchRequestInit,
-				);
+			const url = `https://docs.google.com/spreadsheets/d/${sheetsId}/gviz/tq?${queryParams.toString()}`;
 
-				return res;
+			if (options.debug) {
+				console.debug(`[DEBUG] Fetching from ${url}`);
+			}
+
+			try {
+				return fetchCsv(url, schema, fetchOptions);
 			} catch (e) {
 				throw Error(
 					`Could not get sheet "${sheet}" -> ${e instanceof Error ? e.message : ''}`.trim(),

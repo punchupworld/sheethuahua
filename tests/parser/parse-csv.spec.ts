@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import { Column, Object, Tuple, asNumber, asString, parseCsv } from '../../src';
+import { mockConsoleDebug } from '../setup';
 
 describe('Headers', () => {
 	const schema = Object({
@@ -91,5 +92,22 @@ describe('Column', () => {
 
 		const res = parseCsv('a,b\n1,1\n,', schema);
 		expect(res).toStrictEqual([{ a: 1, b: 1 }, { a: 0 }]);
+	});
+});
+
+describe('Options', () => {
+	const schema = Column('value', asString());
+	const content = 'value\na ';
+
+	it('should not call console.debug when debug is not enabled', () => {
+		parseCsv(content, schema);
+
+		expect(mockConsoleDebug).toHaveBeenCalledTimes(0);
+	});
+
+	it('should call console.debug when debug is enabled', () => {
+		parseCsv(content, schema, { debug: true });
+
+		expect(mockConsoleDebug).not.toHaveBeenCalledTimes(0);
 	});
 });

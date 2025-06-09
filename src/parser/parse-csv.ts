@@ -15,6 +15,17 @@ const ROW_INDEX_OFFSET = 1;
 export type TCsvSchema = TColumn | TObject | TTuple;
 
 /**
+ * Options for parseCsv function
+ */
+interface ParseOptions {
+	/**
+	 * Enable debugging logs
+	 * @defaultValue false
+	 */
+	debug?: boolean;
+}
+
+/**
  * Parse the CSV string according to the given schema
  * @param content - A string of CSV file content
  * @param schema - Output schema mapping of each row
@@ -28,8 +39,18 @@ export type TCsvSchema = TColumn | TObject | TTuple;
 export function parseCsv<T extends TCsvSchema>(
 	content: string,
 	schema: T,
+	options?: ParseOptions,
 ): StaticDecode<T>[] {
 	const [headerRow, ...bodyRows] = csvParseRows(content);
+
+	if (options?.debug) {
+		console.debug(
+			`[DEBUG] Found ${bodyRows.length + 1} rows (1 header + ${bodyRows.length} body)`,
+		);
+		console.debug(
+			`[DEBUG] Headers: ${headerRow.map((header, i) => `${header} (${i})`).join(', ')}`,
+		);
+	}
 
 	const columnMatching = new Map<string, number>();
 
@@ -42,6 +63,12 @@ export function parseCsv<T extends TCsvSchema>(
 
 		columnMatching.set(columnName, index);
 	});
+
+	if (options?.debug) {
+		console.debug(
+			`[DEBUG] Schema's column and header index matching: ${[...columnMatching.entries()].map((pair) => pair.join(' => ')).join(', ')}`,
+		);
+	}
 
 	return bodyRows.map((cols, rowIndex) =>
 		collectColumnsInSchema(schema, ({ columnName, ...transform }) => {
