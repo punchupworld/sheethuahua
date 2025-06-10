@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.2.0](https://github.com/punchupworld/sheethuahua/compare/3.1.0...3.2.0) (2025-06-10)
+
+### Features
+
+- add debug option for spreadsheet, fetchCsv and parseCsv ([9be316b](https://github.com/punchupworld/sheethuahua/commit/9be316b0c5aa416fe4ad001b4f8351c6ac094639))
+- set default sheets headers query parameter to 1 ([a2b1191](https://github.com/punchupworld/sheethuahua/commit/a2b1191b3f7810ab1bdd39d18d16b86e6ca61daf))
+
+### Bug Fixes
+
+- correctly pass fetchRequestInit options from Spreadsheet to fetchCsv ([b64de46](https://github.com/punchupworld/sheethuahua/commit/b64de46c75e6481fd03a1ea01b90608381f7d39a))
+
 ## [3.1.0](https://github.com/punchupworld/sheethuahua/compare/3.0.0...3.1.0) (2024-11-20)
 
 ### Features
