@@ -17,7 +17,7 @@ export type TCsvSchema = TColumn | TObject | TTuple;
 /**
  * Options for parseCsv function
  */
-interface ParseOptions {
+export interface ParseOptions {
 	/**
 	 * Enable debugging logs
 	 * @defaultValue false

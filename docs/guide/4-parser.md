@@ -69,3 +69,15 @@ const output = await sheets.get('SheetName', schema);
 2. Google Sheets has [a very low rate limit](https://developers.google.com/sheets/api/limits). It should be used with Static Site Generation (SSG), cache, or both.
 
 :::
+
+## Debugging
+
+Sheethuahua does many things under the hood. If you run into any problem, you can enable debugging logs by setting `debug` to `true` in the parser options.
+
+```ts
+parseCsv(input, schema, { debug: true });
+
+await fetchCsv('https://url-to/data.csv', schema, { debug: true });
+
+await sheets.get('SheetName', schema, { debug: true });
+```

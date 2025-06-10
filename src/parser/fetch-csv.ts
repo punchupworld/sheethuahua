@@ -6,7 +6,7 @@ const DEBUG_BODY_LIMIT = 2000;
 /**
  * Options for fetchCsv function
  */
-interface FetchOptions {
+export interface FetchOptions {
 	/**
 	 * Fetch requests configuration
 	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/RequestInit}
