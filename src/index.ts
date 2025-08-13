@@ -4,6 +4,8 @@ export * from './parser/fetch-csv';
 export * from './parser/parse-csv';
 export * from './parser/spreadsheet';
 
+export * from './plugin/cache';
+
 export * from './schema/column';
 export * from './schema/typebox';
 

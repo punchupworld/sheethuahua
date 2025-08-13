@@ -66,7 +66,7 @@ const output = await sheets.get('SheetName', schema);
 ::: warning
 
 1. The sheets must be publicly accessible (At least anyone with the link can view).
-2. Google Sheets has [a very low rate limit](https://developers.google.com/sheets/api/limits). It should be used with Static Site Generation (SSG), cache, or both.
+2. Google Sheets has [a very low rate limit](https://developers.google.com/sheets/api/limits). It should be used with Static Site Generation (SSG) or [caching](/plugin/caching.html).
 
 :::
 

@@ -35,6 +35,29 @@ export interface SheetOptions {
 }
 
 /**
+ * Spreadsheet object type
+ */
+export interface TSpreadsheet {
+	/**
+	 * Fetch and parse the sheet from given sheet name.
+	 * @param sheet - The sheet name
+	 * @param schema - Output schema mapping of each row
+	 * @param options - {@link SheetOptions}
+	 * @returns An array of objects corresponded to the sheet definition
+	 * @throws If fail to fetch or parse the sheet
+	 * @example
+	 * ```ts
+	 * const output = await sheets.get('sheet-name', schema);
+	 * ```
+	 */
+	get<S extends TCsvSchema>(
+		sheet: string,
+		schema: S,
+		options?: SheetOptions,
+	): Promise<StaticDecode<S>[]>;
+}
+
+/**
  * Define a spreadsheet corresponded to a Google Sheets document.
  * @param sheetsId - Google Sheets ID can be found from the URL `docs.google.com/spreadsheets/d/{sheetsId}/`
  * @param globalOptions - {@link SheetOptions} which will be applied in every `.get` call
@@ -47,25 +70,13 @@ export interface SheetOptions {
 export function Spreadsheet(
 	sheetsId: string,
 	globalOptions: SheetOptions = {},
-) {
+): TSpreadsheet {
 	return {
-		/**
-		 * Fetch and parse the sheet from given sheet name.
-		 * @param sheet - The sheet name
-		 * @param schema - Output schema mapping of each row
-		 * @param options - {@link SheetOptions}
-		 * @returns An array of objects corresponded to the sheet definition
-		 * @throws If fail to fetch or parse the sheet
-		 * @example
-		 * ```ts
-		 * const output = await sheets.get('SheetName', schema);
-		 * ```
-		 */
-		async get<T extends TCsvSchema>(
+		async get<S extends TCsvSchema>(
 			sheet: string,
-			schema: T,
+			schema: S,
 			options: SheetOptions = {},
-		): Promise<StaticDecode<T>[]> {
+		) {
 			const { range, headers, ...fetchOptions } = {
 				headers: 1,
 				...globalOptions,
