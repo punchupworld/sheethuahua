@@ -26,6 +26,17 @@ export interface TCacheAdapter {
 }
 
 /**
+ * Options for with cache plugin
+ */
+export interface WithCacheOptions {
+	/**
+	 * Enable debugging logs
+	 * @defaultValue false
+	 */
+	debug?: boolean;
+}
+
+/**
  * Add caching capability to the spreadsheet object.
  * @param spreadsheet - A spreadsheet object
  * @param cache - A cache adapter
@@ -40,7 +51,10 @@ export interface TCacheAdapter {
 export function withCache<C extends TCacheAdapter>(
 	spreadsheet: TSpreadsheet,
 	cache: C,
+	options: WithCacheOptions = {},
 ): TSpreadsheet {
+	const cacheDebug = options?.debug;
+
 	return {
 		async get<S extends TCsvSchema>(
 			sheet: string,
@@ -54,6 +68,12 @@ export function withCache<C extends TCacheAdapter>(
 			const cachedValue = (await cache.get(cacheKey)) as
 				| StaticDecode<S>[]
 				| undefined;
+
+			if (cacheDebug) {
+				console.debug(
+					`Cache ${cachedValue ? 'HIT' : 'MISS'} (Key = ${cacheKey})`,
+				);
+			}
 
 			if (cachedValue) {
 				return cachedValue;

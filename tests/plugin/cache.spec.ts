@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'bun:test';
 import { asString, Column, Spreadsheet, withCache } from '../../src';
-import { mockFetch } from '../setup';
+import { mockConsoleDebug, mockFetch } from '../setup';
 
 describe('.get', () => {
 	const cache = new Map();
@@ -51,5 +51,20 @@ describe('.get', () => {
 
 		expect(mockFetch).toHaveBeenCalled();
 		expect(value).toEqual(['a']);
+	});
+
+	it('should not call console.debug when debug is not enabled', async () => {
+		await sheets.get(tableName, columnSchema);
+
+		expect(mockConsoleDebug).toHaveBeenCalledTimes(0);
+	});
+
+	it('should call console.debug when debug is enabled', async () => {
+		await withCache(Spreadsheet('some-sheets-id'), cache, { debug: true }).get(
+			tableName,
+			columnSchema,
+		);
+
+		expect(mockConsoleDebug).not.toHaveBeenCalledTimes(0);
 	});
 });
