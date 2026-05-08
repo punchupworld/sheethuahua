@@ -11,7 +11,7 @@ export interface FetchOptions {
 	 * Fetch requests configuration
 	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/RequestInit}
 	 */
-	fetchRequestInit?: FetchRequestInit;
+	fetchRequestInit?: RequestInit;
 	/**
 	 * Enable debugging logs
 	 * @defaultValue false
