@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.3.0](https://github.com/punchupworld/sheethuahua/compare/3.2.0...3.3.0) (2026-05-08)
+
+### Features
+
+- add a spreadsheet caching plugin ([cbc4015](https://github.com/punchupworld/sheethuahua/commit/cbc4015a705c8c84644f6499d8bb34bbbee8e78f))
+- add debug option for withCache ([c3d79c7](https://github.com/punchupworld/sheethuahua/commit/c3d79c7641fa9e62f15d9f809ae3583bf6b25f97))
+
+### Bug Fixes
+
+- rename FetchRequestInit type to RequestInit ([7e9e488](https://github.com/punchupworld/sheethuahua/commit/7e9e488a4b85daeff9ce6685e9f079ef625d9467))
+
 ## [3.2.0](https://github.com/punchupworld/sheethuahua/compare/3.1.0...3.2.0) (2025-06-10)
 
 ### Features
