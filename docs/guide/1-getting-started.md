@@ -1,3 +1,7 @@
+---
+description: Installation instructions for the sheethuahua npm package (npm, yarn, pnpm, bun) and example imports of core functions.
+---
+
 # Getting Started
 
 Sheethuahua is available on [NPM](https://www.npmjs.com/package/sheethuahua) package repository.
@@ -41,3 +45,8 @@ import {
 	// ...
 } from 'sheethuahua';
 ```
+
+::: tip
+
+🤖 LLM texts are available in [standard](/llms.txt) and [full](/llms-full.txt) version
+:::

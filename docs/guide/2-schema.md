@@ -1,3 +1,7 @@
+---
+description: Schema definition using Column, Object, and Tuple — including nested schemas and type inference with StaticDecode.
+---
+
 # Schema
 
 Schemas define how each row from CSV/Sheet will be transformed into.

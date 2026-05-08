@@ -1,3 +1,7 @@
+---
+description: Parsing CSV data from different sources — parseCsv for strings, fetchCsv for URLs, and Spreadsheet for Google Sheets, with debugging options.
+---
+
 # Parser
 
 Parser validate and decode the input CSV from the given _data source_ and the _schema_. If validation has failed, the error will be thrown.

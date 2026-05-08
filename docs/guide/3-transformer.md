@@ -1,3 +1,7 @@
+---
+description: Transformers that decode/encode CSV string cells into typed values — built-in transformers (asString, asNumber, asBoolean, asDate, asOneOf, asArray), custom transformers via createTransformer, and optional/fallback variants.
+---
+
 # Transformer
 
 Every cell in CSV/Sheets is a `string`. Transformers contain instructions about how to convert a string of each cell to be the data you want (decode) and convert it back (encode). `Column()` requires a transformer in the 2nd argument.

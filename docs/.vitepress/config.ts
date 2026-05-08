@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress';
+import llmstxt from 'vitepress-plugin-llms';
 import { generateSidebar } from 'vitepress-sidebar';
 import typedocSidebar from '../references/typedoc-sidebar.json';
 
@@ -39,7 +40,7 @@ export default defineConfig({
 			{ text: 'References', link: '/references.html' },
 		],
 		sidebar: [
-			// @ts-ignore
+			// @ts-expect-error incompatible type
 			...(generateSidebar({
 				excludePattern: ['references'],
 				documentRootPath: 'docs',
@@ -72,5 +73,12 @@ export default defineConfig({
 		outline: {
 			level: [2, 3],
 		},
+	},
+	vite: {
+		plugins: [
+			llmstxt({
+				domain: 'https://punchupworld.github.io',
+			}),
+		],
 	},
 });

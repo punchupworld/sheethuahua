@@ -1,3 +1,7 @@
+---
+description: Overview of Sheethuahua — a set of schemas, transformers, type-safe parsers and formatters for CSV and Google Sheets data, with notes on Google Sheets rate limits.
+---
+
 # Introduction
 
 CSV (or Google Sheets) is an easy to used data format. But it is quite unpredictable, and not that flexible. We aim to help you with **"Sheethuahua"**, a set of schemas, transformers, type-safe parsers and formatters. What you need to do is:

@@ -1,3 +1,7 @@
+---
+description: Formatting JavaScript data back to CSV string using formatToCsv and schema-defined encoders — the inverse of parsing.
+---
+
 # Formatter
 
 Formatter is the opposite of parser: it validates and encodes JavaScript data back to the CSV string with the given _schema_. If validation has failed, the error will be thrown.

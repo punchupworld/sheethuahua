@@ -9,6 +9,7 @@ Using [TypeBox](https://github.com/sinclairzx81/typebox), [d3-dsv](https://d3js.
 [![NPM Version](https://img.shields.io/npm/v/sheethuahua)](https://www.npmjs.com/package/sheethuahua)
 
 [📖 View full documentation](https://punchupworld.github.io/sheethuahua/)
+[🤖 Use llms.txt](https://punchupworld.github.io/sheethuahua/llms.txt)
 
 <!-- #region doc-index -->
 
