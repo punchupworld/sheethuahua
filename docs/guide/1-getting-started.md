@@ -46,7 +46,10 @@ import {
 } from 'sheethuahua';
 ```
 
-::: tip
+## For AI Agents
 
-🤖 LLM texts are available in [standard](/llms.txt) and [full](/llms-full.txt) version
-:::
+- [LLM texts](/llms.txt) — full API reference for LLM context
+- [sheethuahua-schema](https://github.com/punchupworld/sheethuahua/blob/main/skills/sheethuahua-schema/SKILL.md) skill — generate schemas from CSV/Sheets automatically:
+  ```bash
+  npx skills add punchupworld/sheethuahua
+  ```

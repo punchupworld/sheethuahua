@@ -9,7 +9,6 @@ Using [TypeBox](https://github.com/sinclairzx81/typebox), [d3-dsv](https://d3js.
 [![NPM Version](https://img.shields.io/npm/v/sheethuahua)](https://www.npmjs.com/package/sheethuahua)
 
 [📖 View full documentation](https://punchupworld.github.io/sheethuahua/)
-[🤖 Use llms.txt](https://punchupworld.github.io/sheethuahua/llms.txt)
 
 <!-- #region doc-index -->
 
@@ -93,6 +92,17 @@ ID,Name,Email Address,Phone Number
 1,Samoyed,samo123@doggo,0800000000
 2,Shiba,shibainu@doggo,
 ```
+
+## For AI Agents 🤖
+
+- [📖 LLM texts](https://punchupworld.github.io/sheethuahua/llms.txt) — full API reference for LLM context
+- [sheethuahua-schema](https://github.com/punchupworld/sheethuahua/blob/main/skills/sheethuahua-schema/SKILL.md) skill — generate type-safe schemas from CSV/Sheets automatically
+
+```bash
+npx skills add punchupworld/sheethuahua
+```
+
+The skill helps AI coding agents understand your data, infer column types, propose schemas with appropriate transformers, and write the schema file — with human verification at each step.
 
 <!-- #endregion doc-index -->
 
