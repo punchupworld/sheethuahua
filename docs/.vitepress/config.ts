@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitepress';
-import llmstxt from 'vitepress-plugin-llms';
+import llmstxt, {
+	copyOrDownloadAsMarkdownButtons,
+} from 'vitepress-plugin-llms';
 import { generateSidebar } from 'vitepress-sidebar';
 import typedocSidebar from '../references/typedoc-sidebar.json';
 
@@ -72,6 +74,11 @@ export default defineConfig({
 		},
 		outline: {
 			level: [2, 3],
+		},
+	},
+	markdown: {
+		config(md) {
+			md.use(copyOrDownloadAsMarkdownButtons);
 		},
 	},
 	vite: {
