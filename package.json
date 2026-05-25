@@ -29,6 +29,7 @@
 		"test": "bun test",
 		"build": "rm -rf dist && tsc && tsc-alias",
 		"lint": "eslint --fix src tests",
+		"check": "tsc --noEmit",
 		"release": "release-it",
 		"docs:collect": "typedoc",
 		"docs:dev": "vitepress dev docs",
