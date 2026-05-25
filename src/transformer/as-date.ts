@@ -6,7 +6,7 @@ import {
 	type Format,
 } from '@formkit/tempo';
 import { Date, type DateOptions } from '@sinclair/typebox';
-import { createTransformer } from './create-transformer';
+import { createTransformer, type TransformOptions } from './create-transformer';
 
 export type { DateOptions };
 
@@ -28,9 +28,14 @@ export interface TempoOptions {
 }
 
 /**
+ * Options for {@link asDate}
+ */
+export type AsDateOptions = TempoOptions & DateOptions & TransformOptions;
+
+/**
  * Create a date transformer.
  * Using {@link https://tempo.formkit.com | Tempo} to parse and format date string.
- * @param options - {@link TempoOptions} for parsing/formatting and {@link DateOptions} for validation
+ * @param options - Validation options
  * @remarks Without format option, asDate expects {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format | ISO 8601 format}
  * @example
  * ```ts
@@ -43,19 +48,20 @@ export interface TempoOptions {
  * }));
  * ```
  */
-export function asDate(options: TempoOptions & DateOptions = {}) {
+export function asDate(options: AsDateOptions = {}) {
 	const {
 		format: formatOption,
 		timezone = 'UTC',
+		emptyValues,
 		...validateOptions
 	} = options;
 
-	return createTransformer(
-		(str) => {
+	return createTransformer({
+		decode: (str) => {
 			const localDate = parse(str, formatOption);
 			return applyOffset(localDate, offset(localDate, timezone));
 		},
-		(date) =>
+		encode: (date) =>
 			format({
 				date,
 				format: formatOption ?? 'YYYY-MM-DDTHH:mm:ss',
@@ -64,6 +70,7 @@ export function asDate(options: TempoOptions & DateOptions = {}) {
 			(formatOption === undefined
 				? `.${date.getMilliseconds().toString().padStart(3, '0')}Z`
 				: ''),
-		Date(validateOptions),
-	);
+		validateSchema: Date(validateOptions),
+		emptyValues,
+	});
 }

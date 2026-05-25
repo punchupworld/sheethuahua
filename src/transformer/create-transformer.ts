@@ -3,7 +3,6 @@ import {
 	Optional,
 	String,
 	Transform,
-	type StaticDecode,
 	type TAny,
 	type TOptional,
 	type TSchema,
@@ -36,50 +35,72 @@ export type TTransformer<T, S extends TSchema = TAny> = TTransform<
 };
 
 /**
- * Create custom transformer
- * @param decode - A function to parse string from CSV cell
- * @param encode - A function to format value back to string
- * @example
- * ```ts
- * const asMarkdownList = createTransformer(
- * 	(str) => str
- * 		.split('\n')
- * 		.map((line) => line.replace('- ', '').trim())
- * 		.filter((item) => item.length > 0),
- * );
- * ```
+ * Common options for all transformer factories
  */
-export function createTransformer<T>(
-	decode: (value: string) => T,
-	encode?: (value: T) => string,
-): TTransformer<T>;
+export interface TransformOptions {
+	/**
+	 * Values treated as empty.
+	 * On non-optional columns, throws if matched.
+	 * On optional columns, returns `undefined` or the given fallback.
+	 * @defaultValue `['']`
+	 */
+	emptyValues?: string[];
+}
+
+/**
+ * Options for {@link createTransformer}
+ */
+export interface CreateTransformerOptions<T, S extends TSchema = TAny>
+	extends TransformOptions {
+	/**
+	 * A function to parse string from CSV cell
+	 */
+	decode: (value: string) => T;
+	/**
+	 * A function to format value back to string
+	 */
+	encode?: (value: T) => string;
+	/**
+	 * A schema to validate decoded value
+	 */
+	validateSchema?: S;
+}
+
 /**
  * Create a custom transformer
- * @param decode - A function to parse string from CSV cell
- * @param encode - A function to format value back to string
- * @param decodeSchema - A schema to validate decoded value
  * @example
  * ```ts
- * const asMarkdownList = createTransformer(
- * 	(str) => str
+ * const asMarkdownList = createTransformer({
+ * 	decode: (str) => str
  * 		.split('\n')
  * 		.map((line) => line.replace('- ', '').trim())
  * 		.filter((item) => item.length > 0),
- * 	(items) => items.map(item => `- ${item}`).join('\n')
- * );
+ * });
  * ```
  */
-export function createTransformer<S extends TSchema, T = StaticDecode<S>>(
-	decode: (value: string) => unknown,
-	encode: (value: T) => string,
-	decodeSchema: S,
+export function createTransformer<T, S extends TSchema = TAny>(
+	options: CreateTransformerOptions<T, S>,
 ): TTransformer<T, S>;
-export function createTransformer(
-	decode: (value: string) => unknown,
-	encode: (value: unknown) => string = () => '',
-	validateSchema: TSchema = Any(),
-) {
+export function createTransformer(options: {
+	decode: (value: string) => unknown;
+	encode?: (value: unknown) => string;
+	validateSchema?: TSchema;
+	emptyValues?: string[];
+}) {
+	const {
+		decode,
+		encode = () => '',
+		validateSchema = Any(),
+		emptyValues = [''],
+	} = options;
+	const emptyValuesSet = new Set(emptyValues);
+
 	function safeDecode(value: string) {
+		if (emptyValuesSet.has(value)) {
+			throw new Error(
+				`Received empty value '${value}' but column is not optional. Use .optional() to allow empty values.`,
+			);
+		}
 		const output = decode(value);
 		Assert(validateSchema, output);
 		return output;
@@ -96,7 +117,10 @@ export function createTransformer(
 			.Encode(safeEncode),
 		optional(fallback: unknown = undefined) {
 			const transform = Transform(String())
-				.Decode((value) => (value?.length ? safeDecode(value) : fallback))
+				.Decode((value) => {
+					if (emptyValuesSet.has(value) || !value?.length) return fallback;
+					return safeDecode(value);
+				})
 				.Encode((value) => (value !== undefined ? safeEncode(value) : ''));
 
 			return fallback === undefined ? Optional(transform) : transform;

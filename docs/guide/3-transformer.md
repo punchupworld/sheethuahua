@@ -42,15 +42,15 @@ You can create your own transformer with [`createTransformer()`](/references/fun
 ```ts{3-11}
 import { createTransformer, Column, type StaticDecode } from 'sheethuahua';
 
-const asMarkdownList = createTransformer(
+const asMarkdownList = createTransformer({
 	// Decode function: string -> string[]
-	(str) => str
+	decode: (str) => str
 		.split('\n')
 		.map((line) => line.replace('- ', '').trim())
 		.filter((item) => item.length > 0),
 	// Encode function (Optional): string[] -> string
-	(items) => items.map(item => `- ${item}`).join('\n')
-);
+	encode: (items) => items.map(item => `- ${item}`).join('\n'),
+});
 
 const schema = Column('Items', asMarkdownList);
 
@@ -61,12 +61,12 @@ type Items = StaticDecode<typeof schema>;
 ::: tip
 
 - Encode function is optional. If it isn't provided, a function returning an empty string will be used. (When you don't plan to use the [formatter](5-formatter))
-- [TypeBox's Type](https://github.com/sinclairzx81/typebox?tab=readme-ov-file#types) can be supplied to the [`createTransformer()`](/references/functions/createTransformer.html) 3rd argument to validate the decode output and encode input.
+- A [TypeBox's Type](https://github.com/sinclairzx81/typebox?tab=readme-ov-file#types) can be supplied via the `validateSchema` option to validate the decode output and encode input.
   :::
 
 ## Optional Variant
 
-Transformer required value by default and will throw when input is an empty string. If the column can be left empty you can call `.optional()` variant of the transformer. An empty cell will be parsed as `undefined` and omitted from `Object` instead of throwing an error.
+Transformer required value by default and will throw when input is an empty string (or any value in `emptyValues` option). If the column can be left empty you can call `.optional()` variant of the transformer. An empty cell will be parsed as `undefined` and omitted from `Object` instead of throwing an error.
 
 ```ts{3,8}
 const schema = Object({
@@ -96,4 +96,25 @@ const schema = Object({
 //     name: string; (will be 'anonymous' when the cell is empty)
 // }
 type Person = StaticDecode<typeof schema>;
+```
+
+## Custom Empty Values
+
+By default, only the empty string `''` is treated as empty. You can override which values are treated as empty via the `emptyValues` option on any transformer:
+
+```ts
+// On non-optional column: throws "Received empty value 'N/A'…"
+Column('Score', asNumber({ emptyValues: ['N/A', '-'] }));
+
+// On optional column: returns undefined or fallback
+Column('Score', asNumber({ emptyValues: ['N/A'] }).optional());
+Column('Score', asNumber({ emptyValues: ['N/A'] }).optional(0));
+```
+
+- Matching is case-sensitive and exact.
+- Empty values only checked at the cell level — `asArray` inner items do not inherit this check.
+- Passing `emptyValues` replaces the default. Include `''` explicitly if you still want empty strings treated as empty: `emptyValues: ['', 'N/A']`.
+
+```
+
 ```
