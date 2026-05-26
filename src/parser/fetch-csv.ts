@@ -42,7 +42,7 @@ export async function fetchCsv<T extends TCsvSchema>(
 
 	if (!res.ok) {
 		throw new Error(
-			`Failed to fetch (${res.status} ${res.statusText}), please recheck if the source is corrected and publicly accessible.`,
+			`Failed to fetch ${url} (${res.status} ${res.statusText}), please recheck if the source is corrected and publicly accessible.`,
 		);
 	}
 
@@ -58,5 +58,12 @@ export async function fetchCsv<T extends TCsvSchema>(
 		);
 	}
 
-	return parseCsv(body, schema, parseOptions);
+	try {
+		return parseCsv(body, schema, parseOptions);
+	} catch (e) {
+		throw new Error(
+			`Failed to parse CSV from ${url}: ${e instanceof Error ? e.message : String(e)}`,
+			{ cause: e },
+		);
+	}
 }

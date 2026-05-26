@@ -91,6 +91,33 @@ describe('.get', () => {
 	});
 });
 
+describe('Error cascade', () => {
+	it('should wrap fetch/parse errors with sheet name and cause chain', async () => {
+		const sheets = Spreadsheet(sheetsId);
+
+		mockFetch.mockResolvedValue(new Response('wrong_header\nb'));
+
+		try {
+			await sheets.get(tableName, Column('value', asString()));
+			throw new Error('should have thrown');
+		} catch (e) {
+			expect(e).toBeInstanceOf(Error);
+			expect((e as Error).message).toInclude(
+				`Could not get sheet "${tableName}"`,
+			);
+			expect((e as Error).message).toInclude(sheetsId);
+			expect((e as Error).cause).toBeInstanceOf(Error);
+
+			const cause = (e as Error).cause as Error;
+			expect(cause.message).toInclude('Failed to parse CSV');
+			expect(cause.cause).toBeInstanceOf(Error);
+
+			const rootCause = cause.cause as Error;
+			expect(rootCause.message).toBe('Column "value" is not found');
+		}
+	});
+});
+
 describe('Options', () => {
 	const sheets = Spreadsheet(sheetsId);
 	const schema = Column('value', asString());

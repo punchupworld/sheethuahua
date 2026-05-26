@@ -98,10 +98,11 @@ export function Spreadsheet(
 			}
 
 			try {
-				return fetchCsv(url, schema, fetchOptions);
+				return await fetchCsv(url, schema, fetchOptions);
 			} catch (e) {
-				throw Error(
-					`Could not get sheet "${sheet}" -> ${e instanceof Error ? e.message : ''}`.trim(),
+				throw new Error(
+					`Could not get sheet "${sheet}" from ${url}: ${e instanceof Error ? e.message : String(e)}`,
+					{ cause: e },
 				);
 			}
 		},
