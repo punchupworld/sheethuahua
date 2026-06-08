@@ -1,6 +1,6 @@
 import { Decode, Encode } from '@sinclair/typebox/value';
 import { describe, expect, it } from 'bun:test';
-import { asArray, asNumber } from '../../src';
+import { asArray, asNumber, asString } from '../../src';
 
 describe('default', () => {
 	it('should throw if empty', () => {
@@ -33,6 +33,43 @@ describe('default', () => {
 		const encoded = Encode(schema, decoded);
 
 		expect(encoded).toBe(input);
+	});
+
+	it('should split items that contain the separator when wrapped in quotes', () => {
+		const schema = asArray(asString());
+		const input = 'a,"b, c",d';
+		const decoded = Decode(schema, input);
+
+		expect(decoded).toStrictEqual(['a', 'b, c', 'd']);
+
+		const encoded = Encode(schema, decoded);
+
+		expect(encoded).toBe('a,"b, c",d');
+	});
+
+	it('should tolerate whitespace between the separator and the opening quote', () => {
+		const schema = asArray(asString());
+		const decoded = Decode(schema, 'a, "b, c", d');
+
+		expect(decoded).toStrictEqual(['a', 'b, c', 'd']);
+	});
+
+	it('should tolerate leading whitespace before the first quoted field', () => {
+		const schema = asArray(asString());
+		const decoded = Decode(schema, '   "a", b');
+
+		expect(decoded).toStrictEqual(['a', 'b']);
+	});
+
+	it('should round-trip items containing the separator', () => {
+		const schema = asArray(asString(), '|');
+		const decoded = Decode(schema, 'one|"two|three"|four');
+
+		expect(decoded).toStrictEqual(['one', 'two|three', 'four']);
+
+		const encoded = Encode(schema, decoded);
+
+		expect(encoded).toBe('one|"two|three"|four');
 	});
 });
 
