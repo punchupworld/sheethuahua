@@ -1,5 +1,21 @@
 # Changelog
 
+## [4.0.0](https://github.com/punchupworld/sheethuahua/compare/3.3.0...4.0.0) (2026-06-17)
+
+### ⚠ BREAKING CHANGES
+
+- create transformer except single option object and support custom
+
+### Features
+
+- add schema writer skills ([5121e79](https://github.com/punchupworld/sheethuahua/commit/5121e7962b1601cdc4fdf1b90f4091f9bf1107d6))
+- create transformer except single option object and support custom ([f30071c](https://github.com/punchupworld/sheethuahua/commit/f30071cd4ac30b4d568d759120e1c3897142a84f))
+- improve error stack with cause chain ([0d37af3](https://github.com/punchupworld/sheethuahua/commit/0d37af3c96df65345f62fe8116d8f9cce654e562))
+
+### Bug Fixes
+
+- handle quoted item in asArray with d3-dsv ([41c8b14](https://github.com/punchupworld/sheethuahua/commit/41c8b14ee1ef65336595a76c7da4cd9a2fc69a20))
+
 ## [3.3.0](https://github.com/punchupworld/sheethuahua/compare/3.2.0...3.3.0) (2026-05-08)
 
 ### Features

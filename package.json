@@ -1,6 +1,6 @@
 {
 	"name": "sheethuahua",
-	"version": "3.3.0",
+	"version": "4.0.0",
 	"description": "Type-safe Google Sheets and CSV parser for TypeScript and JavaScript",
 	"keywords": [
 		"Google Sheets",
