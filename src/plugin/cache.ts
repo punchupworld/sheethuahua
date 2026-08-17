@@ -41,6 +41,9 @@ export interface WithCacheOptions {
  * @param spreadsheet - A spreadsheet object
  * @param cache - A cache adapter
  * @returns A spreadsheet object with underlying caching
+ * @remarks The cache key is derived from the spreadsheet id, sheet name,
+ * effective range and headers options, and a schema fingerprint, so one cache
+ * adapter can safely be shared across spreadsheets and schemas.
  * @example
  * ```ts
  * const cache = new Map(); // Use Map as a simple in-memory cache
@@ -56,14 +59,21 @@ export function withCache<C extends TCacheAdapter>(
 	const cacheDebug = options?.debug;
 
 	return {
+		...spreadsheet,
 		async get<S extends TCsvSchema>(
 			sheet: string,
 			schema: S,
 			options: SheetOptions = {},
 		) {
-			const { range, headers } = options;
+			const { range, headers } = { ...spreadsheet.globalOptions, ...options };
 
-			const cacheKey = [sheet, range, headers].join('|');
+			const cacheKey = [
+				spreadsheet.id,
+				sheet,
+				range,
+				headers,
+				hashSchema(schema),
+			].join('|');
 
 			const cachedValue = (await cache.get(cacheKey)) as
 				| StaticDecode<S>[]
@@ -81,9 +91,27 @@ export function withCache<C extends TCacheAdapter>(
 
 			const newValue = await spreadsheet.get(sheet, schema, options);
 
-			cache.set(cacheKey, newValue);
+			await cache.set(cacheKey, newValue);
 
 			return newValue;
 		},
 	};
+}
+
+/**
+ * Derive a short stable fingerprint from a schema with the FNV-1a hash,
+ * so that the same sheet parsed with different schemas is cached separately.
+ * @param schema - The schema to fingerprint
+ * @returns A base-36 hash string
+ */
+function hashSchema(schema: TCsvSchema): string {
+	const str = JSON.stringify(schema);
+	let hash = 0x811c9dc5;
+
+	for (let i = 0; i < str.length; i++) {
+		hash ^= str.charCodeAt(i);
+		hash = Math.imul(hash, 0x01000193);
+	}
+
+	return (hash >>> 0).toString(36);
 }

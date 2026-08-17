@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'bun:test';
-import { asString, Column, Spreadsheet, withCache } from '../../src';
+import { asNumber, asString, Column, Spreadsheet, withCache } from '../../src';
 import { mockConsoleDebug, mockFetch } from '../setup';
 
 describe('.get', () => {
@@ -9,12 +9,8 @@ describe('.get', () => {
 	const tableName = 'Users';
 	const columnSchema = Column('value', asString());
 
-	function getCacheKey(sheet: string, range?: string, headers?: string) {
-		return [sheet, range, headers].join('|');
-	}
-
 	beforeEach(() => {
-		mockFetch.mockResolvedValue(new Response('value\na'));
+		mockFetch.mockImplementation(async () => new Response('value\na'));
 		cache.clear();
 	});
 
@@ -30,11 +26,15 @@ describe('.get', () => {
 	it('should save parsed output value to the cache', async () => {
 		const value = await sheets.get(tableName, columnSchema);
 
-		expect(cache.get(getCacheKey(tableName))).toEqual(value);
+		expect(cache.size).toBe(1);
+		expect([...cache.values()][0]).toEqual(value);
 	});
 
 	it('should retrieve the data from cache if the request table name is available', async () => {
-		cache.set(getCacheKey(tableName), ['b']);
+		await sheets.get(tableName, columnSchema);
+		cache.set([...cache.keys()][0], ['b']);
+		mockFetch.mockClear();
+
 		const value = await sheets.get(tableName, columnSchema);
 
 		expect(mockFetch).not.toHaveBeenCalled();
@@ -42,7 +42,8 @@ describe('.get', () => {
 	});
 
 	it('should refetch if range or header option are changed', async () => {
-		cache.set(getCacheKey(tableName), ['b']);
+		await sheets.get(tableName, columnSchema);
+		mockFetch.mockClear();
 
 		const value = await sheets.get(tableName, columnSchema, {
 			range: '2',
@@ -51,6 +52,53 @@ describe('.get', () => {
 
 		expect(mockFetch).toHaveBeenCalled();
 		expect(value).toEqual(['a']);
+	});
+
+	it('should refetch if the schema is changed', async () => {
+		mockFetch.mockImplementation(async () => new Response('value\n1'));
+		await sheets.get(tableName, columnSchema);
+		mockFetch.mockClear();
+
+		const value = await sheets.get(tableName, Column('value', asNumber()));
+
+		expect(mockFetch).toHaveBeenCalled();
+		expect(value).toEqual([1]);
+	});
+
+	it('should not share cache entries between different spreadsheets', async () => {
+		await sheets.get(tableName, columnSchema);
+		mockFetch.mockClear();
+
+		const otherSheets = withCache(Spreadsheet('other-sheets-id'), cache);
+		await otherSheets.get(tableName, columnSchema);
+
+		expect(mockFetch).toHaveBeenCalled();
+		expect(cache.size).toBe(2);
+	});
+
+	it('should include global options in the cache key', async () => {
+		await sheets.get(tableName, columnSchema);
+		mockFetch.mockClear();
+
+		const rangedSheets = withCache(
+			Spreadsheet('some-sheets-id', { range: 'A:B' }),
+			cache,
+		);
+		await rangedSheets.get(tableName, columnSchema);
+
+		expect(mockFetch).toHaveBeenCalled();
+		expect(cache.size).toBe(2);
+	});
+
+	it('should throw if the cache setter fails', async () => {
+		const failingSheets = withCache(Spreadsheet('some-sheets-id'), {
+			get: () => undefined,
+			set: () => Promise.reject(new Error('Cache is down')),
+		});
+
+		expect(failingSheets.get(tableName, columnSchema)).rejects.toThrow(
+			'Cache is down',
+		);
 	});
 
 	it('should not call console.debug when debug is not enabled', async () => {

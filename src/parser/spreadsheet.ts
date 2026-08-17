@@ -39,6 +39,16 @@ export interface SheetOptions {
  */
 export interface TSpreadsheet {
 	/**
+	 * Google Sheets ID this spreadsheet reads from.
+	 * Used by plugins to namespace derived data such as cache keys.
+	 */
+	readonly id?: string;
+	/**
+	 * {@link SheetOptions} applied to every `.get` call.
+	 * Exposed so plugins can resolve the effective options of a call.
+	 */
+	readonly globalOptions?: SheetOptions;
+	/**
 	 * Fetch and parse the sheet from given sheet name.
 	 * @param sheet - The sheet name
 	 * @param schema - Output schema mapping of each row
@@ -72,6 +82,8 @@ export function Spreadsheet(
 	globalOptions: SheetOptions = {},
 ): TSpreadsheet {
 	return {
+		id: sheetsId,
+		globalOptions,
 		async get<S extends TCsvSchema>(
 			sheet: string,
 			schema: S,
