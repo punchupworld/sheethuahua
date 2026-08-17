@@ -35,6 +35,46 @@ Column('Count', asNumber({ minimum: 0, maximum: 10 }));
 
 See more about the _options_ in each transformer's reference.
 
+### Date Format and Timezone
+
+[`asDate()`](/references/functions/asDate.html) uses [Tempo](https://tempo.formkit.com) and expects [ISO 8601](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format) by default. Use the `format` option for anything else, and `timezone` (default UTC) to say which zone a bare date string is written in.
+
+```ts
+Column('CreatedAt', asDate());
+
+Column(
+	'CreatedAt',
+	asDate({
+		format: 'DD/MM/YYYY',
+		timezone: 'Asia/Bangkok',
+	}),
+);
+```
+
+A date string without an explicit UTC offset is read as local time in `timezone`, while a string that already carries an offset (or the `Z` suffix) is respected as-is.
+
+```ts
+const transformer = asDate({ timezone: 'Asia/Bangkok' });
+
+// Bangkok midnight, which is 17:00 UTC the previous day
+Decode(transformer, '2024-01-01T00:00');
+
+// Already explicit, so the offset wins
+Decode(transformer, '2024-01-01T07:00:00.000+07:00');
+```
+
+When encoding without a custom `format`, the output is written in `timezone` with its matching UTC offset, so it decodes back to the same instant.
+
+```ts
+const date = new Date('2024-01-01T00:00:00.000Z');
+
+// '2024-01-01T00:00:00.000Z'
+Encode(asDate(), date);
+
+// '2024-01-01T07:00:00.000+07:00'
+Encode(asDate({ timezone: 'Asia/Bangkok' }), date);
+```
+
 ## DIY
 
 You can create your own transformer with [`createTransformer()`](/references/functions/createTransformer.html)
@@ -114,7 +154,3 @@ Column('Score', asNumber({ emptyValues: ['N/A'] }).optional(0));
 - Matching is case-sensitive and exact.
 - Empty values only checked at the cell level — `asArray` inner items do not inherit this check.
 - Passing `emptyValues` replaces the default. Include `''` explicitly if you still want empty strings treated as empty: `emptyValues: ['', 'N/A']`.
-
-```
-
-```

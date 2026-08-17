@@ -74,6 +74,38 @@ const output = await sheets.get('SheetName', schema);
 
 :::
 
+### Global Options
+
+Options given to `Spreadsheet()` are applied to every `.get()` call, so shared settings do not have to be repeated. Options given to `.get()` take precedence.
+
+```ts
+const sheets = Spreadsheet('google-sheets-id', {
+	headers: 2,
+	debug: true,
+});
+
+// Uses headers: 2 and debug: true
+await sheets.get('SheetName', schema);
+
+// Overrides headers to 1, still debug: true
+await sheets.get('AnotherSheet', schema, { headers: 1 });
+```
+
+## Parsing Behavior
+
+A few things worth knowing about how the CSV input is read:
+
+- Every cell is trimmed before it is passed to the transformer.
+- A leading [byte order mark](https://en.wikipedia.org/wiki/Byte_order_mark) is ignored, so files exported from Excel and other spreadsheet apps match their headers correctly.
+- Rows with fewer cells than the header are accepted, and the missing cells are treated as empty. Optional columns are omitted while required ones throw.
+- An empty input throws `CSV content is empty, expected at least a header row`.
+
+Errors from a cell report a _data row_ number, where the first row after the header is data row 1.
+
+```
+Expected number, received "a" (column "Count", data row 3)
+```
+
 ## Debugging
 
 Sheethuahua does many things under the hood. If you run into any problem, you can enable debugging logs by setting `debug` to `true` in the parser options.

@@ -37,3 +37,13 @@ ID,Name
 1,Samoyed
 2,Shiba
 ```
+
+Each column in the schema becomes one CSV column, in the order it is declared. Because a column name maps to exactly one output column, reusing the same name twice throws rather than silently dropping one of the values.
+
+```ts
+// Throws: Column "ID" is defined more than once in the schema
+const schema = Object({
+	id: Column('ID', asNumber()),
+	legacyId: Column('ID', asNumber()),
+});
+```
