@@ -13,3 +13,4 @@ Type-safe CSV and Google Sheets parser for TypeScript and JavaScript
   - Run test with `bun test`
   - Format code with `bun run format` before declaring task as done
 - Human will get in the loop and may edit some file along the way. If you spot it, please respect those changes
+- Commit changes using a concise message without a body content
