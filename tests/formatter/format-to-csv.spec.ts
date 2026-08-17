@@ -46,6 +46,19 @@ describe('Schema', () => {
 	});
 });
 
+describe('Schema validation', () => {
+	it('should throw if a column name is used more than once', () => {
+		const schema = Object({
+			a: Column('ID', asNumber()),
+			b: Column('ID', asNumber()),
+		});
+
+		expect(() => formatToCsv([{ a: 1, b: 2 }], schema)).toThrow(
+			'Column "ID" is defined more than once in the schema',
+		);
+	});
+});
+
 describe('Column', () => {
 	it('should throw if column is required but missing', () => {
 		const schema = Object({

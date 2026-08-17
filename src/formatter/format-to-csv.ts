@@ -26,6 +26,12 @@ export function formatToCsv<T extends TCsvSchema>(
 	const pathSchemaMap = new Map<string, { schema: TSchema; path: ValuePath }>();
 
 	collectColumnsInSchema(schema, ({ columnName, ...schema }, path) => {
+		if (pathSchemaMap.has(columnName)) {
+			throw new Error(
+				`Column "${columnName}" is defined more than once in the schema`,
+			);
+		}
+
 		pathSchemaMap.set(columnName, { schema, path });
 	});
 
