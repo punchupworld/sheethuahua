@@ -10,6 +10,8 @@ import { createTransformer, type TransformOptions } from './create-transformer';
 
 export type { DateOptions };
 
+const ISO_OFFSET_SUFFIX = /(?:Z|[+-]\d{2}:?\d{2})$/i;
+
 /**
  * Options for Tempo to parse and format date string.
  */
@@ -59,17 +61,26 @@ export function asDate(options: AsDateOptions = {}) {
 	return createTransformer({
 		decode: (str) => {
 			const localDate = parse(str, formatOption);
+
+			// An explicit UTC offset is already resolved by parse; shifting again would double-apply it
+			if (formatOption === undefined && ISO_OFFSET_SUFFIX.test(str)) {
+				return localDate;
+			}
+
 			return applyOffset(localDate, offset(localDate, timezone));
 		},
-		encode: (date) =>
-			format({
-				date,
-				format: formatOption ?? 'YYYY-MM-DDTHH:mm:ss',
-				tz: timezone,
-			}) +
-			(formatOption === undefined
-				? `.${date.getMilliseconds().toString().padStart(3, '0')}Z`
-				: ''),
+		encode: (date) => {
+			if (formatOption !== undefined) {
+				return format({ date, format: formatOption, tz: timezone });
+			}
+
+			const utcOffset = offset(date, 'UTC', timezone, 'Z');
+			const milliseconds = date.getMilliseconds().toString().padStart(3, '0');
+
+			return `${format({ date, format: 'YYYY-MM-DDTHH:mm:ss', tz: timezone })}.${milliseconds}${
+				utcOffset === '+00:00' ? 'Z' : utcOffset
+			}`;
+		},
 		validateSchema: Date(validateOptions),
 		emptyValues,
 	});

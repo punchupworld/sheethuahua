@@ -84,6 +84,17 @@ describe('default', () => {
 		const string = Encode(tfm, date);
 		expect(string).toStartWith(input);
 	});
+
+	it('should encode with the timezone UTC offset instead of Z suffix', () => {
+		const tfm = asDate({
+			timezone: 'Asia/Bangkok',
+		});
+
+		const date = new Date('2024-01-01T00:00:00.000Z');
+		const string = Encode(tfm, date);
+		expect(string).toBe('2024-01-01T07:00:00.000+07:00');
+		expect(Decode(tfm, string)).toStrictEqual(date);
+	});
 });
 
 describe('optional', () => {
