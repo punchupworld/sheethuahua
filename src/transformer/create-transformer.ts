@@ -50,8 +50,10 @@ export interface TransformOptions {
 /**
  * Options for {@link createTransformer}
  */
-export interface CreateTransformerOptions<T, S extends TSchema = TAny>
-	extends TransformOptions {
+export interface CreateTransformerOptions<
+	T,
+	S extends TSchema = TAny,
+> extends TransformOptions {
 	/**
 	 * A function to parse string from CSV cell
 	 */
