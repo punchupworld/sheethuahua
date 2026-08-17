@@ -41,7 +41,11 @@ export function parseCsv<T extends TCsvSchema>(
 	schema: T,
 	options?: ParseOptions,
 ): StaticDecode<T>[] {
-	const [headerRow, ...bodyRows] = csvParseRows(content);
+	const [headerRow, ...bodyRows] = csvParseRows(content.replace(/^\uFEFF/, ''));
+
+	if (headerRow === undefined) {
+		throw new Error('CSV content is empty, expected at least a header row');
+	}
 
 	if (options?.debug) {
 		console.debug(
@@ -72,8 +76,9 @@ export function parseCsv<T extends TCsvSchema>(
 
 	return bodyRows.map((cols, rowIndex) =>
 		collectColumnsInSchema(schema, ({ columnName, ...transform }) => {
-			const trimmedValue =
-				cols[columnMatching.get(columnName) as number].trim();
+			const trimmedValue = (
+				cols[columnMatching.get(columnName) as number] ?? ''
+			).trim();
 
 			try {
 				return Decode(transform, trimmedValue);

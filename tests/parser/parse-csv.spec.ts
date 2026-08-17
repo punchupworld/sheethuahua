@@ -12,6 +12,16 @@ describe('Headers', () => {
 		expect(() => parseCsv('unknown_column\na', schema)).toThrow(
 			'Column "a" is not found',
 		));
+
+	it('should throw error if content is empty', () =>
+		expect(() => parseCsv('', schema)).toThrow(
+			'CSV content is empty, expected at least a header row',
+		));
+
+	it('should ignore leading BOM character', () => {
+		const res = parseCsv('\uFEFFa,b\n1,2', schema);
+		expect(res).toStrictEqual([{ a: '1', b: '2' }]);
+	});
 });
 
 describe('Schema', () => {
@@ -92,6 +102,25 @@ describe('Column', () => {
 
 		const res = parseCsv('a,b\n1,1\n,', schema);
 		expect(res).toStrictEqual([{ a: 1, b: 1 }, { a: 0 }]);
+	});
+
+	it('should treat missing cells in a short row as empty', () => {
+		const schema = Object({
+			a: Column('a', asNumber()),
+			b: Column('b', asNumber().optional()),
+		});
+
+		const res = parseCsv('a,b\n1,2\n3', schema);
+		expect(res).toStrictEqual([{ a: 1, b: 2 }, { a: 3 }]);
+
+		const required = Object({
+			a: Column('a', asNumber()),
+			b: Column('b', asNumber()),
+		});
+
+		expect(() => parseCsv('a,b\n1,2\n3', required)).toThrow(
+			'Column "b" cannot be empty (row 2)',
+		);
 	});
 });
 
