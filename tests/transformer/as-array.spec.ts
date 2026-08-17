@@ -71,6 +71,113 @@ describe('default', () => {
 
 		expect(encoded).toBe('one|"two|three"|four');
 	});
+
+	it.each(['\n', '\r\n'])('should support %j as a separator', (separator) => {
+		const schema = asArray(asString(), separator);
+		const input = ['a', 'b', 'c'].join(separator);
+		const decoded = Decode(schema, input);
+
+		expect(decoded).toStrictEqual(['a', 'b', 'c']);
+
+		const encoded = Encode(schema, decoded);
+
+		expect(encoded).toBe(input);
+	});
+
+	it('should treat a newline inside an item as an ordinary character', () => {
+		const schema = asArray(asString());
+
+		expect(Decode(schema, 'a,b\nc,d')).toStrictEqual(['a', 'b\nc', 'd']);
+		expect(Decode(schema, 'a,"b\nc",d')).toStrictEqual(['a', 'b\nc', 'd']);
+		expect(Encode(schema, ['a', 'b\nc', 'd'])).toBe('a,b\nc,d');
+	});
+
+	it('should round-trip a newline-separated item containing the separator', () => {
+		const schema = asArray(asString(), '\n');
+		const input = 'a\n"b\nc"\nd';
+		const decoded = Decode(schema, input);
+
+		expect(decoded).toStrictEqual(['a', 'b\nc', 'd']);
+
+		const encoded = Encode(schema, decoded);
+
+		expect(encoded).toBe(input);
+	});
+
+	it('should support a multi-character separator', () => {
+		const schema = asArray(asString(), '::');
+		const input = 'a::"b::c"::d';
+		const decoded = Decode(schema, input);
+
+		expect(decoded).toStrictEqual(['a', 'b::c', 'd']);
+
+		const encoded = Encode(schema, decoded);
+
+		expect(encoded).toBe(input);
+	});
+
+	it('should round-trip an item containing a double quote', () => {
+		const schema = asArray(asString());
+		const input = 'a,"b""c",d';
+		const decoded = Decode(schema, input);
+
+		expect(decoded).toStrictEqual(['a', 'b"c', 'd']);
+
+		const encoded = Encode(schema, decoded);
+
+		expect(encoded).toBe(input);
+	});
+
+	it.each([
+		['::', ['a:', 'b']],
+		['::', [':b', 'a']],
+		['aa', ['a', 'a']],
+	])(
+		'should round-trip items that straddle the %j separator',
+		(separator, items) => {
+			const schema = asArray(asString(), separator);
+
+			expect(Decode(schema, Encode(schema, items))).toStrictEqual(items);
+		},
+	);
+
+	it.each([' ', '\t'])(
+		'should support %j as a separator with quoted items',
+		(separator) => {
+			const schema = asArray(asString(), separator);
+			const input = ['a', `"b${separator}c"`, 'd'].join(separator);
+
+			expect(Decode(schema, input)).toStrictEqual(['a', `b${separator}c`, 'd']);
+		},
+	);
+
+	it('should throw if a closing quote is followed by anything but whitespace', () => {
+		expect(() => Decode(asArray(asString()), 'x,"a"y,b')).toThrow(
+			'Unexpected "y" after a closing quote at position 5',
+		);
+	});
+
+	it('should tolerate whitespace between the closing quote and the separator', () => {
+		expect(Decode(asArray(asString()), 'a, "b, c" , d')).toStrictEqual([
+			'a',
+			'b, c',
+			'd',
+		]);
+	});
+
+	it('should decode an unterminated quote up to the end of the input', () => {
+		expect(Decode(asArray(asString()), 'a,"b,c')).toStrictEqual(['a', 'b,c']);
+	});
+
+	it('should trim items even when they are quoted', () => {
+		expect(Decode(asArray(asString()), '"  a  ",b')).toStrictEqual(['a', 'b']);
+	});
+
+	it('should throw if separator is an empty string', () => {
+		expect(() => asArray(asString(), '')).toThrow(
+			'asArray separator must not be an empty string',
+		);
+	});
 });
 
 describe('optional', () => {
