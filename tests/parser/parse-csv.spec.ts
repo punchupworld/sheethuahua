@@ -82,7 +82,7 @@ describe('Column', () => {
 		const schema = Column('value', asString());
 
 		expect(() => parseCsv('value\n\n', schema)).toThrow(
-			'Column "value" cannot be empty (row 1)',
+			'Column "value" cannot be empty (data row 1)',
 		);
 	});
 
@@ -90,7 +90,7 @@ describe('Column', () => {
 		const schema = Column('value', asNumber());
 
 		expect(() => parseCsv('value\na\n', schema)).toThrow(
-			'Expected number, received "a" (column "value", row 1)',
+			'Expected number, received "a" (column "value", data row 1)',
 		);
 	});
 
@@ -119,7 +119,7 @@ describe('Column', () => {
 		});
 
 		expect(() => parseCsv('a,b\n1,2\n3', required)).toThrow(
-			'Column "b" cannot be empty (row 2)',
+			'Column "b" cannot be empty (data row 2)',
 		);
 	});
 });

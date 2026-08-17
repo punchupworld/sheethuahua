@@ -137,4 +137,10 @@ describe('Options', () => {
 
 		expect(mockConsoleDebug).not.toHaveBeenCalledTimes(0);
 	});
+
+	it('should call console.debug when debug is enabled from global options', async () => {
+		await Spreadsheet(sheetsId, { debug: true }).get(tableName, schema);
+
+		expect(mockConsoleDebug).not.toHaveBeenCalledTimes(0);
+	});
 });

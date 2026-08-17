@@ -85,12 +85,12 @@ export function parseCsv<T extends TCsvSchema>(
 			} catch (e) {
 				if (e instanceof TransformDecodeCheckError) {
 					throw new Error(
-						`Column "${columnName}" cannot be empty (row ${rowIndex + ROW_INDEX_OFFSET})`,
+						`Column "${columnName}" cannot be empty (data row ${rowIndex + ROW_INDEX_OFFSET})`,
 					);
 				}
 				if (e instanceof TransformDecodeError) {
 					throw new Error(
-						`${e.message}, received "${trimmedValue}" (column "${columnName}", row ${rowIndex + ROW_INDEX_OFFSET})`,
+						`${e.message}, received "${trimmedValue}" (column "${columnName}", data row ${rowIndex + ROW_INDEX_OFFSET})`,
 					);
 				}
 				throw e;

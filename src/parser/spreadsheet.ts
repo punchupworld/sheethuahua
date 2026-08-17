@@ -105,7 +105,7 @@ export function Spreadsheet(
 
 			const url = `https://docs.google.com/spreadsheets/d/${sheetsId}/gviz/tq?${queryParams.toString()}`;
 
-			if (options.debug) {
+			if (fetchOptions.debug) {
 				console.debug(`[DEBUG] Fetching from ${url}`);
 			}
 
