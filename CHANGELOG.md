@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.1](https://github.com/punchupworld/sheethuahua/compare/4.0.0...4.0.1) (2026-08-18)
+
+### Bug Fixes
+
+- correct UTC offset handling in asDate encode and decode ([db0dad1](https://github.com/punchupworld/sheethuahua/commit/db0dad1a854195d7aa8d9cdc19ef52e5f3e52e4e))
+- handle empty content, short rows, and BOM in parseCsv ([e6c4305](https://github.com/punchupworld/sheethuahua/commit/e6c4305c0e85901c0d12aca7f74c6f61064682c2))
+- include spreadsheet id, global options, and schema in cache key ([ba255be](https://github.com/punchupworld/sheethuahua/commit/ba255be808c656caa641ddaf8bae6149e3bef447))
+- respect global debug option and clarify data row number in error ([15ca781](https://github.com/punchupworld/sheethuahua/commit/15ca781e8deca7a00ac095e6ca5f116103689db0))
+- support any asArray separator including newline ([4829cd7](https://github.com/punchupworld/sheethuahua/commit/4829cd7d59b104e9fa731c7070e7fc55f0b78472))
+- throw on duplicated column names in formatToCsv ([1344b27](https://github.com/punchupworld/sheethuahua/commit/1344b277922085e50a754317a79fbe2a3b51f624))
+
 ## [4.0.0](https://github.com/punchupworld/sheethuahua/compare/3.3.0...4.0.0) (2026-06-17)
 
 ### ⚠ BREAKING CHANGES
